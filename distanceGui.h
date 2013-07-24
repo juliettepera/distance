@@ -12,6 +12,7 @@
 #include <QMessageBox>
 #include <QMainWindow>
 #include <QFileDialog>
+#include <QTextBrowser>
 
 // VTK library
 #include "vtkSmartPointer.h"

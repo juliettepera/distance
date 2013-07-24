@@ -16,10 +16,14 @@
 #include <QVTKWidget.h>
 #include <vtkImageViewer.h>
 
+// QT library
+#include <QTextBrowser>
+
 // Other Library
 #include <string>
 
 void windowInitialisation( QVTKWidget* widgetMesh , std::string mesh , QSize s );
+void initialisation(QTextBrowser* widgetText);
 
 
 #endif

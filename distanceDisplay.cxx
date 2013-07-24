@@ -1,5 +1,14 @@
 #include "distanceDisplay.h"
 
+
+
+void initialisation(QTextBrowser* widgetText)
+{
+    // change text and background color
+    // change font and size
+    widgetText->setText("Choose Mesh A");
+}
+
 void windowInitialisation( QVTKWidget* widgetMesh , std::string mesh , QSize s )
 {
     //READER
@@ -31,3 +40,5 @@ void windowInitialisation( QVTKWidget* widgetMesh , std::string mesh , QSize s )
     renderWindow -> Render();
     widgetMesh -> show();
 }
+
+

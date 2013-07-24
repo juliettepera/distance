@@ -2,6 +2,7 @@
 #include "distanceGui.h"
 #include "distanceDisplay.h"
 
+
 //************************************************* CLASS ****************************************************
 distanceGui::distanceGui(std::string meshA, std::string meshB)
 {
@@ -12,6 +13,12 @@ distanceGui::distanceGui(std::string meshA, std::string meshB)
     m_meshA = meshA;
     m_meshB = meshB;
     m_distance = 0;
+
+
+    //******** WIDGETS **********
+    QTextBrowser *widgetText = new QTextBrowser( this -> scrollAreaUser );
+    initialisation( widgetText );
+
        
     //******** CONNECTION ********
     //MESH A BUTTON TO MESH A LINE EDIT
@@ -86,6 +93,7 @@ void distanceGui::Display()
 
         //SIZES
         //widgetMeshA->resize( scrollAreaMeshA->maximumWidth() , scollAreaMeshA->maximumHeight() );
+        // set size automaticly ??????
         QSize sizeA( 351 , 311 );
         QSize sizeBoth( 711 , 381 );
 
@@ -114,14 +122,31 @@ void distanceGui::ChangeValue()
 }
 
 
-
 // apply the good calculated distance
 void distanceGui::ApplyDistance()
 {
-   // if( m_distance != 0 )
-   // {
-        std::cout << "valeur distance" << m_distance << std::endl;
-   // }
+
+    //QTextBrowser *widgetText = new QTextBrowser( this -> scrollAreaUser );
+
+    switch( m_distance )
+    {
+        case 0:
+            //widgetText->setText("you have to select the distance you want to compute");
+            std::cout << std::endl << "you have to select the distance you want to compute " << std::endl;
+            break;
+
+        case 1:
+            std::cout << std::endl << "you want to compute the A to B distances " << std::endl;
+            break;
+
+        case 2:
+            std::cout << std::endl << "you want to compute the B to A distances " << std::endl;
+            break;
+
+        case 3:
+            std::cout << std::endl << "you want to compute both distances " << std::endl;
+            break;
+    }
 }
 
 
