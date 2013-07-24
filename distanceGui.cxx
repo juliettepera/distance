@@ -14,12 +14,6 @@ distanceGui::distanceGui(std::string meshA, std::string meshB)
     m_meshB = meshB;
     m_distance = 0;
 
-
-    //******** WIDGETS **********
-    QTextBrowser *widgetText = new QTextBrowser( this -> scrollAreaUser );
-    initialisation( widgetText );
-
-       
     //******** CONNECTION ********
     //MESH A BUTTON TO MESH A LINE EDIT
     QObject::connect( buttonMeshA , SIGNAL( clicked() ) , this , SLOT( OpenMeshBrowseWindowA() ) );
@@ -131,7 +125,6 @@ void distanceGui::ApplyDistance()
     switch( m_distance )
     {
         case 0:
-            //widgetText->setText("you have to select the distance you want to compute");
             std::cout << std::endl << "you have to select the distance you want to compute " << std::endl;
             break;
 

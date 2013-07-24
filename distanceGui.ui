@@ -204,29 +204,6 @@
      <string>Mesh B</string>
     </property>
    </widget>
-   <widget class="QScrollArea" name="scrollAreaUser">
-    <property name="geometry">
-     <rect>
-      <x>860</x>
-      <y>600</y>
-      <width>261</width>
-      <height>151</height>
-     </rect>
-    </property>
-    <property name="widgetResizable">
-     <bool>true</bool>
-    </property>
-    <widget class="QWidget" name="scrollAreaWidgetContents_4">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>259</width>
-       <height>149</height>
-      </rect>
-     </property>
-    </widget>
-   </widget>
    <zorder>gridLayoutWidget</zorder>
    <zorder>scrollAreaMeshA</zorder>
    <zorder>scrollAreaMeshB</zorder>
@@ -235,7 +212,6 @@
    <zorder>labelMeshBoth</zorder>
    <zorder>labelMeshA</zorder>
    <zorder>labelMeshB</zorder>
-   <zorder>scrollAreaUser</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

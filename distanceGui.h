@@ -45,10 +45,6 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
    public slots:
    void OpenMeshBrowseWindowA();
    void OpenMeshBrowseWindowB();    
-   
-   //void FromAtoB();
-   //void FromBtoA();
-   //void CalculateBoth();
    void Display();
    void ChangeValue();
    void ApplyDistance();

@@ -49,4 +49,4 @@ GENERATECLP( Dsources main.xml )
 ADD_EXECUTABLE( distance ${Dsources} )
 
 # link the libraries to the executable
-TARGET_LINK_LIBRARIES( distance ${QT_LIBRARIES} ${VTK_LIBRARIES} QVTK )
+TARGET_LINK_LIBRARIES( distance ${QT_LIBRARIES} ${VTK_LIBRARIES} )
