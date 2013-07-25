@@ -1,7 +1,7 @@
-// My library
+// My libraries
 #include "distanceGui.h"
 #include "distanceDisplay.h"
-
+#include "distanceCompute.h"
 
 //************************************************* CLASS ****************************************************
 distanceGui::distanceGui(std::string meshA, std::string meshB)
@@ -13,25 +13,35 @@ distanceGui::distanceGui(std::string meshA, std::string meshB)
     m_meshA = meshA;
     m_meshB = meshB;
     m_distance = 0;
+    m_colorA.setRed( 0.0 ); m_colorA.setGreen( 1.0 ); m_colorA.setBlue( 1.0 );
+    m_colorB.setRed( 0.0 ); m_colorB.setGreen( 0.0 ); m_colorB.setBlue( 1.0 );
+    m_opacityA = 1.0;
+    m_opacityB = 1.0;
 
     //******** CONNECTION ********
     //MESH A BUTTON TO MESH A LINE EDIT
     QObject::connect( buttonMeshA , SIGNAL( clicked() ) , this , SLOT( OpenMeshBrowseWindowA() ) );
             
-    //OUTPUT BUTTON TO OUTPUT LINE EDIT
+    //MESH B BUTTON TO MESH B LINE EDIT
     QObject::connect( buttonMeshB , SIGNAL( clicked() ) , this , SLOT( OpenMeshBrowseWindowB() ) );
     
-    //DISPLAY BUTTON 
-    QObject::connect( buttonDisplay , SIGNAL( clicked() ) , this , SLOT( Display() ) );
-
     //RADIO BUTTON A to B
-    QObject::connect( radioAtoB , SIGNAL(clicked() ) , this , SLOT( ChangeValue() ) );
+    QObject::connect( radioAtoB , SIGNAL( clicked() ) , this , SLOT( ChangeValue() ) );
 
     //RADIO BUTTON B to A
-    QObject::connect( radioBtoA , SIGNAL(clicked() ) , this , SLOT( ChangeValue() ) );
+    QObject::connect( radioBtoA , SIGNAL( clicked() ) , this , SLOT( ChangeValue() ) );
 
     //RADIO BUTTON B to A
-    QObject::connect( radioBoth , SIGNAL(clicked() ) , this , SLOT( ChangeValue() ) );
+    QObject::connect( radioBoth , SIGNAL( clicked() ) , this , SLOT( ChangeValue() ) );
+
+    // SPINBOX OPACITY A TO VALUE OF OPACITY
+    QObject::connect( spinBoxOpacityA , SIGNAL( valueChanged( double ) ), this, SLOT( ChangeValueOpacityA() ) );
+
+    // SPINBOX OPACITY B TO VALUE OF OPACITY
+    QObject::connect( spinBoxOpacityB , SIGNAL( valueChanged( double ) ), this, SLOT( ChangeValueOpacityB() ) );
+
+    //DISPLAY BUTTON
+    QObject::connect( buttonDisplay , SIGNAL( clicked() ) , this , SLOT( Display() ) );
 
     //APPLY BUTTON 
     QObject::connect( buttonApply , SIGNAL( clicked() ) , this , SLOT( ApplyDistance() ) );
@@ -52,6 +62,14 @@ distanceGui::distanceGui(std::string meshA, std::string meshB)
                                                                               
 }
 
+//************************************************* ACCESSOR *************************************************
+ double distanceGui::getOpacityAValue()
+ {
+     double opacityA = 1.0;
+     opacityA = m_opacityA;
+     return opacityA;
+ }
+
 //************************************************* SLOTS ****************************************************   
 // display on the edit line "lineMeshA" the file selected
 void distanceGui::OpenMeshBrowseWindowA() 
@@ -64,6 +82,9 @@ void distanceGui::OpenMeshBrowseWindowA()
       m_meshA = ( lineMeshA -> text() ).toStdString();
 }
 
+
+
+
 // display on the edit line "lineMeshB" the file selected
 void distanceGui::OpenMeshBrowseWindowB() 
 {
@@ -75,28 +96,8 @@ void distanceGui::OpenMeshBrowseWindowB()
       m_meshB = ( lineMeshB -> text() ).toStdString();
 }
 
-// display the two files selected on the box "meshWidget"
-void distanceGui::Display()
-{
-    if( m_meshA != "\0" && m_meshB != "\0")
-    {
-        //QVTKWIDGETS
-        QVTKWidget *widgetMeshA = new QVTKWidget( this -> scrollAreaMeshA );
-        QVTKWidget *widgetMeshB = new QVTKWidget( this -> scrollAreaMeshB );
-        QVTKWidget *widgetMeshBoth = new QVTKWidget( this -> scrollAreaBoth );
 
-        //SIZES
-        //widgetMeshA->resize( scrollAreaMeshA->maximumWidth() , scollAreaMeshA->maximumHeight() );
-        // set size automaticly ??????
-        QSize sizeA( 351 , 311 );
-        QSize sizeBoth( 711 , 381 );
 
-        //VISUALISATION
-        windowInitialisation( widgetMeshA , m_meshA , sizeA );
-        windowInitialisation( widgetMeshB , m_meshB , sizeA );
-        windowInitialisation( widgetMeshBoth , m_meshB, sizeBoth );
-     }
-}
 
 // change the value of m_distance
 void distanceGui::ChangeValue()
@@ -116,12 +117,54 @@ void distanceGui::ChangeValue()
 }
 
 
+
+
+// change the value of m_opacityA
+void distanceGui::ChangeValueOpacityA()
+{
+    m_opacityA = spinBoxOpacityA -> value();
+}
+
+
+
+
+// change the value of m_opacityB
+void distanceGui::ChangeValueOpacityB()
+{
+    m_opacityB = spinBoxOpacityB -> value();
+}
+
+
+
+
+// display the two files selected on the box "meshWidget"
+void distanceGui::Display()
+{
+    if( m_meshA != "\0" && m_meshB != "\0")
+    {
+        //QVTKWIDGETS
+        QVTKWidget *widgetMeshA = new QVTKWidget( this -> scrollAreaMeshA );
+        QVTKWidget *widgetMeshB = new QVTKWidget( this -> scrollAreaMeshB );
+        QVTKWidget *widgetMeshBoth = new QVTKWidget( this -> scrollAreaBoth );
+
+        //SIZES
+        // set size automaticly ??????
+        QSize sizeA( 351 , 311 );
+        QSize sizeBoth( 711 , 381 );
+
+        //VISUALISATION
+        windowUpdate( widgetMeshA , m_meshA , sizeA , m_colorA , m_opacityA );
+        windowUpdate( widgetMeshB , m_meshB , sizeA , m_colorB , m_opacityB );
+        windowUpdate( widgetMeshBoth , m_meshA , m_meshB , sizeBoth , m_colorA , m_colorB , m_opacityA , m_opacityB );
+     }
+}
+
+
+
+
 // apply the good calculated distance
 void distanceGui::ApplyDistance()
 {
-
-    //QTextBrowser *widgetText = new QTextBrowser( this -> scrollAreaUser );
-
     switch( m_distance )
     {
         case 0:
@@ -129,19 +172,18 @@ void distanceGui::ApplyDistance()
             break;
 
         case 1:
-            std::cout << std::endl << "you want to compute the A to B distances " << std::endl;
+            computeDistanceAtoB();
             break;
 
         case 2:
-            std::cout << std::endl << "you want to compute the B to A distances " << std::endl;
+            computeDistanceBtoA();
             break;
 
         case 3:
-            std::cout << std::endl << "you want to compute both distances " << std::endl;
+            computeDistanceBoth();
             break;
     }
 }
-
 
 
 

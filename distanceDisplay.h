@@ -1,7 +1,7 @@
 #ifndef DISTANCEDISPLAY_H
 #define DISTANCEDISPLAY_H
 
-// VTK library
+// VTK libraries
 #include "vtkSmartPointer.h"
 #include "vtkGenericDataObjectReader.h"
 #include "vtkGenericDataObjectWriter.h"
@@ -15,15 +15,18 @@
 #include <vtkRenderWindowInteractor.h>
 #include <QVTKWidget.h>
 #include <vtkImageViewer.h>
+#include <vtkProperty.h>
+#include <vtkCamera.h>
 
-// QT library
-#include <QTextBrowser>
+// Qt libraries
+#include <QVector3D>
 
-// Other Library
+// Other Libraries
 #include <string>
+#include <iostream>
 
-void windowInitialisation( QVTKWidget* widgetMesh , std::string mesh , QSize s );
-void initialisation(QTextBrowser* widgetText);
 
+void windowUpdate( QVTKWidget* widgetMesh , std::string mesh , QSize size , QColor color , double opacity );
+void windowUpdate( QVTKWidget* widgetMesh , std::string meshA , std::string meshB , QSize size , QColor colorA, QColor colorB , double opacityA , double opacityB );
 
 #endif

@@ -40,7 +40,7 @@ QT4_WRAP_CPP( QtProject_HEADERS_MOC distanceGui.h )
 QT4_WRAP_UI( UI_FILES distanceGui.ui )
 
 # set the sources files
-SET( Dsources main.cxx distanceGui.h distanceGui.cxx distanceDisplay.cxx distanceDisplay.h ${QtProject_HEADERS_MOC} ${UI_FILES} )
+SET( Dsources main.cxx distanceGui.h distanceGui.cxx distanceDisplay.cxx distanceDisplay.h distanceCompute.cxx distanceCompute.h ${QtProject_HEADERS_MOC} ${UI_FILES} )
 
 # generate the CLP file
 GENERATECLP( Dsources main.xml )

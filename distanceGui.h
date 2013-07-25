@@ -1,7 +1,7 @@
 #ifndef DEF_distanceGui
 #define DEF_distanceGui
 
-// Qt library
+// Qt libraries
 #include <QFont>
 #include <QWidget>
 #include <QPushButton>
@@ -13,8 +13,9 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QTextBrowser>
+#include <QVector3D>
 
-// VTK library
+// VTK libraries
 #include "vtkSmartPointer.h"
 #include "vtkGenericDataObjectReader.h"
 #include "vtkGenericDataObjectWriter.h"
@@ -28,10 +29,11 @@
 #include <vtkRenderWindowInteractor.h>
 #include <QVTKWidget.h>
 
-// Other Library
+// Other Libraries
 #include <string>
+#include <iostream>
 
-// My library
+// My libraries
 #include "ui_distanceGui.h"
 
 // My class
@@ -40,19 +42,28 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
    Q_OBJECT
 
    public:
-   distanceGui ( std::string meshA , std::string meshB ); 
-        
+        distanceGui ( std::string meshA , std::string meshB );
+
+
+
    public slots:
-   void OpenMeshBrowseWindowA();
-   void OpenMeshBrowseWindowB();    
-   void Display();
-   void ChangeValue();
-   void ApplyDistance();
+       void OpenMeshBrowseWindowA();
+       void OpenMeshBrowseWindowB();
+       void Display();
+       void ChangeValue();
+       void ChangeValueOpacityA();
+       void ChangeValueOpacityB();
+       void ApplyDistance();
+       double getOpacityAValue();
             
    private:
-   std::string m_meshA;
-   std::string m_meshB;
-   int m_distance;
+       std::string m_meshA;
+       std::string m_meshB;
+       int m_distance;
+       QColor m_colorA;
+       QColor m_colorB;
+       double m_opacityA;
+       double m_opacityB;
 };
 
 #endif
