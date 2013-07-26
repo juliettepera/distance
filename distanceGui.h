@@ -53,8 +53,11 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        void ChangeValue();
        void ChangeValueOpacityA();
        void ChangeValueOpacityB();
+       void buttonFrontClicked();
+       void buttonBackClicked();
+       void buttonRightClicked();
+       void buttonLeftClicked();
        void ApplyDistance();
-       double getOpacityAValue();
             
    private:
        std::string m_meshA;
@@ -64,6 +67,7 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        QColor m_colorB;
        double m_opacityA;
        double m_opacityB;
+       QVector3D m_positionCam;
 };
 
 #endif

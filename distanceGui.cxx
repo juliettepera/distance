@@ -17,6 +17,8 @@ distanceGui::distanceGui(std::string meshA, std::string meshB)
     m_colorB.setRed( 0.0 ); m_colorB.setGreen( 0.0 ); m_colorB.setBlue( 1.0 );
     m_opacityA = 1.0;
     m_opacityB = 1.0;
+    m_positionCam.setX( 0 ); m_positionCam.setY( 0 ); m_positionCam.setZ( 1 );
+
 
     //******** CONNECTION ********
     //MESH A BUTTON TO MESH A LINE EDIT
@@ -40,6 +42,18 @@ distanceGui::distanceGui(std::string meshA, std::string meshB)
     // SPINBOX OPACITY B TO VALUE OF OPACITY
     QObject::connect( spinBoxOpacityB , SIGNAL( valueChanged( double ) ), this, SLOT( ChangeValueOpacityB() ) );
 
+    //RADIO BUTTON FRONT
+    QObject::connect( buttonFront , SIGNAL( clicked() ) , this , SLOT( buttonFrontClicked() ) );
+
+    //RADIO BUTTON BACK
+    QObject::connect( buttonBack , SIGNAL( clicked() ) , this , SLOT( buttonBackClicked() ) );
+
+    //RADIO BUTTON RIGHT
+    QObject::connect( buttonRight , SIGNAL( clicked() ) , this , SLOT( buttonRightClicked() ) );
+
+    //RADIO BUTTON LEFT
+    QObject::connect( buttonLeft , SIGNAL( clicked() ) , this , SLOT( buttonLeftClicked() ) );
+
     //DISPLAY BUTTON
     QObject::connect( buttonDisplay , SIGNAL( clicked() ) , this , SLOT( Display() ) );
 
@@ -62,13 +76,6 @@ distanceGui::distanceGui(std::string meshA, std::string meshB)
                                                                               
 }
 
-//************************************************* ACCESSOR *************************************************
- double distanceGui::getOpacityAValue()
- {
-     double opacityA = 1.0;
-     opacityA = m_opacityA;
-     return opacityA;
- }
 
 //************************************************* SLOTS ****************************************************   
 // display on the edit line "lineMeshA" the file selected
@@ -134,6 +141,30 @@ void distanceGui::ChangeValueOpacityB()
     m_opacityB = spinBoxOpacityB -> value();
 }
 
+// change the value of the position of the camera
+void distanceGui::buttonFrontClicked()
+{
+    m_positionCam.setX(0); m_positionCam.setY(0); m_positionCam.setZ(1);
+    Display();
+}
+
+void distanceGui::buttonBackClicked()
+{
+    m_positionCam.setX(0); m_positionCam.setY(0); m_positionCam.setZ(-1);
+    Display();
+}
+
+void distanceGui::buttonRightClicked()
+{
+    m_positionCam.setX(1); m_positionCam.setY(0); m_positionCam.setZ(0);
+    Display();
+}
+
+void distanceGui::buttonLeftClicked()
+{
+    m_positionCam.setX(0); m_positionCam.setY(-1); m_positionCam.setZ(0);
+    Display();
+}
 
 
 
@@ -153,8 +184,8 @@ void distanceGui::Display()
         QSize sizeBoth( 711 , 381 );
 
         //VISUALISATION
-        windowUpdate( widgetMeshA , m_meshA , sizeA , m_colorA , m_opacityA );
-        windowUpdate( widgetMeshB , m_meshB , sizeA , m_colorB , m_opacityB );
+        windowUpdate( widgetMeshA , m_meshA , sizeA , m_colorA , m_opacityA , m_positionCam );
+        windowUpdate( widgetMeshB , m_meshB , sizeA , m_colorB , m_opacityB , m_positionCam );
         windowUpdate( widgetMeshBoth , m_meshA , m_meshB , sizeBoth , m_colorA , m_colorB , m_opacityA , m_opacityB );
      }
 }

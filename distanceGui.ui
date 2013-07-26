@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1017</width>
-    <height>804</height>
+    <width>1023</width>
+    <height>862</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -58,6 +58,7 @@
        <height>309</height>
       </rect>
      </property>
+     <zorder>gridLayoutWidget</zorder>
     </widget>
    </widget>
    <widget class="QScrollArea" name="scrollAreaBoth">
@@ -275,7 +276,7 @@
     <property name="geometry">
      <rect>
       <x>900</x>
-      <y>720</y>
+      <y>770</y>
       <width>111</width>
       <height>31</height>
      </rect>
@@ -295,8 +296,8 @@
      <rect>
       <x>730</x>
       <y>460</y>
-      <width>265</width>
-      <height>64</height>
+      <width>281</width>
+      <height>61</height>
      </rect>
     </property>
     <layout class="QFormLayout" name="formLayout_4">
@@ -352,28 +353,28 @@
      </rect>
     </property>
     <property name="text">
-     <string>Propreties of Mesh A</string>
+     <string>Properties of Mesh A</string>
     </property>
    </widget>
    <widget class="QLabel" name="labelPrporetiesMeshB">
     <property name="geometry">
      <rect>
       <x>730</x>
-      <y>560</y>
+      <y>530</y>
       <width>141</width>
       <height>17</height>
      </rect>
     </property>
     <property name="text">
-     <string>Propreties of Mesh B</string>
+     <string>Properties of Mesh B</string>
     </property>
    </widget>
    <widget class="QWidget" name="formLayoutWidget_5">
     <property name="geometry">
      <rect>
       <x>730</x>
-      <y>580</y>
-      <width>261</width>
+      <y>550</y>
+      <width>281</width>
       <height>61</height>
      </rect>
     </property>
@@ -404,13 +405,100 @@
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="gridLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>730</x>
+      <y>640</y>
+      <width>285</width>
+      <height>95</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="2">
+      <widget class="QPushButton" name="buttonBack">
+       <property name="text">
+        <string>Back</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QPushButton" name="buttonLeft">
+       <property name="text">
+        <string>Left</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="text">
+        <string>PushButton</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QPushButton" name="pushButton_5">
+       <property name="text">
+        <string>PushButton</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QPushButton" name="buttonFront">
+       <property name="text">
+        <string>Front</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QPushButton" name="buttonRight">
+       <property name="text">
+        <string>Right</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="PropertiesCamera">
+    <property name="geometry">
+     <rect>
+      <x>730</x>
+      <y>620</y>
+      <width>151</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Properties of Camera</string>
+    </property>
+   </widget>
+   <zorder>scrollAreaMeshA</zorder>
+   <zorder>scrollAreaMeshB</zorder>
+   <zorder>scrollAreaBoth</zorder>
+   <zorder>labelMeshBoth</zorder>
+   <zorder>labelMeshA</zorder>
+   <zorder>labelMeshB</zorder>
+   <zorder>formLayoutWidget</zorder>
+   <zorder>formLayoutWidget_2</zorder>
+   <zorder>formLayoutWidget_3</zorder>
+   <zorder>verticalLayoutWidget_4</zorder>
+   <zorder>verticalLayoutWidget_5</zorder>
+   <zorder>verticalLayoutWidget_6</zorder>
+   <zorder>formLayoutWidget_4</zorder>
+   <zorder>progressBar</zorder>
+   <zorder>labelPrporetiesMeshA</zorder>
+   <zorder>labelPrporetiesMeshB</zorder>
+   <zorder>formLayoutWidget_5</zorder>
+   <zorder>gridLayoutWidget</zorder>
+   <zorder>PropertiesCamera</zorder>
+   <zorder>buttonQuit</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1017</width>
+     <width>1023</width>
      <height>25</height>
     </rect>
    </property>
