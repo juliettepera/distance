@@ -2,47 +2,6 @@
 #include "distanceGui.h"
 
 
-// update the window with one mesh
-/*void windowUpdate( QVTKWidget* widgetMesh , std::string mesh , QSize size , QColor color , double opacity , QVector3D positionCam )
-{
-    //READER
-    vtkSmartPointer <vtkGenericDataObjectReader> readerMesh = vtkSmartPointer <vtkGenericDataObjectReader>::New();
-    readerMesh -> SetFileName( mesh.c_str() );
-    readerMesh -> Update();
-
-    //MAPPER
-    vtkSmartPointer <vtkPolyDataMapper> mapperMesh = vtkSmartPointer <vtkPolyDataMapper>::New();
-    mapperMesh -> SetInputConnection( readerMesh -> GetOutputPort() );
-
-    //ACTOR
-    vtkSmartPointer <vtkActor> actorMesh = vtkSmartPointer <vtkActor>::New();
-    actorMesh -> SetMapper( mapperMesh );
-    actorMesh -> GetProperty() -> SetColor( color.red() , color.green() , color.blue() );
-    actorMesh -> GetProperty() -> SetOpacity( opacity );
-
-    //CAMERA
-    vtkSmartPointer <vtkCamera> cameraMesh = vtkSmartPointer <vtkCamera>::New();
-
-    //RENDERER
-    vtkSmartPointer<vtkRenderer> rendererMesh = vtkSmartPointer<vtkRenderer>::New();
-    rendererMesh -> SetBackground( .6 , .5 , .4 );
-    rendererMesh -> AddActor( actorMesh );
-    rendererMesh -> SetActiveCamera( cameraMesh );
-    rendererMesh -> ResetCamera();
-
-    positionCamera( cameraMesh , positionCam.x() , positionCam.y() , positionCam.z() );
-
-    //RENDER WINDOW
-    vtkSmartPointer <vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-    renderWindow-> AddRenderer( rendererMesh );
-
-    //Display
-    widgetMesh -> SetRenderWindow( renderWindow );
-    widgetMesh -> resize( size );
-    renderWindow -> Render();
-    widgetMesh -> show();
-}*/
-
 // update the window with both mesh
 void windowUpdate( QVTKWidget* widgetMesh , std::string meshA , std::string meshB , QSize size , QColor colorA, QColor colorB , double opacityA, double opacityB , QVector3D positionCam )
 {

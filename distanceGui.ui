@@ -221,10 +221,10 @@
    <widget class="QWidget" name="formLayoutWidget_4">
     <property name="geometry">
      <rect>
-      <x>730</x>
-      <y>460</y>
-      <width>281</width>
-      <height>61</height>
+      <x>200</x>
+      <y>550</y>
+      <width>241</width>
+      <height>128</height>
      </rect>
     </property>
     <layout class="QFormLayout" name="formLayout_4">
@@ -238,20 +238,60 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QDoubleSpinBox" name="spinBoxOpacityA">
-       <property name="maximum">
-        <double>1.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="0">
       <widget class="QLabel" name="labelColorMeshA">
        <property name="text">
         <string>Color</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSlider" name="sliderOpacityMeshA">
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="pageStep">
+        <number>10</number>
+       </property>
+       <property name="value">
+        <number>100</number>
+       </property>
+       <property name="sliderPosition">
+        <number>100</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QCheckBox" name="checkSurfaceA">
+       <property name="text">
+        <string>Surface</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QCheckBox" name="checkWireA">
+       <property name="text">
+        <string>Wireframe</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QCheckBox" name="checkPointA">
+       <property name="text">
+        <string>Points</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="labelApparenceMeshA">
+       <property name="text">
+        <string>Apparence</string>
        </property>
       </widget>
      </item>
@@ -273,8 +313,8 @@
    <widget class="QLabel" name="labelPrporetiesMeshA">
     <property name="geometry">
      <rect>
-      <x>730</x>
-      <y>440</y>
+      <x>200</x>
+      <y>530</y>
       <width>141</width>
       <height>17</height>
      </rect>
@@ -286,7 +326,7 @@
    <widget class="QLabel" name="labelPrporetiesMeshB">
     <property name="geometry">
      <rect>
-      <x>730</x>
+      <x>470</x>
       <y>530</y>
       <width>141</width>
       <height>17</height>
@@ -299,13 +339,16 @@
    <widget class="QWidget" name="formLayoutWidget_5">
     <property name="geometry">
      <rect>
-      <x>730</x>
+      <x>470</x>
       <y>550</y>
-      <width>281</width>
-      <height>61</height>
+      <width>251</width>
+      <height>131</height>
      </rect>
     </property>
     <layout class="QFormLayout" name="formLayout_5">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
      <item row="0" column="0">
       <widget class="QLabel" name="labelOpacityB">
        <property name="text">
@@ -314,12 +357,18 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QDoubleSpinBox" name="spinBoxOpacityB">
+      <widget class="QSlider" name="sliderOpacityMeshB">
        <property name="maximum">
-        <double>1.000000000000000</double>
+        <number>100</number>
        </property>
        <property name="singleStep">
-        <double>0.100000000000000</double>
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>100</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -330,15 +379,43 @@
        </property>
       </widget>
      </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Apparence</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QCheckBox" name="checkSurfaceB">
+       <property name="text">
+        <string>Surface</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QCheckBox" name="checkWireB">
+       <property name="text">
+        <string>Wireframe</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QCheckBox" name="checkPointB">
+       <property name="text">
+        <string>Points</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
    <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>730</x>
-      <y>640</y>
-      <width>285</width>
-      <height>95</height>
+      <x>10</x>
+      <y>550</y>
+      <width>141</width>
+      <height>131</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_2">
@@ -389,8 +466,8 @@
    <widget class="QLabel" name="PropertiesCamera">
     <property name="geometry">
      <rect>
-      <x>730</x>
-      <y>620</y>
+      <x>10</x>
+      <y>530</y>
       <width>151</width>
       <height>17</height>
      </rect>

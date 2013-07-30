@@ -12,11 +12,18 @@ distanceGui::distanceGui(std::string meshA, std::string meshB)
     //******** GLOBAL VARIABLES ********
     m_meshA = meshA;
     m_meshB = meshB;
-    m_distance = 0;
-    m_colorA.setRed( 0.0 ); m_colorA.setGreen( 1.0 ); m_colorA.setBlue( 1.0 );
-    m_colorB.setRed( 0.0 ); m_colorB.setGreen( 0.0 ); m_colorB.setBlue( 1.0 );
+
+    m_colorA.setRed( 0.0 ) ; m_colorA.setGreen( 1.0 ) ; m_colorA.setBlue( 1.0 );
+    m_colorB.setRed( 0.0 ) ; m_colorB.setGreen( 0.0 ) ; m_colorB.setBlue( 1.0 );
+
     m_opacityA = 1.0;
     m_opacityB = 1.0;
+
+    //m_apparenceA.surface = true ; m_apparenceA.wire = false ; m_apparenceA.point = false;
+    //m_apparenceB.surface = true ; m_apparenceB.wire = false ; m_apparenceB.point = false;
+
+    m_distance = 0;
+
     m_positionCam.setX( 0 ); m_positionCam.setY( 0 ); m_positionCam.setZ( 1 );
 
 
@@ -37,10 +44,10 @@ distanceGui::distanceGui(std::string meshA, std::string meshB)
     QObject::connect( radioBoth , SIGNAL( clicked() ) , this , SLOT( ChangeValue() ) );
 
     // SPINBOX OPACITY A TO VALUE OF OPACITY
-    QObject::connect( spinBoxOpacityA , SIGNAL( valueChanged( double ) ), this, SLOT( ChangeValueOpacityA() ) );
+    QObject::connect( sliderOpacityMeshA , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueOpacityA() ) );
 
     // SPINBOX OPACITY B TO VALUE OF OPACITY
-    QObject::connect( spinBoxOpacityB , SIGNAL( valueChanged( double ) ), this, SLOT( ChangeValueOpacityB() ) );
+    QObject::connect( sliderOpacityMeshB , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueOpacityB() ) );
 
     //RADIO BUTTON FRONT
     QObject::connect( buttonFront , SIGNAL( clicked() ) , this , SLOT( buttonFrontClicked() ) );
@@ -135,7 +142,8 @@ void distanceGui::ChangeValue()
 // change the value of m_opacityA
 void distanceGui::ChangeValueOpacityA()
 {
-    m_opacityA = spinBoxOpacityA -> value();
+    m_opacityA = sliderOpacityMeshA -> value()/100.;
+    Display();
 }
 
 
@@ -144,7 +152,8 @@ void distanceGui::ChangeValueOpacityA()
 // change the value of m_opacityB
 void distanceGui::ChangeValueOpacityB()
 {
-    m_opacityB = spinBoxOpacityB -> value();
+    m_opacityB = sliderOpacityMeshB -> value()/100.;
+    Display();
 }
 
 
@@ -185,8 +194,6 @@ void distanceGui::buttonDownClicked()
     m_positionCam.setX(0); m_positionCam.setY(1); m_positionCam.setZ(0);
     Display();
 }
-
-
 
 
 // display the two files selected on the box "meshWidget"

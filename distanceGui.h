@@ -36,6 +36,15 @@
 // My libraries
 #include "ui_distanceGui.h"
 
+
+// My structure
+struct apparence
+{
+    bool surface;
+    bool wire;
+    bool point;
+};
+
 // My class
 class distanceGui : public QMainWindow, public Ui::MainWindow
 {
@@ -64,11 +73,19 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
    private:
        std::string m_meshA;
        std::string m_meshB;
-       int m_distance;
+
        QColor m_colorA;
        QColor m_colorB;
+
        double m_opacityA;
        double m_opacityB;
+
+       //apparence m_apparenceA;
+       //apparence m_apparenceB;
+
+       int m_distance;
+
+
        QVector3D m_positionCam;
 };
 
