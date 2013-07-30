@@ -54,6 +54,12 @@ distanceGui::distanceGui(std::string meshA, std::string meshB)
     //RADIO BUTTON LEFT
     QObject::connect( buttonLeft , SIGNAL( clicked() ) , this , SLOT( buttonLeftClicked() ) );
 
+    //RADIO BUTTON UP
+    QObject::connect( buttonUp , SIGNAL( clicked() ) , this , SLOT( buttonUpClicked() ) );
+
+    //RADIO BUTTON DOWN
+    QObject::connect( buttonDown , SIGNAL( clicked() ) , this , SLOT( buttonDownClicked() ) );
+
     //DISPLAY BUTTON
     QObject::connect( buttonDisplay , SIGNAL( clicked() ) , this , SLOT( Display() ) );
 
@@ -141,6 +147,8 @@ void distanceGui::ChangeValueOpacityB()
     m_opacityB = spinBoxOpacityB -> value();
 }
 
+
+
 // change the value of the position of the camera
 void distanceGui::buttonFrontClicked()
 {
@@ -162,9 +170,22 @@ void distanceGui::buttonRightClicked()
 
 void distanceGui::buttonLeftClicked()
 {
+    m_positionCam.setX(-1); m_positionCam.setY(0); m_positionCam.setZ(0);
+    Display();
+}
+
+void distanceGui::buttonUpClicked()
+{
     m_positionCam.setX(0); m_positionCam.setY(-1); m_positionCam.setZ(0);
     Display();
 }
+
+void distanceGui::buttonDownClicked()
+{
+    m_positionCam.setX(0); m_positionCam.setY(1); m_positionCam.setZ(0);
+    Display();
+}
+
 
 
 
@@ -174,19 +195,19 @@ void distanceGui::Display()
     if( m_meshA != "\0" && m_meshB != "\0")
     {
         //QVTKWIDGETS
-        QVTKWidget *widgetMeshA = new QVTKWidget( this -> scrollAreaMeshA );
-        QVTKWidget *widgetMeshB = new QVTKWidget( this -> scrollAreaMeshB );
+        //QVTKWidget *widgetMeshA = new QVTKWidget( this -> scrollAreaMeshA );
+        //QVTKWidget *widgetMeshB = new QVTKWidget( this -> scrollAreaMeshB );
         QVTKWidget *widgetMeshBoth = new QVTKWidget( this -> scrollAreaBoth );
 
         //SIZES
         // set size automaticly ??????
-        QSize sizeA( 351 , 311 );
-        QSize sizeBoth( 711 , 381 );
+        //QSize sizeA( 351 , 311 );
+        QSize sizeBoth( 711 , 491 );
 
         //VISUALISATION
-        windowUpdate( widgetMeshA , m_meshA , sizeA , m_colorA , m_opacityA , m_positionCam );
-        windowUpdate( widgetMeshB , m_meshB , sizeA , m_colorB , m_opacityB , m_positionCam );
-        windowUpdate( widgetMeshBoth , m_meshA , m_meshB , sizeBoth , m_colorA , m_colorB , m_opacityA , m_opacityB );
+        //windowUpdate( widgetMeshA , m_meshA , sizeA , m_colorA , m_opacityA , m_positionCam );
+        //windowUpdate( widgetMeshB , m_meshB , sizeA , m_colorB , m_opacityB , m_positionCam );
+        windowUpdate( widgetMeshBoth , m_meshA , m_meshB , sizeBoth , m_colorA , m_colorB , m_opacityA , m_opacityB , m_positionCam );
      }
 }
 

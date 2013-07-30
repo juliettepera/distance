@@ -57,6 +57,8 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        void buttonBackClicked();
        void buttonRightClicked();
        void buttonLeftClicked();
+       void buttonUpClicked();
+       void buttonDownClicked();
        void ApplyDistance();
             
    private:

@@ -3,7 +3,7 @@
 
 
 // update the window with one mesh
-void windowUpdate( QVTKWidget* widgetMesh , std::string mesh , QSize size , QColor color , double opacity , QVector3D positionCam )
+/*void windowUpdate( QVTKWidget* widgetMesh , std::string mesh , QSize size , QColor color , double opacity , QVector3D positionCam )
 {
     //READER
     vtkSmartPointer <vtkGenericDataObjectReader> readerMesh = vtkSmartPointer <vtkGenericDataObjectReader>::New();
@@ -41,10 +41,10 @@ void windowUpdate( QVTKWidget* widgetMesh , std::string mesh , QSize size , QCol
     widgetMesh -> resize( size );
     renderWindow -> Render();
     widgetMesh -> show();
-}
+}*/
 
 // update the window with both mesh
-void windowUpdate( QVTKWidget* widgetMesh , std::string meshA , std::string meshB , QSize size , QColor colorA, QColor colorB , double opacityA, double opacityB )
+void windowUpdate( QVTKWidget* widgetMesh , std::string meshA , std::string meshB , QSize size , QColor colorA, QColor colorB , double opacityA, double opacityB , QVector3D positionCam )
 {
     //READERS
     vtkSmartPointer <vtkGenericDataObjectReader> readerMeshA = vtkSmartPointer <vtkGenericDataObjectReader>::New();
@@ -73,12 +73,18 @@ void windowUpdate( QVTKWidget* widgetMesh , std::string meshA , std::string mesh
     actorMeshB -> GetProperty() -> SetColor( colorB.red() , colorB.green() , colorB.blue() );
     actorMeshB -> GetProperty() -> SetOpacity( opacityB );
 
+    //CAMERA
+    vtkSmartPointer <vtkCamera> cameraMesh = vtkSmartPointer <vtkCamera>::New();
+
     //RENDERER
     vtkSmartPointer<vtkRenderer> rendererMesh = vtkSmartPointer<vtkRenderer>::New();
     rendererMesh -> SetBackground( .6 , .5 , .4 );
     rendererMesh -> AddActor( actorMeshA );
     rendererMesh -> AddActor( actorMeshB );
+    rendererMesh -> SetActiveCamera( cameraMesh );
     rendererMesh -> ResetCamera();
+
+     positionCamera( cameraMesh , positionCam.x() , positionCam.y() , positionCam.z() );
 
     //RENDER WINDOW
     vtkSmartPointer <vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
@@ -98,6 +104,6 @@ void positionCamera( vtkSmartPointer <vtkCamera> camera , int x ,int y , int z )
     double *focalPoint  = camera -> GetFocalPoint();
     double distance = camera -> GetDistance();
 
-    camera -> SetPosition( focalPoint[0]+x*distance , focalPoint[1]+y*distance , focalPoint[2]+z*distance );
+    camera -> SetPosition( focalPoint[0] + x*distance , focalPoint[1] + y*distance , focalPoint[2]+ z*distance );
     camera -> SetRoll(.001);
 }

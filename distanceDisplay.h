@@ -26,8 +26,8 @@
 #include <iostream>
 
 
-void windowUpdate( QVTKWidget* widgetMesh , std::string mesh , QSize size , QColor color , double opacity , QVector3D positionCam );
-void windowUpdate( QVTKWidget* widgetMesh , std::string meshA , std::string meshB , QSize size , QColor colorA, QColor colorB , double opacityA , double opacityB );
+//void windowUpdate( QVTKWidget* widgetMesh , std::string mesh , QSize size , QColor color , double opacity , QVector3D positionCam );
+void windowUpdate( QVTKWidget* widgetMesh , std::string meshA , std::string meshB , QSize size , QColor colorA, QColor colorB , double opacityA , double opacityB , QVector3D positionCam );
 void positionCamera( vtkSmartPointer <vtkCamera> camera , int x ,int y , int z );
 
 
