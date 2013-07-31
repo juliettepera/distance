@@ -36,15 +36,6 @@
 // My libraries
 #include "ui_distanceGui.h"
 
-
-// My structure
-struct apparence
-{
-    bool surface;
-    bool wire;
-    bool point;
-};
-
 // My class
 class distanceGui : public QMainWindow, public Ui::MainWindow
 {
@@ -52,8 +43,6 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
 
    public:
         distanceGui ( std::string meshA , std::string meshB );
-
-
 
    public slots:
        void OpenMeshBrowseWindowA();
@@ -80,11 +69,7 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        double m_opacityA;
        double m_opacityB;
 
-       //apparence m_apparenceA;
-       //apparence m_apparenceB;
-
        int m_distance;
-
 
        QVector3D m_positionCam;
 };

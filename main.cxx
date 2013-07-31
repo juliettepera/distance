@@ -1,4 +1,3 @@
-
 // My library
 #include "distanceGui.h"
 #include "mainCLP.h"

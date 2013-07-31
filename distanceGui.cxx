@@ -201,19 +201,13 @@ void distanceGui::Display()
 {
     if( m_meshA != "\0" && m_meshB != "\0")
     {
-        //QVTKWIDGETS
-        //QVTKWidget *widgetMeshA = new QVTKWidget( this -> scrollAreaMeshA );
-        //QVTKWidget *widgetMeshB = new QVTKWidget( this -> scrollAreaMeshB );
+        //QVTKWIDGET
         QVTKWidget *widgetMeshBoth = new QVTKWidget( this -> scrollAreaBoth );
 
-        //SIZES
-        // set size automaticly ??????
-        //QSize sizeA( 351 , 311 );
+        //SIZE
         QSize sizeBoth( 711 , 491 );
 
         //VISUALISATION
-        //windowUpdate( widgetMeshA , m_meshA , sizeA , m_colorA , m_opacityA , m_positionCam );
-        //windowUpdate( widgetMeshB , m_meshB , sizeA , m_colorB , m_opacityB , m_positionCam );
         windowUpdate( widgetMeshBoth , m_meshA , m_meshB , sizeBoth , m_colorA , m_colorB , m_opacityA , m_opacityB , m_positionCam );
      }
 }
