@@ -47,16 +47,21 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
    public slots:
        void OpenMeshBrowseWindowA();
        void OpenMeshBrowseWindowB();
-       void Display();
+
+       void DisplayInit();
+       void DisplayUpdate();
+
        void ChangeValue();
        void ChangeValueOpacityA();
        void ChangeValueOpacityB();
+
        void buttonFrontClicked();
        void buttonBackClicked();
        void buttonRightClicked();
        void buttonLeftClicked();
        void buttonUpClicked();
        void buttonDownClicked();
+
        void ApplyDistance();
             
    private:
@@ -69,7 +74,7 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        double m_opacityA;
        double m_opacityB;
 
-       int m_distance;
+       int m_choixdistance;
 
        QVector3D m_positionCam;
 };

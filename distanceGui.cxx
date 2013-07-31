@@ -13,16 +13,13 @@ distanceGui::distanceGui(std::string meshA, std::string meshB)
     m_meshA = meshA;
     m_meshB = meshB;
 
-    m_colorA.setRed( 0.0 ) ; m_colorA.setGreen( 1.0 ) ; m_colorA.setBlue( 1.0 );
-    m_colorB.setRed( 0.0 ) ; m_colorB.setGreen( 0.0 ) ; m_colorB.setBlue( 1.0 );
+    //m_colorA.setRed( 0.0 ) ; m_colorA.setGreen( 1.0 ) ; m_colorA.setBlue( 1.0 );
+   // m_colorB.setRed( 0.0 ) ; m_colorB.setGreen( 0.0 ) ; m_colorB.setBlue( 1.0 );
 
     m_opacityA = 1.0;
     m_opacityB = 1.0;
 
-    //m_apparenceA.surface = true ; m_apparenceA.wire = false ; m_apparenceA.point = false;
-    //m_apparenceB.surface = true ; m_apparenceB.wire = false ; m_apparenceB.point = false;
-
-    m_distance = 0;
+    m_choixdistance = 0;
 
     m_positionCam.setX( 0 ); m_positionCam.setY( 0 ); m_positionCam.setZ( 1 );
 
@@ -68,7 +65,7 @@ distanceGui::distanceGui(std::string meshA, std::string meshB)
     QObject::connect( buttonDown , SIGNAL( clicked() ) , this , SLOT( buttonDownClicked() ) );
 
     //DISPLAY BUTTON
-    QObject::connect( buttonDisplay , SIGNAL( clicked() ) , this , SLOT( Display() ) );
+    QObject::connect( buttonDisplay , SIGNAL( clicked() ) , this , SLOT( DisplayInit() ) );
 
     //APPLY BUTTON 
     QObject::connect( buttonApply , SIGNAL( clicked() ) , this , SLOT( ApplyDistance() ) );
@@ -119,20 +116,20 @@ void distanceGui::OpenMeshBrowseWindowB()
 
 
 
-// change the value of m_distance
+// change the value of m_choixdistance
 void distanceGui::ChangeValue()
 {
     if( this -> radioAtoB -> isChecked() )
     {
-        m_distance = 1;
+        m_choixdistance = 1;
     }
     if( this -> radioBtoA -> isChecked() )
     {
-        m_distance = 2;
+        m_choixdistance = 2;
     }
     if( this -> radioBoth -> isChecked() )
     {
-        m_distance = 3;
+        m_choixdistance = 3;
     }
 }
 
@@ -143,7 +140,7 @@ void distanceGui::ChangeValue()
 void distanceGui::ChangeValueOpacityA()
 {
     m_opacityA = sliderOpacityMeshA -> value()/100.;
-    Display();
+    DisplayUpdate();
 }
 
 
@@ -153,7 +150,7 @@ void distanceGui::ChangeValueOpacityA()
 void distanceGui::ChangeValueOpacityB()
 {
     m_opacityB = sliderOpacityMeshB -> value()/100.;
-    Display();
+    DisplayUpdate();
 }
 
 
@@ -162,63 +159,65 @@ void distanceGui::ChangeValueOpacityB()
 void distanceGui::buttonFrontClicked()
 {
     m_positionCam.setX(0); m_positionCam.setY(0); m_positionCam.setZ(1);
-    Display();
+    DisplayUpdate();
 }
 
 void distanceGui::buttonBackClicked()
 {
     m_positionCam.setX(0); m_positionCam.setY(0); m_positionCam.setZ(-1);
-    Display();
+    DisplayUpdate();
 }
 
 void distanceGui::buttonRightClicked()
 {
     m_positionCam.setX(1); m_positionCam.setY(0); m_positionCam.setZ(0);
-    Display();
+    DisplayUpdate();
 }
 
 void distanceGui::buttonLeftClicked()
 {
     m_positionCam.setX(-1); m_positionCam.setY(0); m_positionCam.setZ(0);
-    Display();
+    DisplayUpdate();
 }
 
 void distanceGui::buttonUpClicked()
 {
     m_positionCam.setX(0); m_positionCam.setY(-1); m_positionCam.setZ(0);
-    Display();
+    DisplayUpdate();
 }
 
 void distanceGui::buttonDownClicked()
 {
     m_positionCam.setX(0); m_positionCam.setY(1); m_positionCam.setZ(0);
-    Display();
+    DisplayUpdate();
 }
 
 
 // display the two files selected on the box "meshWidget"
-void distanceGui::Display()
+void distanceGui::DisplayInit()
 {
     if( m_meshA != "\0" && m_meshB != "\0")
     {
-        //QVTKWIDGET
         QVTKWidget *widgetMeshBoth = new QVTKWidget( this -> scrollAreaBoth );
-
-        //SIZE
-        QSize sizeBoth( 711 , 491 );
-
-        //VISUALISATION
-        windowUpdate( widgetMeshBoth , m_meshA , m_meshB , sizeBoth , m_colorA , m_colorB , m_opacityA , m_opacityB , m_positionCam );
+        windowInit( widgetMeshBoth , m_meshA , m_meshB );
      }
 }
 
+void distanceGui::DisplayUpdate()
+{
+    if( m_meshA != "\0" && m_meshB != "\0")
+    {
+        QVTKWidget *widgetMeshBoth = new QVTKWidget( this -> scrollAreaBoth );
+        windowUpdate( widgetMeshBoth , m_opacityA , m_opacityB , m_positionCam );
+    }
+}
 
 
 
 // apply the good calculated distance
 void distanceGui::ApplyDistance()
 {
-    switch( m_distance )
+    switch( m_choixdistance )
     {
         case 0:
             std::cout << std::endl << "you have to select the distance you want to compute " << std::endl;

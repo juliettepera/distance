@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1023</width>
-    <height>862</height>
+    <width>1020</width>
+    <height>783</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -203,7 +203,7 @@
     <property name="geometry">
      <rect>
       <x>900</x>
-      <y>770</y>
+      <y>690</y>
       <width>111</width>
       <height>31</height>
      </rect>
@@ -221,7 +221,7 @@
    <widget class="QWidget" name="formLayoutWidget_4">
     <property name="geometry">
      <rect>
-      <x>200</x>
+      <x>10</x>
       <y>550</y>
       <width>241</width>
       <height>128</height>
@@ -313,7 +313,7 @@
    <widget class="QLabel" name="labelPrporetiesMeshA">
     <property name="geometry">
      <rect>
-      <x>200</x>
+      <x>10</x>
       <y>530</y>
       <width>141</width>
       <height>17</height>
@@ -326,7 +326,7 @@
    <widget class="QLabel" name="labelPrporetiesMeshB">
     <property name="geometry">
      <rect>
-      <x>470</x>
+      <x>260</x>
       <y>530</y>
       <width>141</width>
       <height>17</height>
@@ -339,7 +339,7 @@
    <widget class="QWidget" name="formLayoutWidget_5">
     <property name="geometry">
      <rect>
-      <x>470</x>
+      <x>260</x>
       <y>550</y>
       <width>251</width>
       <height>131</height>
@@ -412,9 +412,9 @@
    <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>520</x>
       <y>550</y>
-      <width>141</width>
+      <width>277</width>
       <height>131</height>
      </rect>
     </property>
@@ -466,7 +466,7 @@
    <widget class="QLabel" name="PropertiesCamera">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>520</x>
       <y>530</y>
       <width>151</width>
       <height>17</height>
@@ -482,7 +482,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1023</width>
+     <width>1020</width>
      <height>25</height>
     </rect>
    </property>
