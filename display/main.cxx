@@ -1,4 +1,5 @@
 #include "meshDisplay.h"
+#include "meshQtDisplay.h"
 
 int main(int argc , char* argv[] )
 {
@@ -13,6 +14,7 @@ int main(int argc , char* argv[] )
     }
 
     meshDisplay myDisplay( NumberOfMesh , MeshList ); // linking the files to the window
+    myDisplay.createLinks();
     myDisplay.windowInit(); // initialize the window
 
     //*****test change size of the window
@@ -41,16 +43,7 @@ int main(int argc , char* argv[] )
     myDisplay.setRed( 0 , 1.0 );
     */
 
-    myDisplay.windowUpdate();
-
-    //******test change parameters and update again
-    /*
-    myDisplay.setCameraX( 0 );
-    myDisplay.setCameraY( 0 );
-    myDisplay.setCameraZ( -1 );
-    myDisplay.setRed( 0 , 1.0 );
-    myDisplay.windowUpdate();
-    */
+    myDisplay.windowUpdate(); // display the window with parameters changes
 
    return 0;
 }

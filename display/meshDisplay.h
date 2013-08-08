@@ -32,11 +32,11 @@ class meshDisplay
         void setGreen(int IndiceOfMesh , double Green ); // accessor to the Green value of one mesh
         void setBlue(int IndiceOfMesh , double Blue ); // accessor to the Blue value of one mesh
 
-        void createLinks( int IndiceOfMesh ); // load the file and link it to the actor
+        void createLinks(); // load the file and link it to the actor
         void windowInit(); // link all the actors to the same renderer and renderWindow and display the mesh
         void windowUpdate(); // update the window with the new camera position
 
-        void positionCamera(int PositionX , int PositionY , int PositionZ );
+        void positionCamera(int PositionX , int PositionY , int PositionZ ); // set the new position of the camera
 
 
 
@@ -60,10 +60,10 @@ class meshDisplay
         int m_CameraY; // y position of the camera
         int m_CameraZ; // z position of the camera
 
-        std::vector <double> m_RedList;
-        std::vector <double> m_GreenList;
-        std::vector <double> m_BlueList;
-        std::vector <double> m_OpacityList;
+        std::vector <double> m_RedList; // list of the color red parameters for each mesh
+        std::vector <double> m_GreenList; // list of the color green parameters for each mesh
+        std::vector <double> m_BlueList; // list of the color blue parameters for each mesh
+        std::vector <double> m_OpacityList; // list of the opacity parameter for each mesh
 
 };
 

@@ -7,27 +7,37 @@ meshQtDisplay::meshQtDisplay( QWidget *MeshWidget , int NumberOfMesh , std::vect
     // initialisation of the Widget
     m_MeshWidget = new QVTKWidget( this -> MeshWidget );
 
+    int IndiceOfMesh;
+    double Color;
+
     // initialisation of vtk
     m_Renderer = vtkSmartPointer <vtkRenderer>::New();
     m_RenderWindow = vtkSmartPointer <vtkRenderWindow>::New();
+    m_Interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
     m_Camera = vtkSmartPointer <vtkCamera>::New();
 
-    // initialisation of variable
+    // initialisation of variables
     m_SizeH = 700 ; m_SizeW = 700;
     m_CameraX = -1 ; m_CameraY = 0; m_CameraZ = 0;
+    m_NumberOfMesh = NumberOfMesh;
+    std::cout << "number of mesh : " << m_NumberOfMesh << std::endl;
 
-    int i;
+    // initialisation of the parameters of each mesh
+    for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh++)
+    {
+        m_OpacityList.push_back( 1.0 );
 
-    m_NumberOfMesh = NumberOfMesh; // get the number of mesh loaded
+        Color =  double( IndiceOfMesh + 1 ) / double( m_NumberOfMesh ) ;
+        m_RedList.push_back( 0.0 ); m_GreenList.push_back( Color ); m_BlueList.push_back( Color );
+    }
 
-    std::cout << "number of mesh : " << NumberOfMesh << std::endl;
 
     // link all the files to the window
-    for( i=0 ; i < m_NumberOfMesh ; i++)
+    for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh++)
     {
-        m_MeshList.push_back( MeshList[ i ] );
-        std::cout << "name mesh " << i << " : " << m_MeshList[ i ] << std::endl;
-        createLinks( i );
+        m_MeshList.push_back( MeshList[ IndiceOfMesh ] );
+        std::cout << "name mesh " << IndiceOfMesh << " : " << m_MeshList[ IndiceOfMesh ] << std::endl;
+        createLinks( IndiceOfMesh );
     }
 }
 

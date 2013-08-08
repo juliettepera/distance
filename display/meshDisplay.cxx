@@ -29,13 +29,11 @@ meshDisplay::meshDisplay(int NumberOfMesh , std::vector <std::string> MeshList )
         m_RedList.push_back( 0.0 ); m_GreenList.push_back( Color ); m_BlueList.push_back( Color );
     }
 
-
-    // link all the files to the window
+    // initialisation of the list of files
     for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh++)
     {
         m_MeshList.push_back( MeshList[ IndiceOfMesh ] );
         std::cout << "name mesh " << IndiceOfMesh << " : " << m_MeshList[ IndiceOfMesh ] << std::endl;
-        createLinks( IndiceOfMesh );
     }
 }
 
@@ -98,26 +96,31 @@ void meshDisplay::setBlue( int IndiceOfMesh , double Blue )
  * finally between the Mapper and the Actor.
  * All the Data (polydata output of the Reader), the Mapper and the Actor are accessible by the creation of vector.
  */
-void meshDisplay::createLinks( int IndiceOfMesh )
+void meshDisplay::createLinks()
 {
-    // init of the PolyData Reader
-    vtkPolyDataReader* Reader = vtkPolyDataReader::New();
-    m_ReaderList.push_back( Reader );
-    m_ReaderList[ IndiceOfMesh ] -> SetFileName( m_MeshList[ IndiceOfMesh ].c_str() );
-    m_ReaderList[ IndiceOfMesh ] -> Update();
+    int IndiceOfMesh;
 
-    // add PolyData to the list
-    m_PolyDataList.push_back( m_ReaderList[ IndiceOfMesh ] -> GetOutput() );
+    for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh++)
+    {
+        // init of the PolyData Reader
+        vtkPolyDataReader* Reader = vtkPolyDataReader::New();
+        m_ReaderList.push_back( Reader );
+        m_ReaderList[ IndiceOfMesh ] -> SetFileName( m_MeshList[ IndiceOfMesh ].c_str() );
+        m_ReaderList[ IndiceOfMesh ] -> Update();
 
-    // init Mapper
-    vtkPolyDataMapper* Mapper = vtkPolyDataMapper::New();
-    m_MapperList.push_back( Mapper );
-    m_MapperList[ IndiceOfMesh ] -> SetInputData( m_PolyDataList[ IndiceOfMesh ] );
+        // add PolyData to the list
+        m_PolyDataList.push_back( m_ReaderList[ IndiceOfMesh ] -> GetOutput() );
 
-    // add Actor to the list
-    vtkActor* Actor = vtkActor::New();
-    m_ActorList.push_back( Actor );
-    m_ActorList[ IndiceOfMesh ] -> SetMapper( m_MapperList[ IndiceOfMesh ] );
+        // init Mapper
+        vtkPolyDataMapper* Mapper = vtkPolyDataMapper::New();
+        m_MapperList.push_back( Mapper );
+        m_MapperList[ IndiceOfMesh ] -> SetInputData( m_PolyDataList[ IndiceOfMesh ] );
+
+        // add Actor to the list
+        vtkActor* Actor = vtkActor::New();
+        m_ActorList.push_back( Actor );
+        m_ActorList[ IndiceOfMesh ] -> SetMapper( m_MapperList[ IndiceOfMesh ] );
+    }
 }
 
 
