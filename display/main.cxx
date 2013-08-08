@@ -13,6 +13,7 @@ int main(int argc , char* argv[] )
     }
 
     meshDisplay myDisplay( NumberOfMesh , MeshList ); // linking the files to the window
+    myDisplay.windowInit(); // initialize the window
 
     //*****test change size of the window
     /*
@@ -26,25 +27,30 @@ int main(int argc , char* argv[] )
      // up : 0 0 1       | down : 0 0 -1
     /*
     myDisplay.setCameraX( 0 );
+    myDisplay.setCameraY( 1 );
+    myDisplay.setCameraZ( 0 );
+    */
+
+    //*****test change the value of the opacity of the 2nd mesh
+    /*
+    myDisplay.setOpacity( 1 , 0.5 );
+    */
+
+    //*****test change the color of the first mesh
+    /*
+    myDisplay.setRed( 0 , 1.0 );
+    */
+
+    myDisplay.windowUpdate();
+
+    //******test change parameters and update again
+    /*
+    myDisplay.setCameraX( 0 );
     myDisplay.setCameraY( 0 );
     myDisplay.setCameraZ( -1 );
+    myDisplay.setRed( 0 , 1.0 );
+    myDisplay.windowUpdate();
     */
-
-    //******test change the parameters of the differents mesh (here for 2)
-    /*
-    myDisplay.setParameters( 0 , 1.0 , 0.0 , 0.0 , 1.0 ); // change the parameters of the mesh 0
-    myDisplay.setParameters( 1 , 0.5 , 1.0 , 0.0 , 0.0 ); // change the parameters of the mesh 1
-    */
-
-    //******test change the only one of the parameters of the differents mesh (here for 2)
-    /*
-    myDisplay.setParameters( 0 , 0.5 ); // change the oopacity parameter of the mesh 0
-    myDisplay.setParameters( 1 , 1.0 , 0.0 , 0.0 ); // change the color parameter of the mesh 1
-    */
-
-
-    myDisplay.windowInit(); // initialize the window and display it
-
 
    return 0;
 }
