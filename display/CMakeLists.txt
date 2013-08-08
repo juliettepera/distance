@@ -31,11 +31,17 @@ INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}  ${
 # ?????
 ADD_DEFINITIONS( -DQT_GUI_LIBS -DQT_CORE_LIB -DQT3_SUPPORT )
 
+
 # set the sources files
 SET( Dsources
 main.cxx
+
 meshDisplay.cxx
 meshDisplay.h
+
+#meshQtDisplay.cxx
+#meshQtDisplay.h
+
 )
 
 # generate the executable
