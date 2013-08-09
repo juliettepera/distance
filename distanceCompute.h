@@ -7,7 +7,6 @@
 
 // My librairies
 #include "distanceGui.h"
-#include "distanceDisplay.h"
 
 void computeDistanceAtoB();
 void computeDistanceBtoA();

@@ -13,27 +13,14 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QTextBrowser>
-#include <QVector3D>
-
-// VTK libraries
-#include "vtkSmartPointer.h"
-#include "vtkGenericDataObjectReader.h"
-#include "vtkGenericDataObjectWriter.h"
-#include "vtkPolyData.h"
-#include "vtkSmoothPolyDataFilter.h"
-#include <vtkPolyDataMapper.h>
-#include <vtkPolyDataReader.h>
-#include <vtkActor.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindowInteractor.h>
-#include <QVTKWidget.h>
 
 // Other Libraries
 #include <string>
 #include <iostream>
 
 // My libraries
+#include "meshQtDisplay.h"
+#include "distanceCompute.h"
 #include "ui_distanceGui.h"
 
 // My class
@@ -42,18 +29,18 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
    Q_OBJECT
 
    public:
-        distanceGui ( std::string meshA , std::string meshB );
+        distanceGui ( int test );
 
    public slots:
-       void OpenMeshBrowseWindowA();
-       void OpenMeshBrowseWindowB();
+       void OpenBrowseWindow();
+
+       void ChangeValueChoice();
+       void ChangeMeshSelected();
+       void ChangeValueOpacity();
+       void ChangeValueSmoothing();
 
        void DisplayInit();
        void DisplayUpdate();
-
-       void ChangeValue();
-       void ChangeValueOpacityA();
-       void ChangeValueOpacityB();
 
        void buttonFrontClicked();
        void buttonBackClicked();
@@ -65,18 +52,24 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        void ApplyDistance();
             
    private:
-       std::string m_meshA;
-       std::string m_meshB;
 
-       QColor m_colorA;
-       QColor m_colorB;
+       int m_NumberOfMesh; // nb of mesh loaded
+       std::vector <std::string> m_MeshList; // list of the mesh
+       int m_MeshSelected; // indice of the mesh selected
 
-       double m_opacityA;
-       double m_opacityB;
+       int m_ChoiceOfError; // choice of witch type of error is computed
 
-       int m_choixdistance;
+       double m_Opacity; // list of the opacity parameter for each mesh
 
-       QVector3D m_positionCam;
+       int m_CameraX; // x position of the camera
+       int m_CameraY; // y position of the camera
+       int m_CameraZ; // z position of the camera
+
+       QVTKWidget *m_WidgetMesh;
+
+       // meshQtDisplay object
+       meshQtDisplay m_MyWindowMesh;
+
 };
 
 #endif

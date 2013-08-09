@@ -1,4 +1,4 @@
-#include "meshDisplay.h"
+//#include "meshDisplay.h"
 #include "meshQtDisplay.h"
 
 int main(int argc , char* argv[] )
@@ -13,7 +13,8 @@ int main(int argc , char* argv[] )
         MeshList.push_back( std::string( argv[ i + 1 ] ) );
     }
 
-    meshDisplay myDisplay( NumberOfMesh , MeshList ); // linking the files to the window
+    QWidget *MeshWidget = new QWidget;
+    meshQtDisplay myDisplay( MeshWidget , NumberOfMesh , MeshList ); // linking the files to the window
     myDisplay.createLinks();
     myDisplay.windowInit(); // initialize the window
 

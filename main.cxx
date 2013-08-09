@@ -9,9 +9,9 @@ int main( int argc , char* argv[] )
       
       QApplication app( argc , argv );
 
-      distanceGui mainWindow( meshA , meshB );
+      distanceGui myMainWindow( test );
       
-      mainWindow.show();
+      myMainWindow.show();
       
       return app.exec();
 

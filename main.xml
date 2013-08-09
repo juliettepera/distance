@@ -14,21 +14,14 @@
   <acknowledgements></acknowledgements>
  
  <parameters>
-    <label>Distance</label>
+ <label>Distance</label>
     <description>Input parameters</description>
     
-    <image>
-            <name>meshA</name>
-            <label>mesh A</label>
-            <longflag>A</longflag>
-            <description>mesh A</description>
-    </image>
-    
-    <image>
-            <name>meshB</name>
-            <label>mesh B</label>
-             <longflag>B</longflag>
-            <description>mesh B</description>
-    </image>    
+    <integer>
+            <name>test</name>
+            <label>test</label>
+            <longflag>t</longflag>
+            <description>test</description>
+    </integer> 
  </parameters>
 </executable>
