@@ -1,7 +1,7 @@
 // My libraries
 #include "distanceGui.h"
 
-distanceGui::distanceGui(int test)
+distanceGui::distanceGui( int test )
 {
     // to display the window
     setupUi(this);
@@ -10,46 +10,60 @@ distanceGui::distanceGui(int test)
     m_NumberOfMesh = 0;
     m_ChoiceOfError = 0;
     m_MeshSelected = 0;
+    m_NumberOfDisplay = 0;
     m_WidgetMesh = new QVTKWidget( this -> scrollAreaMesh );
 
     // connections
     QObject::connect( pushButtonLoad , SIGNAL( clicked() ) , this , SLOT( OpenBrowseWindow() ) ); // load a new mesh
+
     QObject::connect( pushButtonDisplay , SIGNAL( clicked() ) , this , SLOT( DisplayInit() ) ); //initialize the display
+
     QObject::connect( horizontalSliderOpacity , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueOpacity() ) ); // change the value of the opacity of one mesh
     QObject::connect( horizontalSliderSmoothing , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueSmoothing() ) ); // change the value of the smoothing of one mesh
+
     QObject::connect( pushButtonFront , SIGNAL( clicked() ) , this , SLOT( buttonFrontClicked() ) ); // set the position of the camera
     QObject::connect( pushButtonBack , SIGNAL( clicked() ) , this , SLOT( buttonBackClicked() ) );
     QObject::connect( pushButtonRight , SIGNAL( clicked() ) , this , SLOT( buttonRightClicked() ) );
     QObject::connect( pushButtonLeft , SIGNAL( clicked() ) , this , SLOT( buttonLeftClicked() ) );
     QObject::connect( pushButtonUp , SIGNAL( clicked() ) , this , SLOT( buttonUpClicked() ) );
     QObject::connect( pushButtonDown , SIGNAL( clicked() ) , this , SLOT( buttonDownClicked() ) );
+
     QObject::connect( radioButtonAtoB , SIGNAL( clicked() ) , this , SLOT( ChangeValueChoice() ) ); // change the type of error computed
     QObject::connect( radioButtonBtoA , SIGNAL( clicked() ) , this , SLOT( ChangeValueChoice() ) );
     QObject::connect( radioButtonBoth , SIGNAL( clicked() ) , this , SLOT( ChangeValueChoice() ) );
-    QObject::connect( pushButtonApply , SIGNAL( clicked() ) , this , SLOT( ApplyDistance() ) ); // compute the distance error             
+
+    QObject::connect( pushButtonApply , SIGNAL( clicked() ) , this , SLOT( ApplyDistance() ) ); // compute the distance error
+
+    QObject::connect( pushButtonReset , SIGNAL( clicked() ) , this , SLOT( DisplayReset() ) ); // compute the distance error
+
     QObject::connect( pushButtonQuit , SIGNAL( clicked() ) , qApp , SLOT( quit() ) ); // quit the application
                                                                               
 }
 
-
-
-// display on the edit line "lineMeshA" the file selected
+/* This function add all the new files on the list of files and update the number of mesh
+ */
 void distanceGui::OpenBrowseWindow()
 {
-      QString browseMesh = QFileDialog::getOpenFileName( this , "Open a VTK file" , QString() , "vtk mesh (*.vtk)" );
+    std::cout << "in distanceGui : OpenBrowseWindow " << std::endl;
 
-      if( !browseMesh.isEmpty() )
-      {
-            lineEditLoad -> setText( browseMesh );
-      }
+    QString browseMesh = QFileDialog::getOpenFileName( this , "Open a VTK file" , QString() , "vtk mesh (*.vtk)" );
 
-      m_MeshList.push_back( ( lineEditLoad -> text() ).toStdString() );
-      m_NumberOfMesh++;
+    if( !browseMesh.isEmpty() )
+    {
+      lineEditLoad -> setText( browseMesh );
+    }
+
+    m_MeshList.push_back( ( lineEditLoad -> text() ).toStdString() );
+    m_NumberOfMesh = m_MeshList.size() ;
 }
 
-// change the value of m_choixdistance
+
+/* This function change the value of the variable which determine which error is going to be compute
+ */
 void distanceGui::ChangeValueChoice()
 {
+    std::cout << "in distanceGui : ChangeValueChoice " << std::endl;
+
     if( this -> radioButtonAtoB -> isChecked() )
     {
         m_ChoiceOfError = 1;
@@ -64,120 +78,193 @@ void distanceGui::ChangeValueChoice()
     }
 }
 
+
+/* This function change the Indice of the mesh selected
+ */
 void distanceGui::ChangeMeshSelected()
 {
+   std::cout << "in distanceGui : ChangeMeshSelected " << std::endl;
 
 }
 
-// change the value of m_opacityA
+
+/* This function change the value opacity of the selected mesh
+ */
 void distanceGui::ChangeValueOpacity()
 {
+    std::cout << "in distanceGui : ChangeValueOpacity " << std::endl;
+
     m_Opacity = horizontalSliderOpacity -> value()/100.;
     m_MyWindowMesh.setOpacity( m_MeshSelected , m_Opacity );
-    DisplayUpdate();
+
+    m_MyWindowMesh.updateOpacity();
+    m_MyWindowMesh.windowUpdate();
 }
 
+
+/* This function change the value of the smoothing of the selected mesh
+ */
 void distanceGui::ChangeValueSmoothing()
 {
+   std::cout << "in distanceGui : ChangeValueSmoothing " << std::endl;
 
 }
 
-// change the value of the position of the camera
-void distanceGui::buttonFrontClicked()
+
+/* This function change the position of the camera to be on the front view
+ */
+void distanceGui::buttonUpClicked()
 {
+    std::cout << "in distanceGui : Up " << std::endl;
+
     m_CameraX = 0 ; m_CameraY = 0 ; m_CameraZ = 1;
 
     m_MyWindowMesh.setCameraX( m_CameraX );
     m_MyWindowMesh.setCameraY( m_CameraY );
     m_MyWindowMesh.setCameraZ( m_CameraZ );
 
-    DisplayUpdate();
+    DisplayUpdateCamera();
 }
 
-void distanceGui::buttonBackClicked()
+
+/* This function change the position of the camera to be on the back view
+ */
+void distanceGui::buttonDownClicked()
 {
+    std::cout << "in distanceGui : Down " << std::endl;
+
     m_CameraX = 0 ; m_CameraY = 0 ; m_CameraZ = -1;
 
     m_MyWindowMesh.setCameraX( m_CameraX );
     m_MyWindowMesh.setCameraY( m_CameraY );
     m_MyWindowMesh.setCameraZ( m_CameraZ );
 
-    DisplayUpdate();
+    DisplayUpdateCamera();
 }
 
+
+/* This function change the position of the camera to be on the right view
+ */
 void distanceGui::buttonRightClicked()
 {
+    std::cout << "in distanceGui : Right " << std::endl;
+
     m_CameraX = 1 ; m_CameraY = 0 ; m_CameraZ = 0;
 
     m_MyWindowMesh.setCameraX( m_CameraX );
     m_MyWindowMesh.setCameraY( m_CameraY );
     m_MyWindowMesh.setCameraZ( m_CameraZ );
 
-    DisplayUpdate();
+    DisplayUpdateCamera();
 }
 
+
+/* This function change the position of the camera to be on the left view
+ */
 void distanceGui::buttonLeftClicked()
 {
+    std::cout << "in distanceGui : Left " << std::endl;
+
     m_CameraX = -1 ; m_CameraY = 0 ; m_CameraZ = 0;
 
     m_MyWindowMesh.setCameraX( m_CameraX );
     m_MyWindowMesh.setCameraY( m_CameraY );
     m_MyWindowMesh.setCameraZ( m_CameraZ );
 
-    DisplayUpdate();
+    DisplayUpdateCamera();
 }
 
-void distanceGui::buttonUpClicked()
+
+/* This function change the position of the camera to be on the up view
+ */
+void distanceGui::buttonBackClicked()
 {
+    std::cout << "in distanceGui : Back " << std::endl;
+
     m_CameraX = 0 ; m_CameraY = -1 ; m_CameraZ = 0;
 
     m_MyWindowMesh.setCameraX( m_CameraX );
     m_MyWindowMesh.setCameraY( m_CameraY );
     m_MyWindowMesh.setCameraZ( m_CameraZ );
 
-    DisplayUpdate();
+    DisplayUpdateCamera();
 }
 
-void distanceGui::buttonDownClicked()
+
+/* This function change the position of the camera to be on the down view
+ */
+void distanceGui::buttonFrontClicked()
 {
+    std::cout << "in distanceGui : Front " << std::endl;
+
     m_CameraX = 0 ; m_CameraY = 1 ; m_CameraZ = 0;
 
     m_MyWindowMesh.setCameraX( m_CameraX );
     m_MyWindowMesh.setCameraY( m_CameraY );
     m_MyWindowMesh.setCameraZ( m_CameraZ );
 
-    DisplayUpdate();
+    DisplayUpdateCamera();
 }
 
 
-// display the two files selected on the box "meshWidget"
+/* This function initialize the window by first setting the widget, list and number of the mesh
+ * then it create the links (reader, actor, mapper, renderer) and it init the renderWindow
+ * finally it display the window
+ */
 void distanceGui::DisplayInit()
 {
-    if( m_NumberOfMesh > 0)
-    {
-       m_MyWindowMesh.setMeshWidget( m_WidgetMesh );
+    std::cout << "in distanceGui : DisplayInit " << std::endl;
 
-        // list, links, init and update
-       m_MyWindowMesh.setMeshList( m_NumberOfMesh , m_MeshList );
-       m_MyWindowMesh.createLinks();
-       m_MyWindowMesh.windowInit();
-       m_MyWindowMesh.windowUpdate();
+    if( m_NumberOfDisplay > 0 )
+    {
+        std::cout << " clearing  : " << m_NumberOfDisplay << std::endl;
+        m_MyWindowMesh.windowClear();
     }
+    else
+    {
+        m_MyWindowMesh.setMeshWidget( m_WidgetMesh );
+    }
+
+    m_MyWindowMesh.setMeshList( m_NumberOfMesh , m_MeshList );
+    m_MyWindowMesh.windowInit();
+    m_MyWindowMesh.windowUpdate();
+
+    m_NumberOfDisplay++;
 }
 
-void distanceGui::DisplayUpdate()
+void distanceGui::DisplayReset()
 {
+    std::cout << "in distanceGui : DisplayReset " << std::endl;
+
+    m_MyWindowMesh.windowClear();
+    m_NumberOfDisplay = 0;
+    m_NumberOfMesh = 0;
+    m_MeshList.clear();
+
+}
+
+
+
+/* This function update the window when one of the camera position is changed
+ */
+void distanceGui::DisplayUpdateCamera()
+{
+    std::cout << "in distanceGui : DistanceUpdateCamera " << std::endl;
+
     if( m_NumberOfMesh > 0)
     {
+        m_MyWindowMesh.positionCamera();
         m_MyWindowMesh.windowUpdate();
     }
 }
 
 
-
-// apply the good calculated distance
+/* This function call the good error computing according to the choice of the user
+ */
 void distanceGui::ApplyDistance()
 {
+    std::cout << "in distanceGui : ApplyDistance " << std::endl;
+
     switch( m_ChoiceOfError )
     {
         case 0:

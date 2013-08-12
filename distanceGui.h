@@ -40,7 +40,8 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        void ChangeValueSmoothing();
 
        void DisplayInit();
-       void DisplayUpdate();
+       void DisplayReset();
+       void DisplayUpdateCamera();
 
        void buttonFrontClicked();
        void buttonBackClicked();
@@ -54,20 +55,16 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
    private:
 
        int m_NumberOfMesh; // nb of mesh loaded
-       std::vector <std::string> m_MeshList; // list of the mesh
        int m_MeshSelected; // indice of the mesh selected
-
        int m_ChoiceOfError; // choice of witch type of error is computed
-
        double m_Opacity; // list of the opacity parameter for each mesh
-
        int m_CameraX; // x position of the camera
        int m_CameraY; // y position of the camera
        int m_CameraZ; // z position of the camera
+       int m_NumberOfDisplay;
 
+       std::vector <std::string> m_MeshList; // list of the mesh
        QVTKWidget *m_WidgetMesh;
-
-       // meshQtDisplay object
        meshQtDisplay m_MyWindowMesh;
 
 };
