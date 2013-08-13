@@ -29,15 +29,15 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
    Q_OBJECT
 
    public:
-        distanceGui ( int test );
+        distanceGui (QWidget * parent = 0, Qt::WFlags f = 0 );
 
    public slots:
        void OpenBrowseWindow();
+       void DisplayAllTheFiles();
 
        void ChangeValueChoice();
        void ChangeMeshSelected();
        void ChangeValueOpacity();
-       void ChangeValueSmoothing();
 
        void DisplayInit();
        void DisplayReset();
@@ -51,6 +51,7 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        void buttonDownClicked();
 
        void ApplyDistance();
+       void ApplySmoothing();
             
    private:
 
@@ -61,12 +62,12 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        int m_CameraX; // x position of the camera
        int m_CameraY; // y position of the camera
        int m_CameraZ; // z position of the camera
-       int m_NumberOfDisplay;
+       int m_NumberOfDisplay; // number of time the display button is clicked
+       bool m_Smoothing; // do or not the smoothing
 
        std::vector <std::string> m_MeshList; // list of the mesh
-       QVTKWidget *m_WidgetMesh;
-       meshQtDisplay m_MyWindowMesh;
-
+       QVTKWidget *m_WidgetMesh; // widget to display the files
+       meshQtDisplay m_MyWindowMesh; // object of the class meshQtDisplay
 };
 
 #endif

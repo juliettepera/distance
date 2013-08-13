@@ -1,7 +1,7 @@
 // My libraries
 #include "distanceGui.h"
 
-distanceGui::distanceGui( int test )
+distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  ): QMainWindow(parent, f)
 {
     // to display the window
     setupUi(this);
@@ -12,31 +12,30 @@ distanceGui::distanceGui( int test )
     m_MeshSelected = 0;
     m_NumberOfDisplay = 0;
     m_WidgetMesh = new QVTKWidget( this -> scrollAreaMesh );
+    m_Smoothing = false;
 
     // connections
     QObject::connect( pushButtonLoad , SIGNAL( clicked() ) , this , SLOT( OpenBrowseWindow() ) ); // load a new mesh
-
-    QObject::connect( pushButtonDisplay , SIGNAL( clicked() ) , this , SLOT( DisplayInit() ) ); //initialize the display
-
-    QObject::connect( horizontalSliderOpacity , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueOpacity() ) ); // change the value of the opacity of one mesh
-    QObject::connect( horizontalSliderSmoothing , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueSmoothing() ) ); // change the value of the smoothing of one mesh
-
+    QObject::connect( pushButtonDisplay , SIGNAL( clicked() ) , this , SLOT( DisplayInit() ) ); // initialize the display
     QObject::connect( pushButtonFront , SIGNAL( clicked() ) , this , SLOT( buttonFrontClicked() ) ); // set the position of the camera
     QObject::connect( pushButtonBack , SIGNAL( clicked() ) , this , SLOT( buttonBackClicked() ) );
     QObject::connect( pushButtonRight , SIGNAL( clicked() ) , this , SLOT( buttonRightClicked() ) );
     QObject::connect( pushButtonLeft , SIGNAL( clicked() ) , this , SLOT( buttonLeftClicked() ) );
     QObject::connect( pushButtonUp , SIGNAL( clicked() ) , this , SLOT( buttonUpClicked() ) );
     QObject::connect( pushButtonDown , SIGNAL( clicked() ) , this , SLOT( buttonDownClicked() ) );
+    QObject::connect( pushButtonApply , SIGNAL( clicked() ) , this , SLOT( ApplyDistance() ) ); // compute the distance error
+    QObject::connect( pushButtonReset , SIGNAL( clicked() ) , this , SLOT( DisplayReset() ) ); // reset the window
+    QObject::connect( pushButtonQuit , SIGNAL( clicked() ) , qApp , SLOT( quit() ) ); // quit the application
+
+    QObject::connect( horizontalSliderOpacity , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueOpacity() ) ); // change the value of the opacity of one mesh
+
+    QObject::connect( checkBoxSmoothing , SIGNAL( stateChanged(int) ) , this , SLOT( ApplySmoothing() ) );
 
     QObject::connect( radioButtonAtoB , SIGNAL( clicked() ) , this , SLOT( ChangeValueChoice() ) ); // change the type of error computed
     QObject::connect( radioButtonBtoA , SIGNAL( clicked() ) , this , SLOT( ChangeValueChoice() ) );
     QObject::connect( radioButtonBoth , SIGNAL( clicked() ) , this , SLOT( ChangeValueChoice() ) );
 
-    QObject::connect( pushButtonApply , SIGNAL( clicked() ) , this , SLOT( ApplyDistance() ) ); // compute the distance error
 
-    QObject::connect( pushButtonReset , SIGNAL( clicked() ) , this , SLOT( DisplayReset() ) ); // compute the distance error
-
-    QObject::connect( pushButtonQuit , SIGNAL( clicked() ) , qApp , SLOT( quit() ) ); // quit the application
                                                                               
 }
 
@@ -55,6 +54,12 @@ void distanceGui::OpenBrowseWindow()
 
     m_MeshList.push_back( ( lineEditLoad -> text() ).toStdString() );
     m_NumberOfMesh = m_MeshList.size() ;
+}
+
+
+void distanceGui::DisplayAllTheFiles()
+{
+    std::cout << "in distanceGui : DisplayAllTheFiles " << std::endl;
 }
 
 
@@ -104,10 +109,17 @@ void distanceGui::ChangeValueOpacity()
 
 /* This function change the value of the smoothing of the selected mesh
  */
-void distanceGui::ChangeValueSmoothing()
+void distanceGui::ApplySmoothing()
 {
-   std::cout << "in distanceGui : ChangeValueSmoothing " << std::endl;
-
+   std::cout << "in distanceGui : ApplySmoothing " << std::endl;
+   if( checkBoxSmoothing -> isChecked() )
+   {
+       m_Smoothing = true;
+   }
+   else
+   {
+       m_Smoothing = false;
+   }
 }
 
 
@@ -240,6 +252,7 @@ void distanceGui::DisplayReset()
     m_NumberOfDisplay = 0;
     m_NumberOfMesh = 0;
     m_MeshList.clear();
+    m_MyWindowMesh.windowUpdate();
 
 }
 
@@ -253,7 +266,7 @@ void distanceGui::DisplayUpdateCamera()
 
     if( m_NumberOfMesh > 0)
     {
-        m_MyWindowMesh.positionCamera();
+        m_MyWindowMesh.updatePositionCamera();
         m_MyWindowMesh.windowUpdate();
     }
 }

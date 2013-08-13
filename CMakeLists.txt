@@ -17,10 +17,6 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.6 )
 # name of the project
 project( distanceGui )
 
-# find the GenerateCLP headers
-FIND_PACKAGE( GenerateCLP REQUIRED )
-INCLUDE( ${GenerateCLP_USE_FILE} )
-
 # find the VTK headers
 FIND_PACKAGE( VTK )
 INCLUDE( ${VTK_USE_FILE} )
@@ -41,9 +37,6 @@ QT4_WRAP_UI( UI_FILES distanceGui.ui )
 
 # set the sources files
 SET( Dsources main.cxx distanceGui.h distanceGui.cxx meshQtDisplay.cxx meshQtDisplay.h distanceCompute.cxx distanceCompute.h ${QtProject_HEADERS_MOC} ${UI_FILES} )
-
-# generate the CLP file
-GENERATECLP( Dsources main.xml )
 
 # generate the executable
 ADD_EXECUTABLE( distance ${Dsources} )
