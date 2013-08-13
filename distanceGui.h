@@ -33,11 +33,11 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
 
    public slots:
        void OpenBrowseWindow();
-       void DisplayAllTheFiles();
 
        void ChangeValueChoice();
        void ChangeMeshSelected();
        void ChangeValueOpacity();
+       void ChangeValueColor();
 
        void DisplayInit();
        void DisplayReset();
@@ -59,9 +59,12 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        int m_MeshSelected; // indice of the mesh selected
        int m_ChoiceOfError; // choice of witch type of error is computed
        double m_Opacity; // list of the opacity parameter for each mesh
+       double m_Color;
+
        int m_CameraX; // x position of the camera
        int m_CameraY; // y position of the camera
        int m_CameraZ; // z position of the camera
+
        int m_NumberOfDisplay; // number of time the display button is clicked
        bool m_Smoothing; // do or not the smoothing
 

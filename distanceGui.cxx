@@ -28,6 +28,7 @@ distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  ): QMainWindow(parent,
     QObject::connect( pushButtonQuit , SIGNAL( clicked() ) , qApp , SLOT( quit() ) ); // quit the application
 
     QObject::connect( horizontalSliderOpacity , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueOpacity() ) ); // change the value of the opacity of one mesh
+    QObject::connect( horizontalSliderColor , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueColor() ) ); // change the value of the color of one mesh
 
     QObject::connect( checkBoxSmoothing , SIGNAL( stateChanged(int) ) , this , SLOT( ApplySmoothing() ) );
 
@@ -53,15 +54,13 @@ void distanceGui::OpenBrowseWindow()
     }
 
     m_MeshList.push_back( ( lineEditLoad -> text() ).toStdString() );
-    m_NumberOfMesh = m_MeshList.size() ;
+
+    listWidgetLoadedMesh -> addItem( ( lineEditLoad -> text() ).toStdString().c_str() );
+
+    m_NumberOfMesh = m_MeshList.size();
+
+
 }
-
-
-void distanceGui::DisplayAllTheFiles()
-{
-    std::cout << "in distanceGui : DisplayAllTheFiles " << std::endl;
-}
-
 
 /* This function change the value of the variable which determine which error is going to be compute
  */
@@ -90,6 +89,11 @@ void distanceGui::ChangeMeshSelected()
 {
    std::cout << "in distanceGui : ChangeMeshSelected " << std::endl;
 
+ /*  QListWidgetItem ItemSelected= listWidgetLoadedMesh -> selectedItems();
+   int Row = listWidgetLoadedMesh -> currentRow( ItemSelected );
+
+   std::cout << " index de selection : " << Row << std::endl;*/
+
 }
 
 
@@ -104,6 +108,19 @@ void distanceGui::ChangeValueOpacity()
 
     m_MyWindowMesh.updateOpacity();
     m_MyWindowMesh.windowUpdate();
+}
+
+void distanceGui::ChangeValueColor()
+{
+    std::cout << "in distanceGui : ChangeValueColor " << std::endl;
+
+    m_Color = horizontalSliderColor -> value()/100.;
+
+    m_MyWindowMesh.setColor( m_MeshSelected , 0.0 , 1.0 , m_Color );
+
+    m_MyWindowMesh.updateColor();
+    m_MyWindowMesh.windowUpdate();
+
 }
 
 
@@ -237,7 +254,7 @@ void distanceGui::DisplayInit()
         m_MyWindowMesh.setMeshWidget( m_WidgetMesh );
     }
 
-    m_MyWindowMesh.setMeshList( m_NumberOfMesh , m_MeshList );
+    m_MyWindowMesh.createTools( m_NumberOfMesh , m_MeshList );
     m_MyWindowMesh.windowInit();
     m_MyWindowMesh.windowUpdate();
 
@@ -249,9 +266,13 @@ void distanceGui::DisplayReset()
     std::cout << "in distanceGui : DisplayReset " << std::endl;
 
     m_MyWindowMesh.windowClear();
+
     m_NumberOfDisplay = 0;
     m_NumberOfMesh = 0;
+
+    listWidgetLoadedMesh -> clear();
     m_MeshList.clear();
+
     m_MyWindowMesh.windowUpdate();
 
 }
