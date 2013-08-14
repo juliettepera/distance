@@ -89,10 +89,9 @@ void distanceGui::ChangeMeshSelected()
 {
    std::cout << "in distanceGui : ChangeMeshSelected " << std::endl;
 
- /*  QListWidgetItem ItemSelected= listWidgetLoadedMesh -> selectedItems();
-   int Row = listWidgetLoadedMesh -> currentRow( ItemSelected );
+   int Row = listWidgetLoadedMesh -> row( listWidgetLoadedMesh -> selectedItems().at(0) );
 
-   std::cout << " index de selection : " << Row << std::endl;*/
+   std::cout << " index de selection : " << Row << std::endl;
 
 }
 
