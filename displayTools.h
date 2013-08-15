@@ -25,7 +25,7 @@ class displayTools
 {
 
     public:
-        displayTools();
+        displayTools( int Indice );
 
         void setName(std::string Name);
         void setReader( vtkSmartPointer <vtkPolyDataReader> Reader );
@@ -33,28 +33,28 @@ class displayTools
         void setActor( vtkSmartPointer <vtkActor> Actor );
         void setPolyData( vtkSmartPointer <vtkPolyData> PolyData );
         void setOpacity( double Opacity );
-        void setRed( double Red );
-        void setBlue( double Blue );
-        void setGreen( double Green );
+        void setColor( double Red , double Green , double Blue );
 
-        void getName(std::string &Name);
-        vtkSmartPointer<vtkPolyDataReader> getReader();
-        void getMapper(vtkSmartPointer<vtkPolyDataMapper> &Mapper );
-        vtkSmartPointer<vtkActor> getActor();
-        void getPolyData(vtkSmartPointer<vtkPolyData> &PolyData );
-        void getOpacity( double &Opacity );
-        void getRed( double &Red );
-        void getBlue( double &Blue );
-        void getGreen( double &Green );
+        std::string getName();
+        vtkSmartPointer <vtkPolyDataReader> getReader();
+        vtkSmartPointer<vtkPolyDataMapper> getMapper();
+        vtkSmartPointer <vtkActor> getActor();
+        vtkSmartPointer<vtkPolyData> getPolyData();
+        double getOpacity();
+        double getRed();
+        double getBlue();
+        double getGreen();
 
         void initialization();
 
     private:
+
+        int m_Indice;
+
         vtkSmartPointer <vtkPolyData> m_PolyData;
         vtkSmartPointer <vtkPolyDataReader> m_Reader;
         vtkSmartPointer <vtkPolyDataMapper> m_Mapper;
         vtkSmartPointer <vtkActor> m_Actor;
-
         std::string m_Name;
 
         double m_Opacity;

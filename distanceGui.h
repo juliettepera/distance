@@ -57,20 +57,25 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
 
        int m_NumberOfMesh; // nb of mesh loaded
        int m_MeshSelected; // indice of the mesh selected
-       int m_ChoiceOfError; // choice of witch type of error is computed
-       double m_Opacity; // list of the opacity parameter for each mesh
-       double m_Color;
+       std::vector <std::string> m_MeshList; // list of the mesh
+       std::vector <double> m_OpacityList;
+       std::vector <double> m_ColorList;
+
+       QVTKWidget *m_WidgetMesh; // widget to display the files
+       meshQtDisplay m_MyWindowMesh; // object of the class meshQtDisplay
 
        int m_CameraX; // x position of the camera
        int m_CameraY; // y position of the camera
        int m_CameraZ; // z position of the camera
 
+       double m_Opacity; // list of the opacity parameter for each mesh
+       double m_Color;
+
        int m_NumberOfDisplay; // number of time the display button is clicked
        bool m_Smoothing; // do or not the smoothing
+       int m_ChoiceOfError; // choice of witch type of error is computed
 
-       std::vector <std::string> m_MeshList; // list of the mesh
-       QVTKWidget *m_WidgetMesh; // widget to display the files
-       meshQtDisplay m_MyWindowMesh; // object of the class meshQtDisplay
+
 };
 
 #endif
