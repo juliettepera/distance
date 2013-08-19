@@ -58,3 +58,15 @@ ADD_EXECUTABLE( distance ${Dsources} )
 
 # link the libraries to the executable
 TARGET_LINK_LIBRARIES( distance ${QT_LIBRARIES} ${VTK_LIBRARIES} )
+
+# for the CTest
+set(BUILD_TESTING ON CACHE BOOL "Build, configure and copy testing files")
+
+IF( BUILD_TESTING )
+enable_testing()
+ADD_SUBDIRECTORY( Testing )
+ENDIF()
+
+
+
+

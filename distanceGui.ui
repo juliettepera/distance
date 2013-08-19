@@ -147,12 +147,12 @@
       <rect>
        <x>140</x>
        <y>410</y>
-       <width>171</width>
+       <width>111</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>ENABLE SMOOTHING</string>
+      <string>SMOOTHING</string>
      </property>
     </widget>
     <widget class="QSlider" name="horizontalSliderColor">
@@ -198,6 +198,34 @@
        <width>301</width>
        <height>221</height>
       </rect>
+     </property>
+    </widget>
+    <widget class="QSlider" name="horizontalSliderSmoothing">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>410</y>
+       <width>181</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>100</number>
+     </property>
+     <property name="maximum">
+      <number>1000</number>
+     </property>
+     <property name="singleStep">
+      <number>50</number>
+     </property>
+     <property name="sliderPosition">
+      <number>100</number>
+     </property>
+     <property name="tracking">
+      <bool>true</bool>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </widget>

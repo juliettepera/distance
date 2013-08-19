@@ -12,7 +12,6 @@ distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  ): QMainWindow(parent,
     m_MeshSelected = 0;
     m_NumberOfDisplay = 0;
     m_WidgetMesh = new QVTKWidget( this -> scrollAreaMesh );
-    m_Smoothing = false;
 
     // connections
     QObject::connect( pushButtonLoad , SIGNAL( clicked() ) , this , SLOT( OpenBrowseWindow() ) ); // load a new mesh
@@ -29,8 +28,11 @@ distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  ): QMainWindow(parent,
 
     QObject::connect( horizontalSliderOpacity , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueOpacity() ) ); // change the value of the opacity of one mesh
     QObject::connect( horizontalSliderColor , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueColor() ) ); // change the value of the color of one mesh
+    QObject::connect( horizontalSliderSmoothing , SIGNAL( sliderReleased() ) , this , SLOT( ChangeValueSmoothing() ) );
 
     QObject::connect( checkBoxSmoothing , SIGNAL( stateChanged(int) ) , this , SLOT( ApplySmoothing() ) );
+
+    QObject::connect( listWidgetLoadedMesh , SIGNAL( itemDoubleClicked( QListWidgetItem* ) ) , this , SLOT( ChangeMeshSelected() ) );
 
     QObject::connect( radioButtonAtoB , SIGNAL( clicked() ) , this , SLOT( ChangeValueChoice() ) ); // change the type of error computed
     QObject::connect( radioButtonBtoA , SIGNAL( clicked() ) , this , SLOT( ChangeValueChoice() ) );
@@ -52,14 +54,14 @@ void distanceGui::OpenBrowseWindow()
     }
 
     m_MeshList.push_back( ( lineEditLoad -> text() ).toStdString() );
-
     m_NumberOfMesh = m_MeshList.size();
 
+    listWidgetLoadedMesh -> addItem( ( lineEditLoad -> text() ).toStdString().c_str() );
+
     m_OpacityList.push_back( 1.0 );
-
     m_ColorList.push_back( 1.0 );
-
-    listWidgetLoadedMesh -> addItem( new QListWidgetItem( "blabla " ) );
+    m_NumberOfIterationList.push_back( 100 );
+    m_DoSmoothList.push_back( false );
 }
 
 void distanceGui::DisplayInit()
@@ -94,11 +96,15 @@ void distanceGui::DisplayReset()
 
     horizontalSliderColor -> setSliderPosition( horizontalSliderColor -> maximum() );
     horizontalSliderOpacity -> setSliderPosition( horizontalSliderOpacity -> maximum() );
+    horizontalSliderSmoothing -> setSliderPosition( horizontalSliderSmoothing -> minimum() );
+    checkBoxSmoothing -> setChecked( false );
 
     listWidgetLoadedMesh -> clear();
     m_MeshList.clear();
     m_OpacityList.clear();
     m_ColorList.clear();
+    m_NumberOfIterationList.clear();
+    m_DoSmoothList.clear();
 
     m_MyWindowMesh.windowUpdate();
 
@@ -115,15 +121,28 @@ void distanceGui::DisplayUpdateCamera()
     }
 }
 
+void distanceGui::DisplayUpdateSmoothing()
+{
+    std::cout << "in distanceGui : DisplayUpdateSmoothing " << std::endl;
+
+    if( m_NumberOfMesh > 0)
+    {
+        m_MyWindowMesh.updateSmoothing();
+        m_MyWindowMesh.windowUpdate();
+    }
+}
+
 
 void distanceGui::ChangeMeshSelected()
 {
    std::cout << "in distanceGui : ChangeMeshSelected " << std::endl;
 
-   int Row = listWidgetLoadedMesh -> row( listWidgetLoadedMesh -> selectedItems().at(0) );
+   m_MeshSelected = listWidgetLoadedMesh -> currentRow();
 
-   std::cout << " index de selection : " << Row << std::endl;
-
+   horizontalSliderColor -> setValue( m_ColorList[ m_MeshSelected ]*100 );
+   horizontalSliderOpacity -> setValue( m_OpacityList[ m_MeshSelected ]*100 );
+   horizontalSliderSmoothing -> setValue( m_NumberOfIterationList[ m_MeshSelected ] );
+   checkBoxSmoothing -> setChecked( m_DoSmoothList[ m_MeshSelected ] );
 }
 
 void distanceGui::ChangeValueOpacity()
@@ -149,6 +168,18 @@ void distanceGui::ChangeValueColor()
     m_MyWindowMesh.updateColor();
     m_MyWindowMesh.windowUpdate();
 
+}
+
+void distanceGui::ChangeValueSmoothing()
+{
+    std::cout << "in distanceGui : ChangeValueSmoothing " << std::endl;
+
+    m_NumberOfIterationList[ m_MeshSelected ] = horizontalSliderSmoothing -> value();
+
+    m_MyWindowMesh.setNumberOfIteration( m_MeshSelected , m_NumberOfIterationList[ m_MeshSelected ] );
+
+    m_MyWindowMesh.updateSmoothing();
+    m_MyWindowMesh.windowUpdate();
 }
 
 
@@ -236,12 +267,16 @@ void distanceGui::ApplySmoothing()
    std::cout << "in distanceGui : ApplySmoothing " << std::endl;
    if( checkBoxSmoothing -> isChecked() )
    {
-       m_Smoothing = true;
+       m_DoSmoothList[ m_MeshSelected ] = true;
+       m_MyWindowMesh.setSmoothing( m_MeshSelected , true );
    }
    else
    {
-       m_Smoothing = false;
+       m_DoSmoothList[ m_MeshSelected ] = false;
+       m_MyWindowMesh.setSmoothing( m_MeshSelected , false );
    }
+
+   DisplayUpdateSmoothing();
 }
 
 

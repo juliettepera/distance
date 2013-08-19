@@ -13,6 +13,8 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QTextBrowser>
+#include <QListWidgetItem>
+#include <QListWidget>
 
 // Other Libraries
 #include <string>
@@ -38,10 +40,12 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        void ChangeMeshSelected();
        void ChangeValueOpacity();
        void ChangeValueColor();
+       void ChangeValueSmoothing();
 
        void DisplayInit();
        void DisplayReset();
        void DisplayUpdateCamera();
+       void DisplayUpdateSmoothing();
 
        void buttonFrontClicked();
        void buttonBackClicked();
@@ -58,8 +62,11 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        int m_NumberOfMesh; // nb of mesh loaded
        int m_MeshSelected; // indice of the mesh selected
        std::vector <std::string> m_MeshList; // list of the mesh
+
        std::vector <double> m_OpacityList;
        std::vector <double> m_ColorList;
+       std::vector <double> m_NumberOfIterationList;
+       std::vector <bool> m_DoSmoothList;
 
        QVTKWidget *m_WidgetMesh; // widget to display the files
        meshQtDisplay m_MyWindowMesh; // object of the class meshQtDisplay
@@ -72,7 +79,6 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        double m_Color;
 
        int m_NumberOfDisplay; // number of time the display button is clicked
-       bool m_Smoothing; // do or not the smoothing
        int m_ChoiceOfError; // choice of witch type of error is computed
 
 

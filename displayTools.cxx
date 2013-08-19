@@ -13,6 +13,8 @@ displayTools::displayTools( int Indice )
     m_Red = 0.0;
     m_Green = 1.0 / double( m_Indice + 1 );
     m_Blue = 1.0;
+    m_Smoothing = false;
+    m_NumberOfIterationSmooth = 100;
 
 }
 
@@ -52,6 +54,16 @@ void displayTools::setColor( double Red , double Green , double Blue )
     m_Red = Red;
     m_Green = Green;
     m_Blue = Blue;
+}
+
+void displayTools::setSmoothing( bool Smoothing )
+{
+    m_Smoothing = Smoothing;
+}
+
+void displayTools::setNumberOfIterationSmooth( int Number )
+{
+    m_NumberOfIterationSmooth = Number;
 }
 
 // **********************************************************************
@@ -100,6 +112,16 @@ double displayTools::getBlue()
     return m_Blue;
 }
 
+bool displayTools::getSmoothing()
+{
+    return m_Smoothing;
+}
+
+int displayTools::getNumberOfIterationSmooth()
+{
+    return m_NumberOfIterationSmooth;
+}
+
 // **********************************************************************
 void displayTools::initialization()
 {
@@ -108,9 +130,16 @@ void displayTools::initialization()
 
     m_PolyData = m_Reader -> GetOutput();
 
-    m_Mapper -> SetInputData( m_PolyData );
+    m_Mapper -> SetInputConnection( m_Reader -> GetOutputPort() );
 
     m_Actor -> SetMapper( m_Mapper );
     m_Actor -> GetProperty() -> SetOpacity( m_Opacity );
     m_Actor -> GetProperty() -> SetColor( m_Red , m_Green , m_Blue );
 }
+
+void displayTools::changeInputPort( vtkAlgorithmOutput* Input)
+{
+    m_Mapper -> SetInputConnection( Input );
+    m_Actor -> SetMapper( m_Mapper );
+}
+

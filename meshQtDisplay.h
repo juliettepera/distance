@@ -37,33 +37,36 @@ class meshQtDisplay
         void setCameraZ( int z ); // accessor z value of the camera position
         void setSizeH( int Height ); // accessor to the height value of the window's size
         void setSizeW( int Width ); // accessor to the width value of the window's size
-        void setOpacity( int IndiceOfMesh , double Opacity ); // accessor to the opacity value of one mesh
-        void setColor(int IndiceOfMesh , double Red , double Green, double Blue); // accessor to the red value of one mesh
         void setMeshWidget( QVTKWidget *MeshWidget ); // set the widget
+
+        displayTools::displayTools getTool( int IndiceOfMesh );
+        QVTKWidget* getWidget();
 
         void createTools( int NumberOfMesh , std::vector <std::string> MeshList );
         void windowInit(); // itinialize the window
         void windowUpdate(); // update the window with the new camera position or parameters
         void windowClear();
+        void updatePositionCamera(); // set the new position of the camera
+
+        void setOpacity( int IndiceOfMesh , double Opacity ); // accessor to the opacity value of one mesh
+        void setColor(int IndiceOfMesh , double Red , double Green, double Blue); // accessor to the red value of one mesh
+        void setSmoothing( int IndiceOfMesh , bool Smooth );
+        void setNumberOfIteration( int IndiceOfMesh , int Number );
 
         void updateOpacity(); // update the opacity of mesh
         void updateColor(); // update the color of the mesh
-        void updatePositionCamera(); // set the new position of the camera
+        void updateSmoothing(); // apply or not the smoothing on one mesh
+        void smooth( int IndiceOfMesh );
 
     private:
         QVTKWidget *m_MeshWidget;
 
         int m_NumberOfMesh; // nb of mesh loaded
-        std::vector <std::string> m_MeshList; // list of the mesh
-
         std::vector <displayTools::displayTools> m_ToolList;
 
         vtkSmartPointer <vtkRenderer> m_Renderer; // renderer
         vtkSmartPointer <vtkRenderWindow> m_RenderWindow; // renderWindow
         vtkSmartPointer <vtkCamera> m_Camera; // camera
-        vtkSmartPointer <vtkSmoothPolyDataFilter> m_SmoothFilter;
-        vtkSmartPointer <vtkPolyDataWriter> m_Writer;
-
 
         int m_SizeH; // height size of the window
         int m_SizeW; // width size of the window
@@ -71,6 +74,8 @@ class meshQtDisplay
         int m_CameraY; // y position of the camera
         int m_CameraZ; // z position of the camera
 
+        vtkSmartPointer <vtkSmoothPolyDataFilter> m_SmoothFilter;
+        vtkSmartPointer <vtkPolyDataWriter> m_Writer;
 };
 
 #endif

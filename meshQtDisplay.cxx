@@ -14,7 +14,7 @@ meshQtDisplay::meshQtDisplay() // constructor
     m_CameraX = 0 ; m_CameraY = 1 ; m_CameraZ = 0;
 }
 
-
+// **********************************************************************
 void meshQtDisplay::setCameraX( int x )
 {
     m_CameraX = x;
@@ -40,25 +40,23 @@ void meshQtDisplay::setSizeW( int Width )
     m_SizeW = Width;
 }
 
-void meshQtDisplay::setOpacity( int IndiceOfMesh , double Opacity )
-{
-    std::cout << "in meshQtDisplay : setOpacity " << std::endl;
-    m_ToolList[ IndiceOfMesh ].setOpacity( Opacity );
-}
-
-void meshQtDisplay::setColor( int IndiceOfMesh , double Red , double Green , double Blue )
-{
-    m_ToolList[ IndiceOfMesh ].setColor( Red , Green , Blue );
-}
-
 void meshQtDisplay::setMeshWidget( QVTKWidget *MeshWidget )
 {
-    std::cout << "in meshQtDisplay : setMeshWidget " << std::endl;
-
     m_MeshWidget = MeshWidget;
 }
 
+// **********************************************************************
+displayTools::displayTools meshQtDisplay::getTool( int IndiceOfMesh )
+{
+    return m_ToolList[ IndiceOfMesh ];
+}
 
+QVTKWidget* meshQtDisplay::getWidget()
+{
+    return m_MeshWidget;
+}
+
+// **********************************************************************
 void meshQtDisplay::createTools( int NumberOfMesh , std::vector <std::string> MeshList )
 {
     m_NumberOfMesh = NumberOfMesh;
@@ -121,9 +119,45 @@ void meshQtDisplay::windowClear()
     }
 
     m_ToolList.clear();
+    m_NumberOfMesh = 0;
 }
 
+void meshQtDisplay::updatePositionCamera()
+{
+    std::cout << "in meshQtDisplay : updatePositionCamera " << std::endl;
 
+    m_Renderer -> ResetCamera();
+
+    double *focalPoint  = m_Camera -> GetFocalPoint();
+    double distance = m_Camera -> GetDistance();
+
+    m_Camera -> SetPosition( focalPoint[0] + m_CameraX*distance , focalPoint[1] + m_CameraY*distance , focalPoint[2]+ m_CameraZ*distance );
+    m_Camera -> SetRoll(.001);
+}
+
+// **********************************************************************
+void meshQtDisplay::setOpacity( int IndiceOfMesh , double Opacity )
+{
+    std::cout << "in meshQtDisplay : setOpacity " << std::endl;
+    m_ToolList[ IndiceOfMesh ].setOpacity( Opacity );
+}
+
+void meshQtDisplay::setColor( int IndiceOfMesh , double Red , double Green , double Blue )
+{
+    m_ToolList[ IndiceOfMesh ].setColor( Red , Green , Blue );
+}
+
+void meshQtDisplay::setSmoothing( int IndiceOfMesh , bool Smooth )
+{
+    m_ToolList[ IndiceOfMesh ].setSmoothing( Smooth );
+}
+
+void meshQtDisplay::setNumberOfIteration( int IndiceOfMesh , int Number )
+{
+    m_ToolList[ IndiceOfMesh ].setNumberOfIterationSmooth( Number );
+}
+
+// **********************************************************************
 void meshQtDisplay::updateOpacity()
 {
     std::cout << "in meshQtDisplay : updateOpacity " << std::endl;
@@ -146,34 +180,37 @@ void meshQtDisplay::updateColor()
     }
 }
 
-void meshQtDisplay::updatePositionCamera()
+
+void meshQtDisplay::updateSmoothing()
 {
-    std::cout << "in meshQtDisplay : updatePositionCamera " << std::endl;
+    std::cout << "in meshQtDisplay : updateSmoothing " << std::endl;
 
-    m_Renderer -> ResetCamera();
-
-    double *focalPoint  = m_Camera -> GetFocalPoint();
-    double distance = m_Camera -> GetDistance();
-
-    m_Camera -> SetPosition( focalPoint[0] + m_CameraX*distance , focalPoint[1] + m_CameraY*distance , focalPoint[2]+ m_CameraZ*distance );
-    m_Camera -> SetRoll(.001);
-}
-
-
-/*void meshQtDisplay::updateIteration()
-{
-    std::cout << "in meshQtDisplay : updateIteration " << std::endl;
     int IndiceOfMesh;
+
     for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh++ )
     {
-        m_SmoothFilter -> SetInputData( m_PolyDataList[ IndiceOfMesh ] );
-        m_PolyDataList[ IndiceOfMesh ] = m_SmoothFilter ->GetOutput();
-        m_SmoothFilter -> SetNumberOfIterations( m_IterationList[ IndiceOfMesh ] );
-        m_SmoothFilter -> Update();
+        m_Renderer -> RemoveActor( m_ToolList[ IndiceOfMesh ].getActor() );
 
-        m_MapperList[ IndiceOfMesh ] -> SetInputData( m_PolyDataList[ IndiceOfMesh ] );
-        m_ActorList[ IndiceOfMesh ] -> SetMapper( m_MapperList[ IndiceOfMesh ] );
-        m_Renderer -> AddActor( m_ActorList[ IndiceOfMesh ] );
+        if( m_ToolList[ IndiceOfMesh ].getSmoothing() == true )
+        {
+            smooth( IndiceOfMesh );
+            m_ToolList[ IndiceOfMesh ].changeInputPort( m_SmoothFilter -> GetOutputPort() );
+        }
+        else
+        {
+            m_ToolList[ IndiceOfMesh ].changeInputPort( m_ToolList[ IndiceOfMesh ].getReader() -> GetOutputPort() );
+        }
 
+        m_Renderer -> AddActor( m_ToolList[ IndiceOfMesh ].getActor() );
     }
-}*/
+}
+
+void meshQtDisplay::smooth( int IndiceOfMesh )
+{
+    std::cout << "in meshQtDisplay : smooth " << std::endl;
+
+    m_SmoothFilter -> SetInputConnection( m_ToolList[ IndiceOfMesh ].getReader() -> GetOutputPort() );
+    m_SmoothFilter -> SetNumberOfIterations( m_ToolList[ IndiceOfMesh ].getNumberOfIterationSmooth() );
+    m_SmoothFilter -> Update();
+}
+

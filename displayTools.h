@@ -2,19 +2,14 @@
 #define DISPLAYTOOLS_H
 
 // VTK libraries
-#include <QVTKWidget.h>
 #include <vtkSmartPointer.h>
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h>
 #include <vtkPolyData.h>
 #include <vtkProperty.h>
 #include <vtkCamera.h>
 #include <vtkSmoothPolyDataFilter.h>
-#include <vtkPolyDataWriter.h>
 
 // Other Libraries
 #include <string>
@@ -34,6 +29,8 @@ class displayTools
         void setPolyData( vtkSmartPointer <vtkPolyData> PolyData );
         void setOpacity( double Opacity );
         void setColor( double Red , double Green , double Blue );
+        void setSmoothing( bool Smoothing );
+        void setNumberOfIterationSmooth( int Number );
 
         std::string getName();
         vtkSmartPointer <vtkPolyDataReader> getReader();
@@ -44,8 +41,11 @@ class displayTools
         double getRed();
         double getBlue();
         double getGreen();
+        bool getSmoothing();
+        int getNumberOfIterationSmooth();
 
         void initialization();
+        void changeInputPort( vtkAlgorithmOutput* Input);
 
     private:
 
@@ -61,6 +61,8 @@ class displayTools
         double m_Red;
         double m_Blue;
         double m_Green;
+        bool m_Smoothing;
+        int m_NumberOfIterationSmooth;
 
 };
 
