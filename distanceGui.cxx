@@ -38,14 +38,15 @@ distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  ): QMainWindow(parent,
     QObject::connect( radioButtonBtoA , SIGNAL( clicked() ) , this , SLOT( ChangeValueChoice() ) );
     QObject::connect( radioButtonBoth , SIGNAL( clicked() ) , this , SLOT( ChangeValueChoice() ) );
 
-
+    DisableDisplay( true );
+    DisableParameters( true );
+    DisableCamera( true );
+    DisableDistance( true );
                                                                               
 }
 
 void distanceGui::OpenBrowseWindow()
 {
-    std::cout << "in distanceGui : OpenBrowseWindow " << std::endl;
-
     QString browseMesh = QFileDialog::getOpenFileName( this , "Open a VTK file" , QString() , "vtk mesh (*.vtk)" );
 
     if( !browseMesh.isEmpty() )
@@ -62,16 +63,20 @@ void distanceGui::OpenBrowseWindow()
     m_ColorList.push_back( 1.0 );
     m_NumberOfIterationList.push_back( 100 );
     m_DoSmoothList.push_back( false );
+
+    DisableDisplay( false );
 }
 
 void distanceGui::DisplayInit()
 {
-    std::cout << "in distanceGui : DisplayInit " << std::endl;
-
     if( m_NumberOfDisplay > 0 )
     {
-        std::cout << " clearing  : " << m_NumberOfDisplay << std::endl;
         m_MyWindowMesh.windowClear();
+
+        horizontalSliderColor -> setSliderPosition( horizontalSliderColor -> maximum() );
+        horizontalSliderOpacity -> setSliderPosition( horizontalSliderOpacity -> maximum() );
+        horizontalSliderSmoothing -> setSliderPosition( horizontalSliderSmoothing -> minimum() );
+        checkBoxSmoothing -> setChecked( false );
     }
     else
     {
@@ -83,12 +88,17 @@ void distanceGui::DisplayInit()
     m_MyWindowMesh.windowUpdate();
 
     m_NumberOfDisplay++;
+
+    DisableCamera( false );
+
+    if( m_NumberOfMesh >= 2 )
+    {
+        DisableDistance( false );
+    }
 }
 
 void distanceGui::DisplayReset()
 {
-    std::cout << "in distanceGui : DisplayReset " << std::endl;
-
     m_MyWindowMesh.windowClear();
 
     m_NumberOfDisplay = 0;
@@ -108,47 +118,32 @@ void distanceGui::DisplayReset()
 
     m_MyWindowMesh.windowUpdate();
 
+    DisableCamera( true );
+    DisableDisplay( true );
+    DisableDistance( true );
+    DisableParameters( true );
 }
 
 void distanceGui::DisplayUpdateCamera()
 {
-    std::cout << "in distanceGui : DistanceUpdateCamera " << std::endl;
-
-    if( m_NumberOfMesh > 0)
-    {
-        m_MyWindowMesh.updatePositionCamera();
-        m_MyWindowMesh.windowUpdate();
-    }
+    m_MyWindowMesh.updatePositionCamera();
+    m_MyWindowMesh.windowUpdate();
 }
-
-void distanceGui::DisplayUpdateSmoothing()
-{
-    std::cout << "in distanceGui : DisplayUpdateSmoothing " << std::endl;
-
-    if( m_NumberOfMesh > 0)
-    {
-        m_MyWindowMesh.updateSmoothing();
-        m_MyWindowMesh.windowUpdate();
-    }
-}
-
 
 void distanceGui::ChangeMeshSelected()
 {
-   std::cout << "in distanceGui : ChangeMeshSelected " << std::endl;
-
    m_MeshSelected = listWidgetLoadedMesh -> currentRow();
 
    horizontalSliderColor -> setValue( m_ColorList[ m_MeshSelected ]*100 );
    horizontalSliderOpacity -> setValue( m_OpacityList[ m_MeshSelected ]*100 );
    horizontalSliderSmoothing -> setValue( m_NumberOfIterationList[ m_MeshSelected ] );
    checkBoxSmoothing -> setChecked( m_DoSmoothList[ m_MeshSelected ] );
+
+   DisableParameters( false );
 }
 
 void distanceGui::ChangeValueOpacity()
 {
-    std::cout << "in distanceGui : ChangeValueOpacity " << std::endl;
-
     m_OpacityList[ m_MeshSelected ] = horizontalSliderOpacity -> value()/100.;
 
     m_MyWindowMesh.setOpacity( m_MeshSelected , m_OpacityList[ m_MeshSelected ] );
@@ -159,11 +154,9 @@ void distanceGui::ChangeValueOpacity()
 
 void distanceGui::ChangeValueColor()
 {
-    std::cout << "in distanceGui : ChangeValueColor " << std::endl;
-
     m_ColorList[ m_MeshSelected ] = horizontalSliderColor -> value()/100.;
 
-    m_MyWindowMesh.setColor( m_MeshSelected , 0.0 , 1.0 , m_ColorList[ m_MeshSelected ] );
+    m_MyWindowMesh.setColor( m_MeshSelected , ( 1.0 - m_ColorList[ m_MeshSelected ] ) , 1.0 , m_ColorList[ m_MeshSelected ] );
 
     m_MyWindowMesh.updateColor();
     m_MyWindowMesh.windowUpdate();
@@ -172,21 +165,34 @@ void distanceGui::ChangeValueColor()
 
 void distanceGui::ChangeValueSmoothing()
 {
-    std::cout << "in distanceGui : ChangeValueSmoothing " << std::endl;
-
     m_NumberOfIterationList[ m_MeshSelected ] = horizontalSliderSmoothing -> value();
-
     m_MyWindowMesh.setNumberOfIteration( m_MeshSelected , m_NumberOfIterationList[ m_MeshSelected ] );
 
-    m_MyWindowMesh.updateSmoothing();
-    m_MyWindowMesh.windowUpdate();
+    if( m_DoSmoothList[ m_MeshSelected ] == true )
+    {
+        m_MyWindowMesh.updateSmoothing();
+        m_MyWindowMesh.windowUpdate();
+    }
 }
 
+void distanceGui::ApplySmoothing()
+{
+   if( checkBoxSmoothing -> isChecked() )
+   {
+       m_DoSmoothList[ m_MeshSelected ] = true;
+   }
+   else
+   {
+       m_DoSmoothList[ m_MeshSelected ] = false;
+   }
+   m_MyWindowMesh.setSmoothing( m_MeshSelected , m_DoSmoothList[ m_MeshSelected ] );
+
+   m_MyWindowMesh.updateSmoothing();
+   m_MyWindowMesh.windowUpdate();
+}
 
 void distanceGui::buttonUpClicked()
 {
-    std::cout << "in distanceGui : Up " << std::endl;
-
     m_CameraX = 0 ; m_CameraY = 0 ; m_CameraZ = 1;
 
     m_MyWindowMesh.setCameraX( m_CameraX );
@@ -198,8 +204,6 @@ void distanceGui::buttonUpClicked()
 
 void distanceGui::buttonDownClicked()
 {
-    std::cout << "in distanceGui : Down " << std::endl;
-
     m_CameraX = 0 ; m_CameraY = 0 ; m_CameraZ = -1;
 
     m_MyWindowMesh.setCameraX( m_CameraX );
@@ -211,8 +215,6 @@ void distanceGui::buttonDownClicked()
 
 void distanceGui::buttonRightClicked()
 {
-    std::cout << "in distanceGui : Right " << std::endl;
-
     m_CameraX = 1 ; m_CameraY = 0 ; m_CameraZ = 0;
 
     m_MyWindowMesh.setCameraX( m_CameraX );
@@ -224,8 +226,6 @@ void distanceGui::buttonRightClicked()
 
 void distanceGui::buttonLeftClicked()
 {
-    std::cout << "in distanceGui : Left " << std::endl;
-
     m_CameraX = -1 ; m_CameraY = 0 ; m_CameraZ = 0;
 
     m_MyWindowMesh.setCameraX( m_CameraX );
@@ -237,8 +237,6 @@ void distanceGui::buttonLeftClicked()
 
 void distanceGui::buttonBackClicked()
 {
-    std::cout << "in distanceGui : Back " << std::endl;
-
     m_CameraX = 0 ; m_CameraY = -1 ; m_CameraZ = 0;
 
     m_MyWindowMesh.setCameraX( m_CameraX );
@@ -250,8 +248,6 @@ void distanceGui::buttonBackClicked()
 
 void distanceGui::buttonFrontClicked()
 {
-    std::cout << "in distanceGui : Front " << std::endl;
-
     m_CameraX = 0 ; m_CameraY = 1 ; m_CameraZ = 0;
 
     m_MyWindowMesh.setCameraX( m_CameraX );
@@ -261,29 +257,8 @@ void distanceGui::buttonFrontClicked()
     DisplayUpdateCamera();
 }
 
-
-void distanceGui::ApplySmoothing()
-{
-   std::cout << "in distanceGui : ApplySmoothing " << std::endl;
-   if( checkBoxSmoothing -> isChecked() )
-   {
-       m_DoSmoothList[ m_MeshSelected ] = true;
-       m_MyWindowMesh.setSmoothing( m_MeshSelected , true );
-   }
-   else
-   {
-       m_DoSmoothList[ m_MeshSelected ] = false;
-       m_MyWindowMesh.setSmoothing( m_MeshSelected , false );
-   }
-
-   DisplayUpdateSmoothing();
-}
-
-
 void distanceGui::ChangeValueChoice()
 {
-    std::cout << "in distanceGui : ChangeValueChoice " << std::endl;
-
     if( this -> radioButtonAtoB -> isChecked() )
     {
         m_ChoiceOfError = 1;
@@ -300,8 +275,6 @@ void distanceGui::ChangeValueChoice()
 
 void distanceGui::ApplyDistance()
 {
-    std::cout << "in distanceGui : ApplyDistance " << std::endl;
-
     switch( m_ChoiceOfError )
     {
         case 0:
@@ -322,6 +295,40 @@ void distanceGui::ApplyDistance()
     }
 }
 
+void distanceGui::DisableDisplay( bool EnableOrNot )
+{
+    pushButtonDisplay -> setDisabled( EnableOrNot );
+    pushButtonReset -> setDisabled( EnableOrNot );
+}
 
+void distanceGui::DisableParameters( bool EnableOrNot)
+{
+    horizontalSliderColor -> setDisabled( EnableOrNot );
+    horizontalSliderOpacity -> setDisabled( EnableOrNot );
+    horizontalSliderSmoothing -> setDisabled( EnableOrNot );
+    checkBoxSmoothing -> setDisabled( EnableOrNot );
+}
+
+void distanceGui::DisableCamera( bool EnableOrNot )
+{
+    pushButtonUp -> setDisabled( EnableOrNot );
+    pushButtonDown -> setDisabled( EnableOrNot );
+    pushButtonRight -> setDisabled( EnableOrNot );
+    pushButtonLeft -> setDisabled( EnableOrNot );
+    pushButtonFront -> setDisabled( EnableOrNot );
+    pushButtonBack -> setDisabled( EnableOrNot );
+}
+
+void distanceGui::DisableDistance( bool EnableOrNot )
+{
+    comboBoxMeshA -> setDisabled( EnableOrNot );
+    comboBoxMeshB -> setDisabled( EnableOrNot );
+    radioButtonAtoB -> setDisabled( EnableOrNot );
+    radioButtonBtoA -> setDisabled( EnableOrNot );
+    radioButtonBoth -> setDisabled( EnableOrNot );
+    doubleSpinBoxMinSampFreq -> setDisabled( EnableOrNot );
+    doubleSpinBoxSampStep -> setDisabled( EnableOrNot );
+    pushButtonApply -> setDisabled( EnableOrNot );
+}
 
 

@@ -45,7 +45,6 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        void DisplayInit();
        void DisplayReset();
        void DisplayUpdateCamera();
-       void DisplayUpdateSmoothing();
 
        void buttonFrontClicked();
        void buttonBackClicked();
@@ -56,30 +55,35 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
 
        void ApplyDistance();
        void ApplySmoothing();
+
+       void DisableDisplay( bool EnableOrNot );
+       void DisableParameters( bool EnableOrNot );
+       void DisableCamera( bool EnableOrNot );
+       void DisableDistance( bool EnableOrNot );
             
    private:
 
-       int m_NumberOfMesh; // nb of mesh loaded
-       int m_MeshSelected; // indice of the mesh selected
-       std::vector <std::string> m_MeshList; // list of the mesh
+       int m_NumberOfMesh;
+       int m_MeshSelected;
+       std::vector <std::string> m_MeshList;
 
        std::vector <double> m_OpacityList;
        std::vector <double> m_ColorList;
        std::vector <double> m_NumberOfIterationList;
        std::vector <bool> m_DoSmoothList;
 
-       QVTKWidget *m_WidgetMesh; // widget to display the files
-       meshQtDisplay m_MyWindowMesh; // object of the class meshQtDisplay
+       QVTKWidget *m_WidgetMesh;
+       meshQtDisplay m_MyWindowMesh;
 
-       int m_CameraX; // x position of the camera
-       int m_CameraY; // y position of the camera
-       int m_CameraZ; // z position of the camera
+       int m_CameraX;
+       int m_CameraY;
+       int m_CameraZ;
 
-       double m_Opacity; // list of the opacity parameter for each mesh
+       double m_Opacity;
        double m_Color;
 
-       int m_NumberOfDisplay; // number of time the display button is clicked
-       int m_ChoiceOfError; // choice of witch type of error is computed
+       int m_NumberOfDisplay;
+       int m_ChoiceOfError;
 
 
 };

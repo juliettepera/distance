@@ -9,7 +9,6 @@
 #include <vtkPolyData.h>
 #include <vtkProperty.h>
 #include <vtkCamera.h>
-#include <vtkSmoothPolyDataFilter.h>
 
 // Other Libraries
 #include <string>

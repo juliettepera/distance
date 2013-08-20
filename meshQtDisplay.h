@@ -3,23 +3,10 @@
 
 // VTK libraries
 #include <QVTKWidget.h>
-#include <vtkSmartPointer.h>
-#include <vtkPolyDataReader.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkActor.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkPolyData.h>
-#include <vtkProperty.h>
-#include <vtkCamera.h>
 #include <vtkSmoothPolyDataFilter.h>
 #include <vtkPolyDataWriter.h>
-
-// Other Libraries
-#include <string>
-#include <iostream>
-#include <vector>
 
 // Qt libraries
 #include <qwidget.h>
@@ -30,49 +17,49 @@
 class meshQtDisplay
 {
     public:
-        meshQtDisplay(); // constructor
+        meshQtDisplay();
 
-        void setCameraX( int x ); // accessor x value of the camera position
-        void setCameraY( int y ); // accessor y value of the camera position
-        void setCameraZ( int z ); // accessor z value of the camera position
-        void setSizeH( int Height ); // accessor to the height value of the window's size
-        void setSizeW( int Width ); // accessor to the width value of the window's size
-        void setMeshWidget( QVTKWidget *MeshWidget ); // set the widget
+        void setCameraX( int x );
+        void setCameraY( int y );
+        void setCameraZ( int z );
+        void setSizeH( int Height );
+        void setSizeW( int Width );
+        void setMeshWidget( QVTKWidget *MeshWidget );
 
         displayTools::displayTools getTool( int IndiceOfMesh );
         QVTKWidget* getWidget();
 
         void createTools( int NumberOfMesh , std::vector <std::string> MeshList );
-        void windowInit(); // itinialize the window
-        void windowUpdate(); // update the window with the new camera position or parameters
+        void windowInit();
+        void windowUpdate();
         void windowClear();
-        void updatePositionCamera(); // set the new position of the camera
+        void updatePositionCamera();
 
-        void setOpacity( int IndiceOfMesh , double Opacity ); // accessor to the opacity value of one mesh
-        void setColor(int IndiceOfMesh , double Red , double Green, double Blue); // accessor to the red value of one mesh
+        void setOpacity( int IndiceOfMesh , double Opacity );
+        void setColor(int IndiceOfMesh , double Red , double Green, double Blue);
         void setSmoothing( int IndiceOfMesh , bool Smooth );
         void setNumberOfIteration( int IndiceOfMesh , int Number );
 
-        void updateOpacity(); // update the opacity of mesh
-        void updateColor(); // update the color of the mesh
-        void updateSmoothing(); // apply or not the smoothing on one mesh
+        void updateOpacity();
+        void updateColor();
+        void updateSmoothing();
         void smooth( int IndiceOfMesh );
 
     private:
         QVTKWidget *m_MeshWidget;
 
-        int m_NumberOfMesh; // nb of mesh loaded
+        int m_NumberOfMesh;
         std::vector <displayTools::displayTools> m_ToolList;
 
-        vtkSmartPointer <vtkRenderer> m_Renderer; // renderer
-        vtkSmartPointer <vtkRenderWindow> m_RenderWindow; // renderWindow
-        vtkSmartPointer <vtkCamera> m_Camera; // camera
+        vtkSmartPointer <vtkRenderer> m_Renderer;
+        vtkSmartPointer <vtkRenderWindow> m_RenderWindow;
+        vtkSmartPointer <vtkCamera> m_Camera;
 
-        int m_SizeH; // height size of the window
-        int m_SizeW; // width size of the window
-        int m_CameraX; // x position of the camera
-        int m_CameraY; // y position of the camera
-        int m_CameraZ; // z position of the camera
+        int m_SizeH;
+        int m_SizeW;
+        int m_CameraX;
+        int m_CameraY;
+        int m_CameraZ;
 
         vtkSmartPointer <vtkSmoothPolyDataFilter> m_SmoothFilter;
         vtkSmartPointer <vtkPolyDataWriter> m_Writer;
