@@ -14,27 +14,30 @@ distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  ): QMainWindow(parent,
     m_WidgetMesh = new QVTKWidget( this -> scrollAreaMesh );
 
     // connections
-    QObject::connect( pushButtonLoad , SIGNAL( clicked() ) , this , SLOT( OpenBrowseWindow() ) ); // load a new mesh
-    QObject::connect( pushButtonDisplay , SIGNAL( clicked() ) , this , SLOT( DisplayInit() ) ); // initialize the display
-    QObject::connect( pushButtonFront , SIGNAL( clicked() ) , this , SLOT( buttonFrontClicked() ) ); // set the position of the camera
+    QObject::connect( pushButtonLoad , SIGNAL( clicked() ) , this , SLOT( OpenBrowseWindow() ) );
+    QObject::connect( pushButtonDisplay , SIGNAL( clicked() ) , this , SLOT( DisplayInit() ) );
+    QObject::connect( pushButtonFront , SIGNAL( clicked() ) , this , SLOT( buttonFrontClicked() ) );
     QObject::connect( pushButtonBack , SIGNAL( clicked() ) , this , SLOT( buttonBackClicked() ) );
     QObject::connect( pushButtonRight , SIGNAL( clicked() ) , this , SLOT( buttonRightClicked() ) );
     QObject::connect( pushButtonLeft , SIGNAL( clicked() ) , this , SLOT( buttonLeftClicked() ) );
     QObject::connect( pushButtonUp , SIGNAL( clicked() ) , this , SLOT( buttonUpClicked() ) );
     QObject::connect( pushButtonDown , SIGNAL( clicked() ) , this , SLOT( buttonDownClicked() ) );
-    QObject::connect( pushButtonApply , SIGNAL( clicked() ) , this , SLOT( ApplyDistance() ) ); // compute the distance error
-    QObject::connect( pushButtonReset , SIGNAL( clicked() ) , this , SLOT( DisplayReset() ) ); // reset the window
-    QObject::connect( pushButtonQuit , SIGNAL( clicked() ) , qApp , SLOT( quit() ) ); // quit the application
+    QObject::connect( pushButtonApply , SIGNAL( clicked() ) , this , SLOT( ApplyDistance() ) );
+    QObject::connect( pushButtonDelete , SIGNAL( clicked() ) , this , SLOT( DisplayReset() ) );
+    QObject::connect( pushButtonHide , SIGNAL( clicked() ) , this , SLOT( HideOne() ) );
+    QObject::connect( pushButtonQuit , SIGNAL( clicked() ) , qApp , SLOT( quit() ) );
+    QObject::connect( pushButtonRefresh , SIGNAL( clicked() ) , this , SLOT( ApplySmoothing() ) );
 
-    QObject::connect( horizontalSliderOpacity , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueOpacity() ) ); // change the value of the opacity of one mesh
-    QObject::connect( horizontalSliderColor , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueColor() ) ); // change the value of the color of one mesh
-    QObject::connect( horizontalSliderSmoothing , SIGNAL( sliderReleased() ) , this , SLOT( ChangeValueSmoothing() ) );
+    QObject::connect( horizontalSliderOpacity , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueOpacity() ) );
+    QObject::connect( horizontalSliderColor , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueColor() ) );
 
-    QObject::connect( checkBoxSmoothing , SIGNAL( stateChanged(int) ) , this , SLOT( ApplySmoothing() ) );
+    QObject::connect( spinBoxSmoothing , SIGNAL( valueChanged( int ) ) , this , SLOT( ChangeValueSmoothing() ) );
 
-    QObject::connect( listWidgetLoadedMesh , SIGNAL( itemDoubleClicked( QListWidgetItem* ) ) , this , SLOT( ChangeMeshSelected() ) );
+    QObject::connect( checkBoxSmoothing , SIGNAL( stateChanged( int ) ) , this , SLOT( DisableAll() ) );
 
-    QObject::connect( radioButtonAtoB , SIGNAL( clicked() ) , this , SLOT( ChangeValueChoice() ) ); // change the type of error computed
+    QObject::connect( listWidgetLoadedMesh , SIGNAL( itemClicked( QListWidgetItem* ) ) , this , SLOT( ChangeMeshSelected() ) );
+
+    QObject::connect( radioButtonAtoB , SIGNAL( clicked() ) , this , SLOT( ChangeValueChoice() ) );
     QObject::connect( radioButtonBtoA , SIGNAL( clicked() ) , this , SLOT( ChangeValueChoice() ) );
     QObject::connect( radioButtonBoth , SIGNAL( clicked() ) , this , SLOT( ChangeValueChoice() ) );
 
@@ -53,18 +56,23 @@ void distanceGui::OpenBrowseWindow()
     {
       lineEditLoad -> setText( browseMesh );
     }
+    if( !lineEditLoad->text().isEmpty() )
+    {
+        m_MeshList.push_back( ( lineEditLoad -> text() ).toStdString() );
+        m_NumberOfMesh = m_MeshList.size();
 
-    m_MeshList.push_back( ( lineEditLoad -> text() ).toStdString() );
-    m_NumberOfMesh = m_MeshList.size();
+        listWidgetLoadedMesh -> addItem( ( lineEditLoad -> text() ).toStdString().c_str() );
 
-    listWidgetLoadedMesh -> addItem( ( lineEditLoad -> text() ).toStdString().c_str() );
+        m_OpacityList.push_back( 1.0 );
+        m_ColorList.push_back( 1.0 );
+        m_NumberOfIterationList.push_back( 100 );
+        m_DoSmoothList.push_back( false );
+    }
+        DisableDisplay( false );
+        pushButtonHide -> setDisabled( true );
 
-    m_OpacityList.push_back( 1.0 );
-    m_ColorList.push_back( 1.0 );
-    m_NumberOfIterationList.push_back( 100 );
-    m_DoSmoothList.push_back( false );
-
-    DisableDisplay( false );
+    browseMesh.clear();
+    lineEditLoad->clear();
 }
 
 void distanceGui::DisplayInit()
@@ -74,12 +82,20 @@ void distanceGui::DisplayInit()
         m_MyWindowMesh.windowClear();
 
         horizontalSliderColor -> setSliderPosition( horizontalSliderColor -> maximum() );
+        lcdNumberColor -> display( horizontalSliderColor -> maximum()  );
+
         horizontalSliderOpacity -> setSliderPosition( horizontalSliderOpacity -> maximum() );
-        horizontalSliderSmoothing -> setSliderPosition( horizontalSliderSmoothing -> minimum() );
+        lcdNumberOpacity -> display( horizontalSliderOpacity -> maximum()  );
+
+        spinBoxSmoothing -> setValue( spinBoxSmoothing -> maximum() );
         checkBoxSmoothing -> setChecked( false );
     }
     else
     {
+        std::cout << " height " << scrollAreaMesh -> height() << std::endl;
+        std::cout << " width " << scrollAreaMesh -> width() << std::endl;
+        m_MyWindowMesh.setSizeH(  scrollAreaMesh -> height()  );
+        m_MyWindowMesh.setSizeW( scrollAreaMesh -> width() );
         m_MyWindowMesh.setMeshWidget( m_WidgetMesh );
     }
 
@@ -95,6 +111,10 @@ void distanceGui::DisplayInit()
     {
         DisableDistance( false );
     }
+
+    DisableDisplay( false );
+    pushButtonHide -> setDisabled( true );
+    DisableParameters( true );
 }
 
 void distanceGui::DisplayReset()
@@ -105,8 +125,12 @@ void distanceGui::DisplayReset()
     m_NumberOfMesh = 0;
 
     horizontalSliderColor -> setSliderPosition( horizontalSliderColor -> maximum() );
+    lcdNumberColor -> display( horizontalSliderColor -> maximum()  );
+
     horizontalSliderOpacity -> setSliderPosition( horizontalSliderOpacity -> maximum() );
-    horizontalSliderSmoothing -> setSliderPosition( horizontalSliderSmoothing -> minimum() );
+    lcdNumberOpacity -> display( horizontalSliderOpacity -> maximum()  );
+
+    spinBoxSmoothing -> setValue( spinBoxSmoothing -> maximum() );
     checkBoxSmoothing -> setChecked( false );
 
     listWidgetLoadedMesh -> clear();
@@ -124,6 +148,14 @@ void distanceGui::DisplayReset()
     DisableParameters( true );
 }
 
+void distanceGui::HideOne()
+{
+    std::cout << " deleteTool " << std::endl;
+    m_MyWindowMesh.hideOne( m_MeshSelected );
+    m_MyWindowMesh.windowUpdate();
+
+}
+
 void distanceGui::DisplayUpdateCamera()
 {
     m_MyWindowMesh.updatePositionCamera();
@@ -135,16 +167,22 @@ void distanceGui::ChangeMeshSelected()
    m_MeshSelected = listWidgetLoadedMesh -> currentRow();
 
    horizontalSliderColor -> setValue( m_ColorList[ m_MeshSelected ]*100 );
+   lcdNumberColor -> display( m_ColorList[ m_MeshSelected ] );
+
    horizontalSliderOpacity -> setValue( m_OpacityList[ m_MeshSelected ]*100 );
-   horizontalSliderSmoothing -> setValue( m_NumberOfIterationList[ m_MeshSelected ] );
+   lcdNumberOpacity -> display( m_OpacityList[ m_MeshSelected ] );
+
+   spinBoxSmoothing -> setValue( m_NumberOfIterationList[ m_MeshSelected ] );
    checkBoxSmoothing -> setChecked( m_DoSmoothList[ m_MeshSelected ] );
 
    DisableParameters( false );
+   pushButtonHide -> setDisabled( false );
 }
 
 void distanceGui::ChangeValueOpacity()
 {
     m_OpacityList[ m_MeshSelected ] = horizontalSliderOpacity -> value()/100.;
+    lcdNumberOpacity -> display( m_OpacityList[ m_MeshSelected ] );
 
     m_MyWindowMesh.setOpacity( m_MeshSelected , m_OpacityList[ m_MeshSelected ] );
 
@@ -155,24 +193,27 @@ void distanceGui::ChangeValueOpacity()
 void distanceGui::ChangeValueColor()
 {
     m_ColorList[ m_MeshSelected ] = horizontalSliderColor -> value()/100.;
+    lcdNumberColor -> display( m_ColorList[ m_MeshSelected ] );
 
     m_MyWindowMesh.setColor( m_MeshSelected , ( 1.0 - m_ColorList[ m_MeshSelected ] ) , 1.0 , m_ColorList[ m_MeshSelected ] );
 
     m_MyWindowMesh.updateColor();
     m_MyWindowMesh.windowUpdate();
-
 }
 
 void distanceGui::ChangeValueSmoothing()
 {
-    m_NumberOfIterationList[ m_MeshSelected ] = horizontalSliderSmoothing -> value();
+    m_NumberOfIterationList[ m_MeshSelected ] = spinBoxSmoothing -> value();
     m_MyWindowMesh.setNumberOfIteration( m_MeshSelected , m_NumberOfIterationList[ m_MeshSelected ] );
 
-    if( m_DoSmoothList[ m_MeshSelected ] == true )
-    {
-        m_MyWindowMesh.updateSmoothing();
-        m_MyWindowMesh.windowUpdate();
-    }
+    DisableCamera( true );
+    DisableDisplay( true );
+    DisableParameters( true );
+    DisableDistance( true );
+
+    pushButtonRefresh -> setDisabled( false );
+    checkBoxSmoothing -> setDisabled( false );
+    spinBoxSmoothing -> setDisabled( false );
 }
 
 void distanceGui::ApplySmoothing()
@@ -189,6 +230,12 @@ void distanceGui::ApplySmoothing()
 
    m_MyWindowMesh.updateSmoothing();
    m_MyWindowMesh.windowUpdate();
+
+   DisableCamera( false );
+   DisableDisplay( false );
+   DisableParameters( false );
+   DisableDistance( false );
+
 }
 
 void distanceGui::buttonUpClicked()
@@ -282,15 +329,15 @@ void distanceGui::ApplyDistance()
             break;
 
         case 1:
-            computeDistanceAtoB();
+            m_MyCompute.computeDistanceAtoB();
             break;
 
         case 2:
-            computeDistanceBtoA();
+            m_MyCompute.computeDistanceBtoA();
             break;
 
         case 3:
-            computeDistanceBoth();
+            m_MyCompute.computeDistanceBoth();
             break;
     }
 }
@@ -298,15 +345,17 @@ void distanceGui::ApplyDistance()
 void distanceGui::DisableDisplay( bool EnableOrNot )
 {
     pushButtonDisplay -> setDisabled( EnableOrNot );
-    pushButtonReset -> setDisabled( EnableOrNot );
+    pushButtonDelete -> setDisabled( EnableOrNot );
+    pushButtonHide -> setDisabled( EnableOrNot );
 }
 
 void distanceGui::DisableParameters( bool EnableOrNot)
 {
     horizontalSliderColor -> setDisabled( EnableOrNot );
     horizontalSliderOpacity -> setDisabled( EnableOrNot );
-    horizontalSliderSmoothing -> setDisabled( EnableOrNot );
+    spinBoxSmoothing -> setDisabled( EnableOrNot );
     checkBoxSmoothing -> setDisabled( EnableOrNot );
+    pushButtonRefresh -> setDisabled( EnableOrNot );
 }
 
 void distanceGui::DisableCamera( bool EnableOrNot )
@@ -331,4 +380,14 @@ void distanceGui::DisableDistance( bool EnableOrNot )
     pushButtonApply -> setDisabled( EnableOrNot );
 }
 
+void distanceGui::DisableAll()
+{
+    DisableCamera( true );
+    DisableDisplay( true );
+    DisableDistance( true );
+    DisableParameters( true );
 
+    pushButtonRefresh -> setDisabled( false );
+    spinBoxSmoothing -> setDisabled( false );
+    checkBoxSmoothing -> setDisabled( false );
+}

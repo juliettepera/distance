@@ -45,6 +45,7 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        void DisplayInit();
        void DisplayReset();
        void DisplayUpdateCamera();
+       void HideOne();
 
        void buttonFrontClicked();
        void buttonBackClicked();
@@ -60,6 +61,7 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        void DisableParameters( bool EnableOrNot );
        void DisableCamera( bool EnableOrNot );
        void DisableDistance( bool EnableOrNot );
+       void DisableAll();
             
    private:
 
@@ -83,6 +85,8 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        double m_Color;
 
        int m_NumberOfDisplay;
+
+       distanceCompute m_MyCompute;
        int m_ChoiceOfError;
 
 

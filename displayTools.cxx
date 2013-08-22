@@ -13,10 +13,12 @@ displayTools::displayTools( int Indice )
     m_Red = 0.0;
     m_Green = 1.0 / double( m_Indice + 1 );
     m_Blue = 1.0;
+
     m_Smoothing = false;
     m_NumberOfIterationSmooth = 100;
 
 }
+
 
 // **********************************************************************
 void displayTools::setName(std::string Name )

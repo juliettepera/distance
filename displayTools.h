@@ -36,6 +36,7 @@ class displayTools
         vtkSmartPointer<vtkPolyDataMapper> getMapper();
         vtkSmartPointer <vtkActor> getActor();
         vtkSmartPointer<vtkPolyData> getPolyData();
+
         double getOpacity();
         double getRed();
         double getBlue();

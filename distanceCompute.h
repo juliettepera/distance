@@ -5,12 +5,17 @@
 #include <string>
 #include <iostream>
 
-// My librairies
-#include "distanceGui.h"
+class distanceCompute
+{
+    public:
+        distanceCompute();
 
-void computeDistanceAtoB();
-void computeDistanceBtoA();
-void computeDistanceBoth();
+        void computeDistanceAtoB();
+        void computeDistanceBtoA();
+        void computeDistanceBoth();
 
+    private:
+
+};
 
 #endif

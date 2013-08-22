@@ -37,19 +37,14 @@ QT4_WRAP_UI( UI_FILES distanceGui.ui )
 
 # set the sources files
 SET( Dsources 
+
 main.cxx 
 
-distanceGui.h 
 distanceGui.cxx 
-
 displayTools.cxx
-displayTools.h
-
 meshQtDisplay.cxx 
-meshQtDisplay.h 
-
 distanceCompute.cxx 
-distanceCompute.h 
+
 
 ${QtProject_HEADERS_MOC} ${UI_FILES} )
 

@@ -114,6 +114,11 @@ void meshQtDisplay::windowClear()
     m_NumberOfMesh = 0;
 }
 
+void meshQtDisplay::hideOne( int IndiceOfMesh )
+{
+    m_Renderer -> RemoveActor( m_ToolList[ IndiceOfMesh ].getActor() );
+}
+
 void meshQtDisplay::updatePositionCamera()
 {
     m_Renderer -> ResetCamera();
@@ -176,8 +181,10 @@ void meshQtDisplay::updateSmoothing()
 
         if( m_ToolList[ IndiceOfMesh ].getSmoothing() == true )
         {
-            smooth( IndiceOfMesh );
-            std::cout << " Smoothing finished " << std::endl;
+            m_SmoothFilter -> SetInputConnection( m_ToolList[ IndiceOfMesh ].getReader() -> GetOutputPort() );
+            m_SmoothFilter -> SetNumberOfIterations( m_ToolList[ IndiceOfMesh ].getNumberOfIterationSmooth() );
+            m_SmoothFilter -> Update();
+
             m_ToolList[ IndiceOfMesh ].changeInputPort( m_SmoothFilter -> GetOutputPort() );
         }
         else
@@ -189,12 +196,4 @@ void meshQtDisplay::updateSmoothing()
     }
 }
 
-void meshQtDisplay::smooth( int IndiceOfMesh )
-{
-    std::cout << " Smoothing " << std::endl << " ................ " << std:: endl;
-
-    m_SmoothFilter -> SetInputConnection( m_ToolList[ IndiceOfMesh ].getReader() -> GetOutputPort() );
-    m_SmoothFilter -> SetNumberOfIterations( m_ToolList[ IndiceOfMesh ].getNumberOfIterationSmooth() );
-    m_SmoothFilter -> Update();
-}
 

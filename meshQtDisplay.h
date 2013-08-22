@@ -33,6 +33,7 @@ class meshQtDisplay
         void windowInit();
         void windowUpdate();
         void windowClear();
+        void hideOne( int IndiceOfMesh );
         void updatePositionCamera();
 
         void setOpacity( int IndiceOfMesh , double Opacity );
@@ -43,7 +44,6 @@ class meshQtDisplay
         void updateOpacity();
         void updateColor();
         void updateSmoothing();
-        void smooth( int IndiceOfMesh );
 
     private:
         QVTKWidget *m_MeshWidget;
