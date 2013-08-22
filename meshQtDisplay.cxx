@@ -5,8 +5,6 @@ meshQtDisplay::meshQtDisplay() // constructor
     m_Renderer = vtkSmartPointer <vtkRenderer>::New();
     m_RenderWindow = vtkSmartPointer <vtkRenderWindow>::New();
     m_Camera = vtkSmartPointer <vtkCamera>::New();
-    m_SmoothFilter = vtkSmartPointer <vtkSmoothPolyDataFilter>::New();
-    m_Writer = vtkSmartPointer <vtkPolyDataWriter>::New();
 
     m_SizeH = 700 ; m_SizeW = 700;
     m_CameraX = 0 ; m_CameraY = 0 ; m_CameraZ = 0;
@@ -181,11 +179,11 @@ void meshQtDisplay::updateSmoothing()
 
         if( m_ToolList[ IndiceOfMesh ].getSmoothing() == true )
         {
-            m_SmoothFilter -> SetInputConnection( m_ToolList[ IndiceOfMesh ].getReader() -> GetOutputPort() );
-            m_SmoothFilter -> SetNumberOfIterations( m_ToolList[ IndiceOfMesh ].getNumberOfIterationSmooth() );
-            m_SmoothFilter -> Update();
+            m_ToolList[ IndiceOfMesh ].getFilter() -> SetInputConnection( m_ToolList[ IndiceOfMesh ].getReader() -> GetOutputPort() );
+            m_ToolList[ IndiceOfMesh ].getFilter() -> SetNumberOfIterations( m_ToolList[ IndiceOfMesh ].getNumberOfIterationSmooth() );
+            m_ToolList[ IndiceOfMesh ].getFilter() -> Update();
 
-            m_ToolList[ IndiceOfMesh ].changeInputPort( m_SmoothFilter -> GetOutputPort() );
+            m_ToolList[ IndiceOfMesh ].changeInputPort( m_ToolList[ IndiceOfMesh ].getFilter() -> GetOutputPort() );
         }
         else
         {

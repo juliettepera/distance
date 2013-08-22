@@ -8,6 +8,7 @@ displayTools::displayTools( int Indice )
     m_Reader = vtkSmartPointer <vtkPolyDataReader>::New() ;
     m_Mapper = vtkSmartPointer <vtkPolyDataMapper>::New() ;
     m_Actor = vtkSmartPointer <vtkActor>::New() ;
+    m_Filter =vtkSmartPointer <vtkSmoothPolyDataFilter>::New();
 
     m_Opacity = 1.0;
     m_Red = 0.0;
@@ -94,6 +95,11 @@ vtkSmartPointer<vtkPolyData> displayTools::getPolyData()
     return m_PolyData;
 }
 
+vtkSmartPointer<vtkSmoothPolyDataFilter> displayTools::getFilter()
+{
+    return m_Filter;
+}
+
 double displayTools::getOpacity()
 {
     return m_Opacity;
@@ -123,6 +129,8 @@ int displayTools::getNumberOfIterationSmooth()
 {
     return m_NumberOfIterationSmooth;
 }
+
+
 
 // **********************************************************************
 void displayTools::initialization()

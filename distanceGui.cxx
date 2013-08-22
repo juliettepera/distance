@@ -150,10 +150,8 @@ void distanceGui::DisplayReset()
 
 void distanceGui::HideOne()
 {
-    std::cout << " deleteTool " << std::endl;
     m_MyWindowMesh.hideOne( m_MeshSelected );
     m_MyWindowMesh.windowUpdate();
-
 }
 
 void distanceGui::DisplayUpdateCamera()

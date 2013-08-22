@@ -9,6 +9,7 @@
 #include <vtkPolyData.h>
 #include <vtkProperty.h>
 #include <vtkCamera.h>
+#include <vtkSmoothPolyDataFilter.h>
 
 // Other Libraries
 #include <string>
@@ -36,6 +37,7 @@ class displayTools
         vtkSmartPointer<vtkPolyDataMapper> getMapper();
         vtkSmartPointer <vtkActor> getActor();
         vtkSmartPointer<vtkPolyData> getPolyData();
+        vtkSmartPointer<vtkSmoothPolyDataFilter> getFilter();
 
         double getOpacity();
         double getRed();
@@ -55,6 +57,7 @@ class displayTools
         vtkSmartPointer <vtkPolyDataReader> m_Reader;
         vtkSmartPointer <vtkPolyDataMapper> m_Mapper;
         vtkSmartPointer <vtkActor> m_Actor;
+        vtkSmartPointer <vtkSmoothPolyDataFilter> m_Filter;
         std::string m_Name;
 
         double m_Opacity;

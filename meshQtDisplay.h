@@ -6,7 +6,7 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkSmoothPolyDataFilter.h>
-#include <vtkPolyDataWriter.h>
+
 
 // Qt libraries
 #include <qwidget.h>
@@ -61,8 +61,6 @@ class meshQtDisplay
         int m_CameraY;
         int m_CameraZ;
 
-        vtkSmartPointer <vtkSmoothPolyDataFilter> m_SmoothFilter;
-        vtkSmartPointer <vtkPolyDataWriter> m_Writer;
 };
 
 #endif
