@@ -9,7 +9,7 @@ meshQtDisplay::meshQtDisplay() // constructor
     m_Writer = vtkSmartPointer <vtkPolyDataWriter>::New();
 
     m_SizeH = 700 ; m_SizeW = 700;
-    m_CameraX = 0 ; m_CameraY = 1 ; m_CameraZ = 0;
+    m_CameraX = 0 ; m_CameraY = 0 ; m_CameraZ = 0;
 }
 
 // **********************************************************************

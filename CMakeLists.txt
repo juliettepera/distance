@@ -18,7 +18,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.6 )
 project( distanceGui )
 
 # find the VTK headers
-FIND_PACKAGE( VTK )
+FIND_PACKAGE( VTK REQUIRED )
 INCLUDE( ${VTK_USE_FILE} )
 
 # find the QT4 headers
