@@ -22,7 +22,7 @@ class displayTools
     public:
         displayTools( int Indice );
 
-        void setName(std::string Name);
+        void setName( std::string Name );
         void setReader( vtkSmartPointer <vtkPolyDataReader> Reader );
         void setMapper( vtkSmartPointer <vtkPolyDataMapper> Mapper );
         void setActor( vtkSmartPointer <vtkActor> Actor );
@@ -38,7 +38,6 @@ class displayTools
         vtkSmartPointer <vtkActor> getActor();
         vtkSmartPointer<vtkPolyData> getPolyData();
         vtkSmartPointer<vtkSmoothPolyDataFilter> getFilter();
-
         double getOpacity();
         double getRed();
         double getBlue();

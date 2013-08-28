@@ -112,11 +112,6 @@ void meshQtDisplay::windowClear()
     m_NumberOfMesh = 0;
 }
 
-void meshQtDisplay::hideOne( int IndiceOfMesh )
-{
-    m_Renderer -> RemoveActor( m_ToolList[ IndiceOfMesh ].getActor() );
-}
-
 void meshQtDisplay::updatePositionCamera()
 {
     m_Renderer -> ResetCamera();
@@ -124,8 +119,9 @@ void meshQtDisplay::updatePositionCamera()
     double *focalPoint  = m_Camera -> GetFocalPoint();
     double distance = m_Camera -> GetDistance();
 
-    m_Camera -> SetPosition( focalPoint[0] + m_CameraX*distance , focalPoint[1] + m_CameraY*distance , focalPoint[2]+ m_CameraZ*distance );
+    m_Camera -> SetPosition( focalPoint[0] + m_CameraX*distance , focalPoint[1] + m_CameraY*distance , focalPoint[2] + m_CameraZ*distance );
     m_Camera -> SetRoll(.001);
+
 }
 
 // **********************************************************************

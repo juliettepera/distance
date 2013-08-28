@@ -15,6 +15,7 @@
 #include <QTextBrowser>
 #include <QListWidgetItem>
 #include <QListWidget>
+#include <QLineEdit>
 
 // Other Libraries
 #include <string>
@@ -22,6 +23,7 @@
 
 // My libraries
 #include "meshQtDisplay.h"
+#include "smoothingGui.h"
 #include "distanceCompute.h"
 #include "ui_distanceGui.h"
 
@@ -31,21 +33,31 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
    Q_OBJECT
 
    public:
-        distanceGui (QWidget * parent = 0, Qt::WFlags f = 0 );
+        distanceGui ( QWidget * parent = 0, Qt::WFlags f = 0 );
+
+        void DisplayUpdateCamera();
+
+        void DisableDisplay( bool EnableOrNot );
+        void DisableParameters( bool EnableOrNot );
+        void DisableCamera( bool EnableOrNot );
+        void DisableDistance( bool EnableOrNot );
+        void DisableAll();
+
+        void ChangeIcon( QIcon Icon );
+        void ChangeIcon( QIcon Icon , int IndiceOfMesh );
 
    public slots:
-       void OpenBrowseWindow();
+       void OpenBrowseWindowFile();
+       void OpenBrowseWindowRepository();
+       void OpenSmoothingWindow();
 
        void ChangeValueChoice();
        void ChangeMeshSelected();
        void ChangeValueOpacity();
        void ChangeValueColor();
-       void ChangeValueSmoothing();
 
        void DisplayInit();
        void DisplayReset();
-       void DisplayUpdateCamera();
-       void HideOne();
 
        void buttonFrontClicked();
        void buttonBackClicked();
@@ -55,13 +67,8 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        void buttonDownClicked();
 
        void ApplyDistance();
-       void ApplySmoothing();
 
-       void DisableDisplay( bool EnableOrNot );
-       void DisableParameters( bool EnableOrNot );
-       void DisableCamera( bool EnableOrNot );
-       void DisableDistance( bool EnableOrNot );
-       void DisableAll();
+
             
    private:
 
@@ -71,8 +78,6 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
 
        std::vector <double> m_OpacityList;
        std::vector <double> m_ColorList;
-       std::vector <double> m_NumberOfIterationList;
-       std::vector <bool> m_DoSmoothList;
 
        QVTKWidget *m_WidgetMesh;
        meshQtDisplay m_MyWindowMesh;
@@ -81,15 +86,16 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        int m_CameraY;
        int m_CameraZ;
 
-       double m_Opacity;
-       double m_Color;
-
        int m_NumberOfDisplay;
 
        distanceCompute m_MyCompute;
        int m_ChoiceOfError;
 
+       smoothingGui m_MySmoothing;
 
+       // icones
+       QIcon m_visible;
+       QIcon m_unvisble;
 };
 
 #endif

@@ -33,8 +33,7 @@ class meshQtDisplay
         void windowInit();
         void windowUpdate();
         void windowClear();
-        void hideOne( int IndiceOfMesh );
-        void updatePositionCamera();
+                void updatePositionCamera();
 
         void setOpacity( int IndiceOfMesh , double Opacity );
         void setColor(int IndiceOfMesh , double Red , double Green, double Blue);

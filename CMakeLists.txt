@@ -32,8 +32,8 @@ INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}  ${
 ADD_DEFINITIONS( -DQT_GUI_LIBS -DQT_CORE_LIB -DQT3_SUPPORT )
 
 # generate moc and ui files
-QT4_WRAP_CPP( QtProject_HEADERS_MOC distanceGui.h )
-QT4_WRAP_UI( UI_FILES distanceGui.ui )
+QT4_WRAP_CPP( QtProject_HEADERS_MOC distanceGui.h smoothingGui.h )
+QT4_WRAP_UI( UI_FILES distanceGui.ui smoothingGui.ui )
 
 # set the sources files
 SET( Dsources 
@@ -44,7 +44,7 @@ distanceGui.cxx
 displayTools.cxx
 meshQtDisplay.cxx 
 distanceCompute.cxx 
-
+smoothingGui.cxx
 
 ${QtProject_HEADERS_MOC} ${UI_FILES} )
 

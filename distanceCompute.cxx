@@ -2,7 +2,9 @@
 
 distanceCompute::distanceCompute()
 {
-
+    m_DataMeshA = vtkSmartPointer <vtkPolyData>::New();
+    m_DataMeshB = vtkSmartPointer <vtkPolyData>::New();
+    m_DataCompute = vtkSmartPointer <vtkPolyData>::New();
 }
 
 void distanceCompute::computeDistanceAtoB()

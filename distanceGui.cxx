@@ -13,8 +13,25 @@ distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  ): QMainWindow(parent,
     m_NumberOfDisplay = 0;
     m_WidgetMesh = new QVTKWidget( this -> scrollAreaMesh );
 
+    //m_MySmoothing.setParent( parentWidget() );
+
+    // shortcuts
+    actionAddNewFile -> setShortcut( QKeySequence("Ctrl+A") );
+    actionAddNewRepository -> setShortcut( QKeySequence("Ctrl+R") );
+    actionSmoothing -> setShortcut( QKeySequence("Ctrl+M") );
+    actionSaveFile -> setShortcut( QKeySequence("Ctrl+S") );
+    actionQuit -> setShortcut( QKeySequence("Ctrl+Q") );
+
+    // icones
+    m_visible = QIcon("/work/jpera/distance/visible.png");
+    m_unvisble = QIcon("/work/jpera/distance/unvisible.png");
+
     // connections
-    QObject::connect( pushButtonLoad , SIGNAL( clicked() ) , this , SLOT( OpenBrowseWindow() ) );
+    QObject::connect( actionAddNewFile , SIGNAL( triggered() ) , this , SLOT( OpenBrowseWindowFile() ) );
+    QObject::connect( actionAddNewRepository , SIGNAL( triggered() ) , this , SLOT( OpenBrowseWindowRepository() ) );
+    QObject::connect( actionSmoothing , SIGNAL( triggered() ) , this , SLOT( OpenSmoothingWindow() ) );
+    QObject::connect( actionQuit , SIGNAL( triggered() ) , qApp , SLOT( quit() ) );
+
     QObject::connect( pushButtonDisplay , SIGNAL( clicked() ) , this , SLOT( DisplayInit() ) );
     QObject::connect( pushButtonFront , SIGNAL( clicked() ) , this , SLOT( buttonFrontClicked() ) );
     QObject::connect( pushButtonBack , SIGNAL( clicked() ) , this , SLOT( buttonBackClicked() ) );
@@ -22,18 +39,12 @@ distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  ): QMainWindow(parent,
     QObject::connect( pushButtonLeft , SIGNAL( clicked() ) , this , SLOT( buttonLeftClicked() ) );
     QObject::connect( pushButtonUp , SIGNAL( clicked() ) , this , SLOT( buttonUpClicked() ) );
     QObject::connect( pushButtonDown , SIGNAL( clicked() ) , this , SLOT( buttonDownClicked() ) );
+
     QObject::connect( pushButtonApply , SIGNAL( clicked() ) , this , SLOT( ApplyDistance() ) );
     QObject::connect( pushButtonDelete , SIGNAL( clicked() ) , this , SLOT( DisplayReset() ) );
-    QObject::connect( pushButtonHide , SIGNAL( clicked() ) , this , SLOT( HideOne() ) );
-    QObject::connect( pushButtonQuit , SIGNAL( clicked() ) , qApp , SLOT( quit() ) );
-    QObject::connect( pushButtonRefresh , SIGNAL( clicked() ) , this , SLOT( ApplySmoothing() ) );
 
     QObject::connect( horizontalSliderOpacity , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueOpacity() ) );
     QObject::connect( horizontalSliderColor , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueColor() ) );
-
-    QObject::connect( spinBoxSmoothing , SIGNAL( valueChanged( int ) ) , this , SLOT( ChangeValueSmoothing() ) );
-
-    QObject::connect( checkBoxSmoothing , SIGNAL( stateChanged( int ) ) , this , SLOT( DisableAll() ) );
 
     QObject::connect( listWidgetLoadedMesh , SIGNAL( itemClicked( QListWidgetItem* ) ) , this , SLOT( ChangeMeshSelected() ) );
 
@@ -41,38 +52,70 @@ distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  ): QMainWindow(parent,
     QObject::connect( radioButtonBtoA , SIGNAL( clicked() ) , this , SLOT( ChangeValueChoice() ) );
     QObject::connect( radioButtonBoth , SIGNAL( clicked() ) , this , SLOT( ChangeValueChoice() ) );
 
-    DisableDisplay( true );
-    DisableParameters( true );
-    DisableCamera( true );
-    DisableDistance( true );
-                                                                              
 }
 
-void distanceGui::OpenBrowseWindow()
+void distanceGui::OpenBrowseWindowFile()
 {
-    QString browseMesh = QFileDialog::getOpenFileName( this , "Open a VTK file" , QString() , "vtk mesh (*.vtk)" );
+    QStringList browseMesh = QFileDialog::getOpenFileNames( this , "Open a VTK file" , QString() , "vtk mesh (*.vtk)" );
+    QLineEdit *lineEditLoad = new QLineEdit;
 
     if( !browseMesh.isEmpty() )
     {
-      lineEditLoad -> setText( browseMesh );
+      for( int i =0 ; i<browseMesh.size() ; i++ )
+      {
+          lineEditLoad -> setText( browseMesh[ i ] );
+
+        if( !lineEditLoad->text().isEmpty() )
+        {
+            m_MeshList.push_back( ( lineEditLoad -> text() ).toStdString() );
+            m_NumberOfMesh = m_MeshList.size();
+
+            listWidgetLoadedMesh -> addItem( ( lineEditLoad -> text() ).toStdString().c_str() );
+            listWidgetLoadedMesh -> item( m_NumberOfMesh - 1 ) -> setIcon( m_unvisble );
+
+            m_OpacityList.push_back( 1.0 );
+            m_ColorList.push_back( 1.0 );
+        }
+      }
     }
-    if( !lineEditLoad->text().isEmpty() )
+        browseMesh.clear();
+        lineEditLoad -> deleteLater();
+}
+
+void distanceGui::OpenBrowseWindowRepository()
+{
+   /* QString browseMesh = QFileDialog::getExistingDirectory( this , tr("Open Directory"), "/home", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    QLineEdit *lineEditLoad = new QLineEdit;
+
+    if( !browseMesh.isEmpty() )
     {
-        m_MeshList.push_back( ( lineEditLoad -> text() ).toStdString() );
-        m_NumberOfMesh = m_MeshList.size();
 
-        listWidgetLoadedMesh -> addItem( ( lineEditLoad -> text() ).toStdString().c_str() );
+      lineEditLoad -> setText( browseMesh );
 
-        m_OpacityList.push_back( 1.0 );
-        m_ColorList.push_back( 1.0 );
-        m_NumberOfIterationList.push_back( 100 );
-        m_DoSmoothList.push_back( false );
+        if( !lineEditLoad->text().isEmpty() )
+        {
+            m_MeshList.push_back( ( lineEditLoad -> text() ).toStdString() );
+            m_NumberOfMesh = m_MeshList.size();
+
+            listWidgetLoadedMesh -> addItem( ( lineEditLoad -> text() ).toStdString().c_str() );
+
+            m_OpacityList.push_back( 1.0 );
+            m_ColorList.push_back( 1.0 );
+        }
     }
-        DisableDisplay( false );
-        pushButtonHide -> setDisabled( true );
-
     browseMesh.clear();
-    lineEditLoad->clear();
+    lineEditLoad -> deleteLater();*/
+}
+
+void distanceGui::OpenSmoothingWindow()
+{
+    if( !m_MeshList.empty() )
+    {
+        m_MySmoothing.setMeshList( m_MeshList );
+        m_MySmoothing.setWindow( m_MyWindowMesh );
+        m_MySmoothing.initialization();
+        m_MySmoothing.show();
+    }
 }
 
 void distanceGui::DisplayInit()
@@ -86,14 +129,9 @@ void distanceGui::DisplayInit()
 
         horizontalSliderOpacity -> setSliderPosition( horizontalSliderOpacity -> maximum() );
         lcdNumberOpacity -> display( horizontalSliderOpacity -> maximum()  );
-
-        spinBoxSmoothing -> setValue( spinBoxSmoothing -> maximum() );
-        checkBoxSmoothing -> setChecked( false );
     }
     else
     {
-        std::cout << " height " << scrollAreaMesh -> height() << std::endl;
-        std::cout << " width " << scrollAreaMesh -> width() << std::endl;
         m_MyWindowMesh.setSizeH(  scrollAreaMesh -> height()  );
         m_MyWindowMesh.setSizeW( scrollAreaMesh -> width() );
         m_MyWindowMesh.setMeshWidget( m_WidgetMesh );
@@ -105,53 +143,30 @@ void distanceGui::DisplayInit()
 
     m_NumberOfDisplay++;
 
-    DisableCamera( false );
-
-    if( m_NumberOfMesh >= 2 )
-    {
-        DisableDistance( false );
-    }
-
-    DisableDisplay( false );
-    pushButtonHide -> setDisabled( true );
-    DisableParameters( true );
+    ChangeIcon( m_visible );
 }
 
 void distanceGui::DisplayReset()
 {
-    m_MyWindowMesh.windowClear();
+    if( ! m_MeshList.empty() && m_NumberOfDisplay != 0 )
+    {
+        m_MyWindowMesh.windowClear();
 
-    m_NumberOfDisplay = 0;
-    m_NumberOfMesh = 0;
+        m_NumberOfDisplay = 0;
+        m_NumberOfMesh = 0;
 
-    horizontalSliderColor -> setSliderPosition( horizontalSliderColor -> maximum() );
-    lcdNumberColor -> display( horizontalSliderColor -> maximum()  );
+        horizontalSliderColor -> setSliderPosition( horizontalSliderColor -> maximum() );
+        lcdNumberColor -> display( horizontalSliderColor -> maximum()  );
 
-    horizontalSliderOpacity -> setSliderPosition( horizontalSliderOpacity -> maximum() );
-    lcdNumberOpacity -> display( horizontalSliderOpacity -> maximum()  );
+        horizontalSliderOpacity -> setSliderPosition( horizontalSliderOpacity -> maximum() );
+        lcdNumberOpacity -> display( horizontalSliderOpacity -> maximum()  );
 
-    spinBoxSmoothing -> setValue( spinBoxSmoothing -> maximum() );
-    checkBoxSmoothing -> setChecked( false );
-
-    listWidgetLoadedMesh -> clear();
-    m_MeshList.clear();
-    m_OpacityList.clear();
-    m_ColorList.clear();
-    m_NumberOfIterationList.clear();
-    m_DoSmoothList.clear();
-
-    m_MyWindowMesh.windowUpdate();
-
-    DisableCamera( true );
-    DisableDisplay( true );
-    DisableDistance( true );
-    DisableParameters( true );
-}
-
-void distanceGui::HideOne()
-{
-    m_MyWindowMesh.hideOne( m_MeshSelected );
-    m_MyWindowMesh.windowUpdate();
+        listWidgetLoadedMesh -> clear();
+        m_MeshList.clear();
+        m_OpacityList.clear();
+        m_ColorList.clear();
+        m_MyWindowMesh.windowUpdate();
+    }
 }
 
 void distanceGui::DisplayUpdateCamera()
@@ -169,12 +184,6 @@ void distanceGui::ChangeMeshSelected()
 
    horizontalSliderOpacity -> setValue( m_OpacityList[ m_MeshSelected ]*100 );
    lcdNumberOpacity -> display( m_OpacityList[ m_MeshSelected ] );
-
-   spinBoxSmoothing -> setValue( m_NumberOfIterationList[ m_MeshSelected ] );
-   checkBoxSmoothing -> setChecked( m_DoSmoothList[ m_MeshSelected ] );
-
-   DisableParameters( false );
-   pushButtonHide -> setDisabled( false );
 }
 
 void distanceGui::ChangeValueOpacity()
@@ -183,6 +192,15 @@ void distanceGui::ChangeValueOpacity()
     lcdNumberOpacity -> display( m_OpacityList[ m_MeshSelected ] );
 
     m_MyWindowMesh.setOpacity( m_MeshSelected , m_OpacityList[ m_MeshSelected ] );
+
+    if( m_OpacityList[ m_MeshSelected ] == 0 )
+    {
+        ChangeIcon( m_unvisble , m_MeshSelected );
+    }
+    else
+    {
+        ChangeIcon( m_visible , m_MeshSelected );
+    }
 
     m_MyWindowMesh.updateOpacity();
     m_MyWindowMesh.windowUpdate();
@@ -197,43 +215,6 @@ void distanceGui::ChangeValueColor()
 
     m_MyWindowMesh.updateColor();
     m_MyWindowMesh.windowUpdate();
-}
-
-void distanceGui::ChangeValueSmoothing()
-{
-    m_NumberOfIterationList[ m_MeshSelected ] = spinBoxSmoothing -> value();
-    m_MyWindowMesh.setNumberOfIteration( m_MeshSelected , m_NumberOfIterationList[ m_MeshSelected ] );
-
-    DisableCamera( true );
-    DisableDisplay( true );
-    DisableParameters( true );
-    DisableDistance( true );
-
-    pushButtonRefresh -> setDisabled( false );
-    checkBoxSmoothing -> setDisabled( false );
-    spinBoxSmoothing -> setDisabled( false );
-}
-
-void distanceGui::ApplySmoothing()
-{
-   if( checkBoxSmoothing -> isChecked() )
-   {
-       m_DoSmoothList[ m_MeshSelected ] = true;
-   }
-   else
-   {
-       m_DoSmoothList[ m_MeshSelected ] = false;
-   }
-   m_MyWindowMesh.setSmoothing( m_MeshSelected , m_DoSmoothList[ m_MeshSelected ] );
-
-   m_MyWindowMesh.updateSmoothing();
-   m_MyWindowMesh.windowUpdate();
-
-   DisableCamera( false );
-   DisableDisplay( false );
-   DisableParameters( false );
-   DisableDistance( false );
-
 }
 
 void distanceGui::buttonUpClicked()
@@ -344,16 +325,12 @@ void distanceGui::DisableDisplay( bool EnableOrNot )
 {
     pushButtonDisplay -> setDisabled( EnableOrNot );
     pushButtonDelete -> setDisabled( EnableOrNot );
-    pushButtonHide -> setDisabled( EnableOrNot );
 }
 
 void distanceGui::DisableParameters( bool EnableOrNot)
 {
     horizontalSliderColor -> setDisabled( EnableOrNot );
     horizontalSliderOpacity -> setDisabled( EnableOrNot );
-    spinBoxSmoothing -> setDisabled( EnableOrNot );
-    checkBoxSmoothing -> setDisabled( EnableOrNot );
-    pushButtonRefresh -> setDisabled( EnableOrNot );
 }
 
 void distanceGui::DisableCamera( bool EnableOrNot )
@@ -384,8 +361,18 @@ void distanceGui::DisableAll()
     DisableDisplay( true );
     DisableDistance( true );
     DisableParameters( true );
+}
 
-    pushButtonRefresh -> setDisabled( false );
-    spinBoxSmoothing -> setDisabled( false );
-    checkBoxSmoothing -> setDisabled( false );
+void distanceGui::ChangeIcon( QIcon Icon )
+{
+    int IndiceOfMesh;
+    for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh ++ )
+    {
+        listWidgetLoadedMesh -> item( IndiceOfMesh ) -> setIcon( Icon );
+    }
+}
+
+void distanceGui::ChangeIcon( QIcon Icon , int IndiceOfMesh )
+{
+        listWidgetLoadedMesh -> item( IndiceOfMesh ) -> setIcon( Icon );
 }
