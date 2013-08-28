@@ -16,6 +16,7 @@
 #include <QListWidgetItem>
 #include <QListWidget>
 #include <QLineEdit>
+#include <QColorDialog>
 
 // Other Libraries
 #include <string>
@@ -33,31 +34,28 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
    Q_OBJECT
 
    public:
+
         distanceGui ( QWidget * parent = 0, Qt::WFlags f = 0 );
-
-        void DisplayUpdateCamera();
-
-        void DisableDisplay( bool EnableOrNot );
-        void DisableParameters( bool EnableOrNot );
-        void DisableCamera( bool EnableOrNot );
-        void DisableDistance( bool EnableOrNot );
-        void DisableAll();
 
         void ChangeIcon( QIcon Icon );
         void ChangeIcon( QIcon Icon , int IndiceOfMesh );
 
+        void DisplayUpdateCamera();
+
    public slots:
+
        void OpenBrowseWindowFile();
        void OpenBrowseWindowRepository();
-       void OpenSmoothingWindow();
 
-       void ChangeValueChoice();
        void ChangeMeshSelected();
-       void ChangeValueOpacity();
-       void ChangeValueColor();
 
        void DisplayInit();
        void DisplayReset();
+
+       void ChangeValueOpacity();
+       void ChooseColor();
+
+       void OpenSmoothingWindow();
 
        void buttonFrontClicked();
        void buttonBackClicked();
@@ -66,36 +64,43 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        void buttonUpClicked();
        void buttonDownClicked();
 
+       void ChangeMinSampleFrequency();
+       void ChangeSamplingStep();
+       void ChangeValueChoice();
+
        void ApplyDistance();
 
-
+       void SelectMeshA();
+       void SelectMeshB();
+       void SetAvailableMesh( int call );
             
    private:
 
        int m_NumberOfMesh;
        int m_MeshSelected;
-       std::vector <std::string> m_MeshList;
-
-       std::vector <double> m_OpacityList;
-       std::vector <double> m_ColorList;
-
-       QVTKWidget *m_WidgetMesh;
-       meshQtDisplay m_MyWindowMesh;
-
        int m_CameraX;
        int m_CameraY;
        int m_CameraZ;
-
        int m_NumberOfDisplay;
-
-       distanceCompute m_MyCompute;
        int m_ChoiceOfError;
+       int m_SelectedItemA;
+       int m_SelectedItemB;
+       double m_MinSampleFrequency;
+       double m_SamplingStep;
 
-       smoothingGui m_MySmoothing;
-
-       // icones
        QIcon m_visible;
        QIcon m_unvisble;
+       QColor m_Color;
+
+       std::vector <std::string> m_MeshList;
+       std::vector <std::string> m_MeshAvailableList;
+       std::vector <double> m_OpacityList;
+
+       QVTKWidget *m_WidgetMesh;
+       meshQtDisplay m_MyWindowMesh;
+       smoothingGui m_MySmoothing;
+       distanceCompute m_MyCompute;
+
 };
 
 #endif
