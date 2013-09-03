@@ -1,7 +1,7 @@
 // My libraries
 #include "distanceGui.h"
 
-distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  ): QMainWindow(parent, f)
+distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  , std::string WorkDirectory ): QMainWindow(parent, f)
 {
     // to display the window
     setupUi(this);
@@ -9,13 +9,15 @@ distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  ): QMainWindow(parent,
     // initialisations
     m_NumberOfMesh = 0;
     m_ChoiceOfError = 0;
-    m_MeshSelected = 0;
+    m_MeshSelected = -1;
     m_NumberOfDisplay = 0;
     m_WidgetMesh = new QVTKWidget( this -> scrollAreaMesh );
     m_SamplingStep = 2;
     m_MinSampleFrequency = 0.5;
     m_SelectedItemA = -1;
     m_SelectedItemB = -1;
+    m_WorkDirectory = WorkDirectory;
+    m_WorkDirectory.erase( m_WorkDirectory.length() - 9 , 9 );
 
     // shortcuts
     actionAddNewFile -> setShortcut( QKeySequence("Ctrl+A") );
@@ -24,9 +26,19 @@ distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  ): QMainWindow(parent,
     actionSaveFile -> setShortcut( QKeySequence("Ctrl+S") );
     actionQuit -> setShortcut( QKeySequence("Ctrl+Q") );
 
-    // icones
-    m_visible = QIcon("/work/jpera/distance/icons/visible.png");
-    m_unvisble = QIcon("/work/jpera/distance/icons/unvisible.png");
+    // icones  
+    std::string visible = m_WorkDirectory;
+    visible += "/icons/visible.png";
+
+    std::string unvisible = m_WorkDirectory;
+    unvisible += "/icons/unvisible.png";
+
+    m_Visible = QString::fromStdString( visible );
+    m_Unvisible = QString::fromStdString( unvisible );
+
+    m_VisibleIcon = QIcon( m_Visible );
+    m_UnvisibleIcon = QIcon( m_Unvisible );
+
 
     // connections
     QObject::connect( actionAddNewFile , SIGNAL( triggered() ) , this , SLOT( OpenBrowseWindowFile() ) );
@@ -61,10 +73,11 @@ distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  ): QMainWindow(parent,
 
 }
 
-
 //************************************ LOADING FILES ************************************************
 void distanceGui::OpenBrowseWindowFile()
 {
+   // ChangeAccessFile();
+
     QStringList browseMesh = QFileDialog::getOpenFileNames( this , "Open a VTK file" , QString() , "vtk mesh (*.vtk)" );
     QLineEdit *lineEditLoad = new QLineEdit;
 
@@ -80,7 +93,7 @@ void distanceGui::OpenBrowseWindowFile()
             m_NumberOfMesh = m_MeshList.size();
 
             listWidgetLoadedMesh -> addItem( ( lineEditLoad -> text() ).toStdString().c_str() );
-            listWidgetLoadedMesh -> item( m_NumberOfMesh - 1 ) -> setIcon( m_unvisble );
+            listWidgetLoadedMesh -> item( m_NumberOfMesh - 1 ) -> setIcon( m_UnvisibleIcon );
 
             comboBoxMeshA -> addItem(  ( lineEditLoad -> text() ).toStdString().c_str() );
             comboBoxMeshB -> addItem(  ( lineEditLoad -> text() ).toStdString().c_str() );
@@ -165,7 +178,7 @@ void distanceGui::DisplayInit()
 
     m_NumberOfDisplay++;
 
-    ChangeIcon( m_visible );
+    ChangeIcon( m_VisibleIcon );
 }
 
 void distanceGui::DisplayReset()
@@ -192,7 +205,7 @@ void distanceGui::DisplayReset()
 //************************************ CHANGING MESH PARAMETERS ************************************************
 void distanceGui::ChangeValueOpacity()
 {
-    if( ! m_MeshList.empty() && m_NumberOfDisplay != 0 )
+    if( ! m_MeshList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
         m_OpacityList[ m_MeshSelected ] = horizontalSliderOpacity -> value()/100.;
         lcdNumberOpacity -> display( m_OpacityList[ m_MeshSelected ] );
@@ -201,11 +214,11 @@ void distanceGui::ChangeValueOpacity()
 
         if( m_OpacityList[ m_MeshSelected ] == 0 )
         {
-            ChangeIcon( m_unvisble , m_MeshSelected );
+            ChangeIcon( m_UnvisibleIcon , m_MeshSelected );
         }
         else
         {
-            ChangeIcon( m_visible , m_MeshSelected );
+            ChangeIcon( m_VisibleIcon , m_MeshSelected );
         }
 
         m_MyWindowMesh.updateOpacity();
@@ -215,7 +228,7 @@ void distanceGui::ChangeValueOpacity()
 
 void distanceGui::ChooseColor()
 {
-    if( ! m_MeshList.empty() && m_NumberOfDisplay != 0 )
+    if( ! m_MeshList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
         m_Color = QColorDialog::getColor( Qt::white , this );
 

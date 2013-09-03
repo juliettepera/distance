@@ -1,21 +1,13 @@
-# GenerateCLP_DIR    
-# /devel/linux/SlicerExecutionModel/SlicerExecutionModel-build_ITKv4.3.0_v3Compatible_linux64/GenerateCLP                                                                                                   
-# QT4_DIR
-# /tools/Qt/Qt4.8.2/Qt4.8.2_linux64_THL                                                                                                                                                                     
-# QT_DIR
-# /tools/Qt/Qt4.8.2/Qt4.8.2_linux64_THL 
-# QT_QMAKE_EXECUTABLE
-# /NIRAL/tools/Qt/Qt4.8.2/Qt4.8.2_linux64_THL/bin/qmake                                                                                                                                                     
-# VTK_DIR
-# /tools/VTK/VTK_5.10.1/VTK_5.10.1_X64_dyn_release_Qt4.8.2_Python/lib/vtk-5.10 
-
-
-
 # minimum version required
 CMAKE_MINIMUM_REQUIRED( VERSION 2.6 ) 
 
 # name of the project
-project( distanceGui )
+PROJECT( distanceGui )
+
+# sub-directory of the executable
+SET(EXECUTABLE_OUTPUT_PATH bin)
+
+FILE(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/bin )
 
 # find the VTK headers
 FIND_PACKAGE( VTK REQUIRED )
@@ -55,10 +47,10 @@ ADD_EXECUTABLE( distance ${Dsources} )
 TARGET_LINK_LIBRARIES( distance ${QT_LIBRARIES} ${VTK_LIBRARIES} )
 
 # for the CTest
-set(BUILD_TESTING ON CACHE BOOL "Build, configure and copy testing files")
+SET(BUILD_TESTING ON CACHE BOOL "Build, configure and copy testing files")
 
 IF( BUILD_TESTING )
-enable_testing()
+ENABLE_TESTING()
 ADD_SUBDIRECTORY( Testing )
 ENDIF()
 

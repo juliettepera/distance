@@ -35,8 +35,9 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
 
    public:
 
-        distanceGui ( QWidget * parent = 0, Qt::WFlags f = 0 );
+    distanceGui ( QWidget * parent = 0 , Qt::WFlags f = 0 , std::string WorkDirectory = "" );
 
+        void ChangeAccessFile();
         void ChangeIcon( QIcon Icon );
         void ChangeIcon( QIcon Icon , int IndiceOfMesh );
 
@@ -87,9 +88,12 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        int m_SelectedItemB;
        double m_MinSampleFrequency;
        double m_SamplingStep;
+       std::string m_WorkDirectory;
 
-       QIcon m_visible;
-       QIcon m_unvisble;
+       QIcon m_VisibleIcon;
+       QString m_Visible;
+       QIcon m_UnvisibleIcon;
+       QString m_Unvisible;
        QColor m_Color;
 
        std::vector <std::string> m_MeshList;
