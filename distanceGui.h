@@ -60,6 +60,9 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        void OpenBrowseWindowRepository();
        void DeleteOneFile();
 
+       void DisplayAll();
+       void HideAll();
+
        void ChangeMeshSelected();
 
        void DisplayInit();

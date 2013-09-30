@@ -38,7 +38,6 @@ distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  , std::string WorkDire
     QObject::connect( actionSmoothing , SIGNAL( triggered() ) , this , SLOT( OpenSmoothingWindow() ) );
     QObject::connect( actionQuit , SIGNAL( triggered() ) , qApp , SLOT( quit() ) );
 
-    QObject::connect( pushButtonDisplay , SIGNAL( clicked() ) , this , SLOT( DisplayInit() ) );
     QObject::connect( pushButtonFront , SIGNAL( clicked() ) , this , SLOT( buttonFrontClicked() ) );
     QObject::connect( pushButtonBack , SIGNAL( clicked() ) , this , SLOT( buttonBackClicked() ) );
     QObject::connect( pushButtonRight , SIGNAL( clicked() ) , this , SLOT( buttonRightClicked() ) );
@@ -50,6 +49,8 @@ distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  , std::string WorkDire
     QObject::connect( pushButtonColor , SIGNAL( clicked() ) , this , SLOT( ChooseColor() ) );
     QObject::connect( pushButtonAdd , SIGNAL( clicked() ) , this , SLOT( OpenBrowseWindowFile() ) );
     QObject::connect( pushButtonDeleteOne , SIGNAL( clicked() ) , this , SLOT( DeleteOneFile() ) );
+    QObject::connect( pushButtonDisplayAll , SIGNAL( clicked() ) , this , SLOT( DisplayAll() ) );
+    QObject::connect( pushButtonHideAll , SIGNAL( clicked() ) , this , SLOT( HideAll() ) );
 
 
     QObject::connect( doubleSpinBoxMinSampFreq , SIGNAL( valueChanged( double ) ) , this , SLOT( ChangeMinSampleFrequency() ) );
@@ -101,13 +102,12 @@ void distanceGui::OpenBrowseWindowFile()
         }
       }
     }
-        browseMesh.clear();
-        delete lineEditLoad;
 
-        if( m_NumberOfMesh != 0 )
-        {
-            pushButtonDisplay -> setEnabled( true );
-        }
+    browseMesh.clear();
+    delete lineEditLoad;
+
+    DisplayInit();
+
 }
 
 void distanceGui::OpenBrowseWindowRepository()
@@ -160,10 +160,7 @@ void distanceGui::OpenBrowseWindowRepository()
         FileList.clear();
     }
 
-    if( m_NumberOfMesh != 0 )
-    {
-        pushButtonDisplay -> setEnabled( true );
-    }
+    DisplayInit();
 }
 
 //************************************ SELECTING FILES ************************************************
@@ -258,8 +255,8 @@ void distanceGui::InitIcon()
     pushButtonAdd -> setIcon( m_PlusIcon );
     pushButtonDeleteOne -> setIcon( m_MinusIcon );
     pushButtonDelete -> setIcon( m_DeleteIcon );
-    pushButtonDisplay -> setIcon( m_DisplayIcon );
-
+    pushButtonDisplayAll -> setIcon( m_VisibleIcon );
+    pushButtonHideAll -> setIcon( m_UnvisibleIcon );
 }
 
 void distanceGui::ChangeIcon( QIcon Icon )
@@ -297,8 +294,9 @@ void distanceGui::DisplayInit()
     groupBoxVisualization -> setEnabled( true );
     pushButtonDelete -> setEnabled( true );
     pushButtonDeleteOne -> setEnabled( true );
+    pushButtonDisplayAll -> setEnabled( true );
+    pushButtonHideAll -> setEnabled( true );
     listWidgetLoadedMesh -> setEnabled( true );
-    pushButtonDisplay -> setEnabled( false );
 }
 
 void distanceGui::DisplayReset()
@@ -337,7 +335,6 @@ void distanceGui::DisplayReset()
         pushButtonAdd -> setEnabled( true );
         pushButtonDeleteOne -> setEnabled( false );
         pushButtonDelete -> setEnabled( false );
-        pushButtonDisplay -> setEnabled( false );
         listWidgetLoadedMesh -> setEnabled( false );
 
         actionAddNewFile -> setEnabled( true );
@@ -380,7 +377,6 @@ void distanceGui::DeleteOneFile()
         pushButtonAdd -> setEnabled( true );
         pushButtonDeleteOne -> setEnabled( false );
         pushButtonDelete -> setEnabled( false );
-        pushButtonDisplay -> setEnabled( false );
         listWidgetLoadedMesh -> setEnabled( false );
 
         actionAddNewFile -> setEnabled( true );
@@ -388,6 +384,46 @@ void distanceGui::DeleteOneFile()
         actionSaveFile -> setEnabled( false );
         actionQuit -> setEnabled( true );
     }
+}
+
+void distanceGui::DisplayAll()
+{
+    int IndiceOfMesh;
+    for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh++ )
+    {
+        m_OpacityList[ IndiceOfMesh ] = 1.0;
+        m_MyWindowMesh.setOpacity( IndiceOfMesh , 1.0 );
+        horizontalSliderOpacity -> setValue( 1.0 );
+        lcdNumberOpacity -> display( 1.0 );
+        ChangeIcon( m_VisibleIcon , IndiceOfMesh );
+    }
+
+    m_MyWindowMesh.updateOpacity();
+    m_MyWindowMesh.windowUpdate();
+
+    groupBoxParameters -> setEnabled( false );
+    groupBoxDistance -> setEnabled( false );
+    menuAdvancedParameters -> setEnabled( false );
+}
+
+void distanceGui::HideAll()
+{
+    int IndiceOfMesh;
+    for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh++ )
+    {
+        m_OpacityList[ IndiceOfMesh ] = 0.0;
+        m_MyWindowMesh.setOpacity( IndiceOfMesh , 0.0 );
+        horizontalSliderOpacity -> setValue( 0.0 );
+        lcdNumberOpacity -> display( 0.0 );
+        ChangeIcon( m_UnvisibleIcon , IndiceOfMesh );
+    }
+
+    m_MyWindowMesh.updateOpacity();
+    m_MyWindowMesh.windowUpdate();
+
+    groupBoxParameters -> setEnabled( false );
+    groupBoxDistance -> setEnabled( false );
+    menuAdvancedParameters -> setEnabled( false );
 }
 
 //************************************ CHANGING MESH PARAMETERS ************************************************
