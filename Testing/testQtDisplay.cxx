@@ -17,7 +17,7 @@ int main( int argc , char* argv[] )
     MeshList.push_back( "/work/jpera/Data/Data_Slicer3/Registered_cranialbase_V2.vtk" );
 
     testQtDisplay.setMeshWidget( widget );
-    testQtDisplay.createTools( 2 , MeshList );
+    testQtDisplay.addTool( MeshList[1] );
 
     testQtDisplay.setSizeH( 900 );
     testQtDisplay.setSizeW( 800 );

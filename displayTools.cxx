@@ -8,7 +8,8 @@ displayTools::displayTools( int Indice )
     m_Reader = vtkSmartPointer <vtkPolyDataReader>::New() ;
     m_Mapper = vtkSmartPointer <vtkPolyDataMapper>::New() ;
     m_Actor = vtkSmartPointer <vtkActor>::New() ;
-    m_Filter =vtkSmartPointer <vtkSmoothPolyDataFilter>::New();
+    m_Filter = vtkSmartPointer <vtkSmoothPolyDataFilter>::New();
+    m_Lut = vtkSmartPointer <vtkColorTransferFunction>::New();
 
     m_Opacity = 1.0;
     m_Red = 0.0;
@@ -47,6 +48,12 @@ void displayTools::setPolyData( vtkSmartPointer <vtkPolyData> PolyData )
     m_PolyData = PolyData;
 }
 
+void displayTools::setPolyDataError( vtkSmartPointer <vtkPolyData> PolyData )
+{
+    m_PolyDataError = vtkSmartPointer <vtkPolyData>::New();
+    m_PolyDataError = PolyData;
+}
+
 void displayTools::setOpacity( double Opacity )
 {
     m_Opacity = Opacity;
@@ -67,6 +74,11 @@ void displayTools::setSmoothing( bool Smoothing )
 void displayTools::setNumberOfIterationSmooth( int Number )
 {
     m_NumberOfIterationSmooth = Number;
+}
+
+void displayTools::setLut( vtkSmartPointer <vtkColorTransferFunction> Lut )
+{
+    m_Lut = Lut;
 }
 
 // **********************************************************************
@@ -135,12 +147,13 @@ int displayTools::getNumberOfIterationSmooth()
 // **********************************************************************
 void displayTools::initialization()
 {
+    std::cout << "       displayTools : initialization " << std::endl;
     m_Reader -> SetFileName( m_Name.c_str() );
     m_Reader -> Update();
 
     m_PolyData = m_Reader -> GetOutput();
 
-    m_Mapper -> SetInputConnection( m_Reader -> GetOutputPort() );
+    m_Mapper -> SetInputData( m_PolyData );
 
     m_Actor -> SetMapper( m_Mapper );
     m_Actor -> GetProperty() -> SetOpacity( m_Opacity );
@@ -149,7 +162,25 @@ void displayTools::initialization()
 
 void displayTools::changeInputPort( vtkAlgorithmOutput* Input)
 {
+    std::cout << "       displayTools : changeInputPort " << std::endl;
     m_Mapper -> SetInputConnection( Input );
     m_Actor -> SetMapper( m_Mapper );
+}
+
+void displayTools::changeInputData( bool Choice )
+{
+    std::cout << "       displayTools : changeInputData " << std::endl;
+    m_Mapper = vtkSmartPointer <vtkPolyDataMapper>::New(); // choice 0 no setting of new lut creation of a new mapper for safety
+    if( Choice == false )
+    {
+        m_Mapper->SetInputData( m_PolyData );
+    }
+    if( Choice == true )
+    {
+        m_Mapper -> SetInputData( m_PolyDataError );
+        m_Mapper -> SetLookupTable( m_Lut );
+    }
+    m_Actor -> SetMapper( m_Mapper );
+
 }
 

@@ -42,7 +42,6 @@ void smoothingGui::initialization()
 
 void smoothingGui::pushButtonQuitClicked()
 {
-    std::cout << " in smoothingGui : quit " << std::endl;
     close();
 }
 
@@ -75,7 +74,9 @@ void smoothingGui::ChangeStateSmoothing()
 
 void smoothingGui::applySmoothing()
 {
-    std::cout << " in smoothingGui : run " << std::endl;
+    //m_DoSmoothList[ m_MeshSelected ] = true;
+    //m_MyWindowMesh.setSmoothing( m_MeshSelected , m_DoSmoothList[ m_MeshSelected ] );
+
     m_MyWindowMesh.updateSmoothing();
     m_MyWindowMesh.windowUpdate();
 }

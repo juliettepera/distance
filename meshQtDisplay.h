@@ -29,11 +29,13 @@ class meshQtDisplay
         displayTools::displayTools getTool( int IndiceOfMesh );
         QVTKWidget* getWidget();
 
-        void createTools( int NumberOfMesh , std::vector <std::string> MeshList );
+        void addTool( std::string Mesh );
+
         void windowInit();
         void windowUpdate();
         void windowClear();
-                void updatePositionCamera();
+        void windowClearOne( int IndiceOfMesh );
+        void updatePositionCamera();
 
         void setOpacity( int IndiceOfMesh , double Opacity );
         void setColor(int IndiceOfMesh , double Red , double Green, double Blue);
@@ -44,11 +46,16 @@ class meshQtDisplay
         void updateColor();
         void updateSmoothing();
 
+        void displayInitError(vtkSmartPointer<vtkPolyData> Data , vtkSmartPointer<vtkColorTransferFunction> Lut , int Indice);
+        void chooseDisplayError(int Indice , bool Choice );
+
+
     private:
         QVTKWidget *m_MeshWidget;
 
         int m_NumberOfMesh;
         std::vector <displayTools::displayTools> m_ToolList;
+        std::vector <bool> m_ErrorList;
 
         vtkSmartPointer <vtkRenderer> m_Renderer;
         vtkSmartPointer <vtkRenderWindow> m_RenderWindow;

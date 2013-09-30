@@ -33,10 +33,47 @@ SET( Dsources
 main.cxx 
 
 distanceGui.cxx 
+distanceGui.h
+
 displayTools.cxx
+displayTools.h
+
 meshQtDisplay.cxx 
-distanceCompute.cxx 
+meshQtDisplay.h
+
 smoothingGui.cxx
+smoothingGui.h
+
+testMeshValmet.cxx
+testMeshValmet.h
+
+MeshValmet/3dmodel.h
+
+MeshValmet/mesh_run.cxx
+MeshValmet/mesh_run.h
+
+MeshValmet/model_in.cxx
+MeshValmet/model_in.h
+
+MeshValmet/read_model.h
+
+MeshValmet/compute_error.cxx
+MeshValmet/compute_error.h
+
+MeshValmet/geomutils.cxx
+MeshValmet/geomutils.h
+
+MeshValmet/model_analysis.cxx
+MeshValmet/model_analysis.h
+
+MeshValmet/reporting.cxx
+MeshValmet/reporting.h
+
+MeshValmet/xalloc.cxx
+MeshValmet/xalloc.h
+
+MeshValmet/compute_volume_overlap.cxx
+MeshValmet/compute_volume_overlap.h
 
 ${QtProject_HEADERS_MOC} ${UI_FILES} )
 

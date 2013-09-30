@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -24,6 +27,12 @@
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="dockNestingEnabled">
+   <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QGroupBox" name="groupBoxVisualization">
@@ -52,24 +61,33 @@
      </property>
     </widget>
     <widget class="QPushButton" name="pushButtonDelete">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>270</y>
-       <width>111</width>
-       <height>27</height>
+       <x>420</x>
+       <y>130</y>
+       <width>31</width>
+       <height>31</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>delete all files</string>
+     </property>
      <property name="text">
-      <string>Delete All</string>
+      <string/>
      </property>
     </widget>
     <widget class="QListWidget" name="listWidgetLoadedMesh">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>20</x>
        <y>50</y>
-       <width>401</width>
+       <width>391</width>
        <height>201</height>
       </rect>
      </property>
@@ -84,203 +102,115 @@
      </property>
     </widget>
     <widget class="QPushButton" name="pushButtonDisplay">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
-       <x>140</x>
-       <y>270</y>
-       <width>111</width>
-       <height>27</height>
+       <x>160</x>
+       <y>260</y>
+       <width>121</width>
+       <height>31</height>
       </rect>
+     </property>
+     <property name="toolTip">
+      <string>display all files</string>
      </property>
      <property name="text">
       <string>Display All</string>
      </property>
+     <property name="autoDefault">
+      <bool>false</bool>
+     </property>
+     <property name="default">
+      <bool>false</bool>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButtonAdd">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>50</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>add file(s)</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButtonDeleteOne">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>90</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>delete selected file</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
     </widget>
    </widget>
    <widget class="QGroupBox" name="groupBoxDistance">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>480</y>
+      <y>510</y>
       <width>461</width>
-      <height>311</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="title">
-     <string>DISTANCE</string>
+     <string>ERROR</string>
     </property>
-    <widget class="QLabel" name="labelMeshA">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>30</y>
-       <width>61</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Mesh A : </string>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="comboBoxMeshA">
-     <property name="geometry">
-      <rect>
-       <x>80</x>
-       <y>30</y>
-       <width>371</width>
-       <height>24</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QComboBox" name="comboBoxMeshB">
      <property name="geometry">
       <rect>
        <x>80</x>
-       <y>60</y>
+       <y>30</y>
        <width>371</width>
        <height>24</height>
       </rect>
+     </property>
+     <property name="toolTip">
+      <string>choose 2nd file for distance error</string>
      </property>
     </widget>
     <widget class="QLabel" name="labelMeshB">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>60</y>
+       <x>10</x>
+       <y>30</y>
        <width>61</width>
        <height>21</height>
       </rect>
      </property>
      <property name="text">
-      <string>Mesh B :</string>
-     </property>
-    </widget>
-    <widget class="QRadioButton" name="radioButtonAtoB">
-     <property name="geometry">
-      <rect>
-       <x>150</x>
-       <y>100</y>
-       <width>96</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>A to B</string>
-     </property>
-    </widget>
-    <widget class="QRadioButton" name="radioButtonBtoA">
-     <property name="geometry">
-      <rect>
-       <x>150</x>
-       <y>130</y>
-       <width>96</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>B to A</string>
-     </property>
-    </widget>
-    <widget class="QRadioButton" name="radioButtonBoth">
-     <property name="geometry">
-      <rect>
-       <x>150</x>
-       <y>160</y>
-       <width>121</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>A to B ; B to A</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="labelComputeError">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>100</y>
-       <width>121</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Compute Error :</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="labelParameter_2">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>190</y>
-       <width>111</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Parameters :</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="labelMinSampFreq">
-     <property name="geometry">
-      <rect>
-       <x>140</x>
-       <y>190</y>
-       <width>201</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Minimum Sampling Frequency</string>
-     </property>
-    </widget>
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxMinSampFreq">
-     <property name="geometry">
-      <rect>
-       <x>351</x>
-       <y>190</y>
-       <width>91</width>
-       <height>24</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="labelSampStep">
-     <property name="geometry">
-      <rect>
-       <x>140</x>
-       <y>230</y>
-       <width>201</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Sampling Step</string>
-     </property>
-    </widget>
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxSampStep">
-     <property name="geometry">
-      <rect>
-       <x>350</x>
-       <y>230</y>
-       <width>91</width>
-       <height>24</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButtonApply">
-     <property name="geometry">
-      <rect>
-       <x>140</x>
-       <y>260</y>
-       <width>121</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Apply</string>
+      <string>Ref :</string>
      </property>
     </widget>
    </widget>
    <widget class="QGroupBox" name="groupBoxCamera">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>480</x>
@@ -374,9 +304,9 @@
    <widget class="QScrollArea" name="scrollAreaMesh">
     <property name="geometry">
      <rect>
-      <x>490</x>
+      <x>480</x>
       <y>90</y>
-      <width>711</width>
+      <width>721</width>
       <height>751</height>
      </rect>
     </property>
@@ -397,23 +327,29 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>709</width>
+       <width>719</width>
        <height>749</height>
       </rect>
      </property>
     </widget>
    </widget>
-   <widget class="QGroupBox" name="groupBox">
+   <widget class="QGroupBox" name="groupBoxParameters">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>360</y>
       <width>461</width>
-      <height>101</height>
+      <height>131</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>parameters of the selected file</string>
+    </property>
     <property name="title">
-     <string>PARAMETERS</string>
+     <string>VISUALIZATION PARAMETERS</string>
     </property>
     <widget class="QSlider" name="horizontalSliderOpacity">
      <property name="geometry">
@@ -423,6 +359,9 @@
        <width>231</width>
        <height>20</height>
       </rect>
+     </property>
+     <property name="toolTip">
+      <string>change opacity of selected file</string>
      </property>
      <property name="maximum">
       <number>100</number>
@@ -459,6 +398,9 @@
        <height>23</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>value of opacity</string>
+     </property>
      <property name="numDigits">
       <number>5</number>
      </property>
@@ -468,12 +410,153 @@
       <rect>
        <x>10</x>
        <y>60</y>
-       <width>93</width>
+       <width>111</width>
        <height>27</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>change color of selected file</string>
+     </property>
      <property name="text">
-      <string>Color</string>
+      <string>Change Color</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBoxError">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>100</y>
+       <width>121</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>(un)display distance error</string>
+     </property>
+     <property name="text">
+      <string>Display Error</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBoxErrorParameters">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>600</y>
+      <width>461</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>ERROR PARAMETERS</string>
+    </property>
+    <widget class="QPushButton" name="pushButtonApply">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>140</y>
+       <width>121</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Apply</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBoxSignedDistance">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>110</y>
+       <width>93</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="doubleSpinBoxMinSampFreq">
+     <property name="geometry">
+      <rect>
+       <x>221</x>
+       <y>30</y>
+       <width>91</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <double>0.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>2.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="value">
+      <double>0.500000000000000</double>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="doubleSpinBoxSampStep">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>70</y>
+       <width>91</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <double>10.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="value">
+      <double>2.000000000000000</double>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelSampStep">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>201</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Sampling Step</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelMinSampFreq">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>201</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Minimum Sampling Frequency</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelSignedDistance">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>110</y>
+       <width>201</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Signed distance</string>
      </property>
     </widget>
    </widget>
@@ -497,6 +580,9 @@
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuAdvancedParameters">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="title">
      <string>Advanced parameters</string>
     </property>
@@ -507,26 +593,41 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionAddNewFile">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Add new file</string>
    </property>
   </action>
   <action name="actionAddNewRepository">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Add new repository</string>
    </property>
   </action>
   <action name="actionSmoothing">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Smoothing</string>
    </property>
   </action>
   <action name="actionSaveFile">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Save file</string>
    </property>
   </action>
   <action name="actionQuit">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Quit</string>
    </property>

@@ -10,6 +10,7 @@
 #include <vtkProperty.h>
 #include <vtkCamera.h>
 #include <vtkSmoothPolyDataFilter.h>
+#include <vtkColorTransferFunction.h>
 
 // Other Libraries
 #include <string>
@@ -27,10 +28,12 @@ class displayTools
         void setMapper( vtkSmartPointer <vtkPolyDataMapper> Mapper );
         void setActor( vtkSmartPointer <vtkActor> Actor );
         void setPolyData( vtkSmartPointer <vtkPolyData> PolyData );
+        void setPolyDataError( vtkSmartPointer <vtkPolyData> PolyData );
         void setOpacity( double Opacity );
         void setColor( double Red , double Green , double Blue );
         void setSmoothing( bool Smoothing );
         void setNumberOfIterationSmooth( int Number );
+        void setLut( vtkSmartPointer <vtkColorTransferFunction> Lut );
 
         std::string getName();
         vtkSmartPointer <vtkPolyDataReader> getReader();
@@ -47,17 +50,20 @@ class displayTools
 
         void initialization();
         void changeInputPort( vtkAlgorithmOutput* Input);
+        void changeInputData(bool Choice );
 
     private:
 
         int m_Indice;
 
         vtkSmartPointer <vtkPolyData> m_PolyData;
+        vtkSmartPointer <vtkPolyData> m_PolyDataError;
         vtkSmartPointer <vtkPolyDataReader> m_Reader;
         vtkSmartPointer <vtkPolyDataMapper> m_Mapper;
         vtkSmartPointer <vtkActor> m_Actor;
         vtkSmartPointer <vtkSmoothPolyDataFilter> m_Filter;
         std::string m_Name;
+        vtkSmartPointer <vtkColorTransferFunction> m_Lut;
 
         double m_Opacity;
         double m_Red;

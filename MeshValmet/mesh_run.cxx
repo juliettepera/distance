@@ -77,8 +77,8 @@ void mesh_run(const struct args *args, struct model_error *model1,
   m1info = (struct model_info*) xa_malloc(sizeof(*m1info));
   m2info = (struct model_info*) xa_malloc(sizeof(*m2info));
 
-  outbuf_printf(out,"Reading %s ... ",args -> m1_fname);
-  outbuf_flush(out);
+  //outbuf_printf(out,"Reading %s ... ",args -> m1_fname);
+  //outbuf_flush(out);
 
   start_time = clock();
 
@@ -86,20 +86,20 @@ void mesh_run(const struct args *args, struct model_error *model1,
   Data1 = ConvertFileToData(  args->m1_fname  );
   model1->mesh = ConvertDataToModel( Data1 );
 
-  outbuf_printf(out,"Done (%.2f secs)\n", (double)(clock()-start_time)/CLOCKS_PER_SEC);
-  outbuf_flush(out);
+  //outbuf_printf(out,"Done (%.2f secs)\n", (double)(clock()-start_time)/CLOCKS_PER_SEC);
+  //outbuf_flush(out);
 
   start_time = clock();
 
-  outbuf_printf(out,"Reading %s ... ",args -> m2_fname);
-  outbuf_flush(out);
+  //outbuf_printf(out,"Reading %s ... ",args -> m2_fname);
+  //outbuf_flush(out);
 
   vtkSmartPointer <vtkPolyData> Data2 = vtkSmartPointer <vtkPolyData>::New();
   Data2 = ConvertFileToData( args->m2_fname );
   model2->mesh = ConvertDataToModel( Data2 );
 
-  outbuf_printf(out,"Done (%.2f secs)\n", (double)(clock()-start_time)/CLOCKS_PER_SEC);
-  outbuf_flush(out);
+  //outbuf_printf(out,"Done (%.2f secs)\n", (double)(clock()-start_time)/CLOCKS_PER_SEC);
+  //outbuf_flush(out);
 
   start_time = clock();
 
@@ -115,10 +115,10 @@ void mesh_run(const struct args *args, struct model_error *model1,
   *abs_sampling_step = args->sampling_step*bbox2_diag;
   *abs_sampling_dens = 1/((*abs_sampling_step)*(*abs_sampling_step));
 
-  outbuf_printf(out,"\nSampling_step : %f\n",*abs_sampling_step);
+  //outbuf_printf(out,"\nSampling_step : %f\n",*abs_sampling_step);
   
   /* Print available model information */
-  outbuf_printf(out,"\n\tModel information\n(degenerate faces ignored for manifold/closed info)\n\n");
+  /*outbuf_printf(out,"\n\tModel information\n(degenerate faces ignored for manifold/closed info)\n\n");
   outbuf_printf(out,"Number of vertices:\t\t%11d\t%11d\n", model1->mesh->num_vert , model2->mesh->num_vert );
   outbuf_printf(out,"Number of triangles:\t\t%11d\t%11d\n", model1->mesh->num_faces , model2->mesh->num_faces );
   outbuf_printf(out,"Degenerate triangles:\t\t%11d\t%11d\n", m1info->n_degenerate , m2info->n_degenerate );
@@ -128,44 +128,44 @@ void mesh_run(const struct args *args, struct model_error *model1,
   outbuf_printf(out,"Originally oriented:\t\t%11s\t%11s\n", (m1info->orig_oriented ? "yes" : "no") , (m2info->orig_oriented ? "yes" : "no") );
   outbuf_printf(out,"Orientable:\t\t\t%11s\t%11s\n", (m1info->orientable ? "yes" : "no") , (m2info->orientable ? "yes" : "no") );
   outbuf_printf(out,"Closed:\t\t\t%11s\t%11s\n" , (m1info->closed ? "yes" : "no") , (m2info->closed ? "yes" : "no") );
-  outbuf_flush(out);
+  outbuf_flush(out);*/
 
   if(args->do_symmetric == 1 )
   {
 
-    outbuf_printf( out , "\n\tCompute the distance from A to B\n" );
+    //outbuf_printf( out , "\n\tCompute the distance from A to B\n" );
 
     /* Compute the distance from one model to the other */
     dist_surf_surf(model1,model2->mesh,*abs_sampling_dens,args->min_sample_freq,
                    stats,1,(args->quiet ? NULL : progress));
 
     /* Print results */
-    outbuf_printf(out,"Surface area:\t%11g\t%11g\n", stats->m1_area , stats->m2_area );
+    /*outbuf_printf(out,"Surface area:\t%11g\t%11g\n", stats->m1_area , stats->m2_area );
 
     outbuf_printf(out,"Min:\t%11g\t%11g\n" , stats->min_dist , fabs(stats->min_dist/bbox2_diag)*100 );
     outbuf_printf(out,"Max:\t%11g\t%11g\n", stats->max_dist , fabs(stats->max_dist/bbox2_diag)*100 );
     outbuf_printf(out,"Mean:\t%11g\t%11g\n" , stats->mean_dist , fabs(stats->mean_dist/bbox2_diag)*100 );
     outbuf_printf(out,"RMS:\t%11g\t%11g\n", stats->rms_dist , fabs(stats->rms_dist/bbox2_diag)*100 );
     outbuf_printf(out,"\n");
-    outbuf_flush(out);
+    outbuf_flush(out);*/
   }
   if(args->do_symmetric == 2 )
   { 
-     outbuf_printf( out , "\n\tCompute the distance from B to A\n" );
+     //outbuf_printf( out , "\n\tCompute the distance from B to A\n" );
 
      /* Invert models and recompute distance */
      dist_surf_surf(model2,model1->mesh,*abs_sampling_dens,args->min_sample_freq,
                    stats_rev,0,(args->quiet ? NULL : progress));
 
-     outbuf_printf(out,"Min:\t%11g\t%11g\n" , stats->min_dist , fabs(stats->min_dist/bbox2_diag)*100 );
+     /*outbuf_printf(out,"Min:\t%11g\t%11g\n" , stats->min_dist , fabs(stats->min_dist/bbox2_diag)*100 );
      outbuf_printf(out,"Max:\t%11g\t%11g\n", stats->max_dist , fabs(stats->max_dist/bbox2_diag)*100 );
      outbuf_printf(out,"Mean:\t%11g\t%11g\n" , stats->mean_dist , fabs(stats->mean_dist/bbox2_diag)*100 );
      outbuf_printf(out,"RMS:\t%11g\t%11g\n", stats->rms_dist , fabs(stats->rms_dist/bbox2_diag)*100 );
      outbuf_printf(out,"\n");
-     outbuf_flush(out);
+     outbuf_flush(out);*/
    }
 
-  outbuf_printf(out,"\tAbsolute\t%%BBox diag\tExpected samples\n\t\tmodel 2\tmodel 1\tmodel 2\n");
+  /*outbuf_printf(out,"\tAbsolute\t%%BBox diag\tExpected samples\n\t\tmodel 2\tmodel 1\tmodel 2\n");
                 
                 
   if (args->do_symmetric == 1) 
@@ -206,7 +206,7 @@ void mesh_run(const struct args *args, struct model_error *model1,
   outbuf_printf(out,"                                \t     "
                   "X\t    Y\t   Z\t   Total\n");
   if(args->do_symmetric == 1 )
-    outbuf_printf(out,"Partitioning grid size (1 to 2):\t%6d\t%5d\t%4d\t%8d\n",
+   outbuf_printf(out,"Partitioning grid size (1 to 2):\t%6d\t%5d\t%4d\t%8d\n",
                   stats->grid_sz.x,stats->grid_sz.y,stats->grid_sz.z,
                   stats->grid_sz.x*stats->grid_sz.y*stats->grid_sz.z);
   if(args->do_symmetric == 2 )
@@ -217,7 +217,7 @@ void mesh_run(const struct args *args, struct model_error *model1,
     outbuf_printf(out,"\nAvg. number of triangles per non-empty cell (1 to 2):"
                   "\t%.2f\n",stats->n_t_p_nec);
   if(args->do_symmetric == 2 )
-    outbuf_printf(out,"Avg. number of triangles per non-empty cell (2 to 1):"
+    /*outbuf_printf(out,"Avg. number of triangles per non-empty cell (2 to 1):"
                   "\t%.2f\n",stats_rev->n_t_p_nec);
   if(args->do_symmetric == 1 )
     outbuf_printf(out,
@@ -234,7 +234,7 @@ void mesh_run(const struct args *args, struct model_error *model1,
   outbuf_printf(out,"\n");
   outbuf_printf(out,"Analysis and measuring time (secs.):\t%.2f\n",
                 (double)(clock()-start_time)/CLOCKS_PER_SEC);
-  outbuf_flush(out);
+  outbuf_flush(out);*/
 
 //--------------------------------------------------------------------------------------
   /* Get the per vertex error metric */
@@ -244,7 +244,7 @@ void mesh_run(const struct args *args, struct model_error *model1,
 
     calc_vertex_error( model1 , &nv_empty , &nf_empty );
 
-    if (nv_empty>0) {
+    /*if (nv_empty>0) {
        outbuf_printf(out,
                       "WARNING: %.2f%% of vertices (%i out of %i) have no error "
                       "samples\n",100.0*nv_empty/model1->mesh->num_vert,
@@ -255,13 +255,13 @@ void mesh_run(const struct args *args, struct model_error *model1,
                       "WARNING: %.2f%% of faces (%i out of %i) have no error "
                       "samples\n",100.0*nf_empty/model1->mesh->num_faces,
                       nf_empty,model1->mesh->num_faces);
-    }
+    }*/
   }
   if(args->do_symmetric == 2 )
   {
-      outbuf_printf(out,"in mesh_run\n");
+      //outbuf_printf(out,"in mesh_run\n");
     calc_vertex_error(model2,&nv_empty,&nf_empty);
-    if (nv_empty>0) {
+    /*if (nv_empty>0) {
         outbuf_printf(out,
                       "WARNING: %.2f%% of vertices (%i out of %i) have no error "
                       "samples\n",100.0*nv_empty/model1->mesh->num_vert,
@@ -272,9 +272,9 @@ void mesh_run(const struct args *args, struct model_error *model1,
                       "WARNING: %.2f%% of faces (%i out of %i) have no error "
                       "samples\n",100.0*nf_empty/model1->mesh->num_faces,
                       nf_empty,model1->mesh->num_faces);
-    }
+    }*/
   }
-  outbuf_flush(out);
+  //outbuf_flush(out);
 }
 
 vtkSmartPointer <vtkPolyData> ConvertFileToData( char* File )

@@ -8,6 +8,8 @@ meshQtDisplay::meshQtDisplay() // constructor
 
     m_SizeH = 700 ; m_SizeW = 700;
     m_CameraX = 0 ; m_CameraY = 0 ; m_CameraZ = 0;
+
+    m_NumberOfMesh = 0;
 }
 
 // **********************************************************************
@@ -53,21 +55,22 @@ QVTKWidget* meshQtDisplay::getWidget()
 }
 
 // **********************************************************************
-void meshQtDisplay::createTools( int NumberOfMesh , std::vector <std::string> MeshList )
+void meshQtDisplay::addTool( std::string Mesh )
 {
-    m_NumberOfMesh = NumberOfMesh;
+   std::cout << "    meshQtDisplay : addTool " << std::endl;
+   m_ToolList.push_back( m_NumberOfMesh );
+   m_ToolList[ m_NumberOfMesh ].setName( Mesh );
 
-    int IndiceOfMesh;
-    for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh++ )
-    {
-        m_ToolList.push_back( IndiceOfMesh );
-        m_ToolList[ IndiceOfMesh ].setName( MeshList[ IndiceOfMesh ] );
-    }
+   m_ErrorList.push_back( false );
+
+   m_NumberOfMesh ++;
 }
 
 void meshQtDisplay::windowInit()
 {
+    std::cout << "    meshQtDisplay : windowInit " << std::endl;
     int IndiceOfMesh;
+
     for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh++)
     {
         m_ToolList[ IndiceOfMesh ].initialization();
@@ -89,19 +92,18 @@ void meshQtDisplay::windowInit()
 
     updateOpacity();
     updateColor();
-
-    m_RenderWindow -> Render();
-    m_MeshWidget -> show();
 }
 
 void meshQtDisplay::windowUpdate()
 {
+    std::cout << "    meshQtDisplay : windowUpdate " << std::endl;
     m_RenderWindow -> Render();
     m_MeshWidget -> show();
 }
 
 void meshQtDisplay::windowClear()
 {
+    std::cout << "    meshQtDisplay : windowClear " << std::endl;
     int IndiceOfMesh;
     for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh++ )
     {
@@ -109,7 +111,19 @@ void meshQtDisplay::windowClear()
     }
 
     m_ToolList.clear();
+    m_ErrorList.clear();
+
     m_NumberOfMesh = 0;
+}
+
+void meshQtDisplay::windowClearOne( int IndiceOfMesh )
+{
+    std::cout << "    meshQtDisplay : windowClearOne " << std::endl;
+    m_Renderer -> RemoveActor( m_ToolList[ IndiceOfMesh ].getActor() );
+    m_ToolList.erase( m_ToolList.begin() + IndiceOfMesh );
+    m_ErrorList.erase( m_ErrorList.begin() + IndiceOfMesh );
+
+    m_NumberOfMesh--;
 }
 
 void meshQtDisplay::updatePositionCamera()
@@ -164,7 +178,6 @@ void meshQtDisplay::updateColor()
     }
 }
 
-
 void meshQtDisplay::updateSmoothing()
 {
     int IndiceOfMesh;
@@ -188,6 +201,38 @@ void meshQtDisplay::updateSmoothing()
 
         m_Renderer -> AddActor( m_ToolList[ IndiceOfMesh ].getActor() );
     }
+}
+
+//*************************************************************************
+void meshQtDisplay::displayInitError( vtkSmartPointer <vtkPolyData> Data , vtkSmartPointer <vtkColorTransferFunction> Lut , int Indice )
+{
+    std::cout << "    meshQtDisplay : displayInitError " << std::endl;
+    m_ToolList[ Indice ].setLut( Lut );
+    m_ToolList[ Indice ].setPolyDataError( Data );
+    m_ToolList[ Indice ].changeInputData( 1 );
+    m_ErrorList[ Indice ] = true;
+
+    m_Renderer -> AddActor( m_ToolList[ Indice ].getActor() );
+
+    m_RenderWindow -> Render();
+    m_MeshWidget -> show();
+}
+
+void meshQtDisplay::chooseDisplayError( int Indice , bool Choice )
+{
+    std::cout << "    meshQtDisplay : chooseDisplayError " << std::endl;
+    if( Choice == false )
+    {
+        m_ToolList[ Indice ].changeInputData( false );
+    }
+    if( Choice == true && m_ErrorList[ Indice ] == true )
+    {
+        m_ToolList[ Indice ].changeInputData( true );
+    }
+
+    m_Renderer -> AddActor( m_ToolList[ Indice ].getActor() );
+    m_RenderWindow -> Render();
+    m_MeshWidget -> show();
 }
 
 
