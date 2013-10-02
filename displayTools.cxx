@@ -12,10 +12,8 @@ displayTools::displayTools( int Indice )
     m_Lut = vtkSmartPointer <vtkColorTransferFunction>::New();
 
     m_Opacity = 1.0;
-    m_Red = 0.0;
-    m_Green = 1.0 / double( m_Indice + 1 );
-    m_Blue = 1.0;
 
+    m_Red = rand()/(double)RAND_MAX  ; m_Green = rand()/(double)RAND_MAX  ; m_Blue = rand()/(double)RAND_MAX ;
     m_Smoothing = false;
     m_NumberOfIterationSmooth = 100;
 
@@ -147,7 +145,6 @@ int displayTools::getNumberOfIterationSmooth()
 // **********************************************************************
 void displayTools::initialization()
 {
-    std::cout << "       displayTools : initialization " << std::endl;
     m_Reader -> SetFileName( m_Name.c_str() );
     m_Reader -> Update();
 
@@ -162,14 +159,12 @@ void displayTools::initialization()
 
 void displayTools::changeInputPort( vtkAlgorithmOutput* Input)
 {
-    std::cout << "       displayTools : changeInputPort " << std::endl;
     m_Mapper -> SetInputConnection( Input );
     m_Actor -> SetMapper( m_Mapper );
 }
 
 void displayTools::changeInputData( bool Choice )
 {
-    std::cout << "       displayTools : changeInputData " << std::endl;
     m_Mapper = vtkSmartPointer <vtkPolyDataMapper>::New(); // choice 0 no setting of new lut creation of a new mapper for safety
     if( Choice == false )
     {

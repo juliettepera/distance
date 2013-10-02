@@ -5,12 +5,12 @@ smoothingGui::smoothingGui(QWidget * parent , Qt::WFlags f  ): QMainWindow(paren
     setupUi(this);
 
     m_NumberOfMesh = 0;
-    m_MeshSelected = 0;
+    m_MeshSelected = -1;
 
     QObject::connect( pushButtonQuit , SIGNAL( clicked() ) , this , SLOT( pushButtonQuitClicked() ) );
     QObject::connect( pushButtonRun , SIGNAL( clicked() ) , this , SLOT( applySmoothing() ) );
     QObject::connect( spinBoxIteration , SIGNAL( valueChanged( int ) ) , this , SLOT( ChangeValueSmoothing() ) );
-    QObject::connect( checkBoxState , SIGNAL( stateChanged( int ) ) , this , SLOT( ChangeStateSmoothing() ) );
+    QObject::connect( checkBoxDisplay , SIGNAL( toggled( bool ) ) , this , SLOT( DisplaySmoothing() ) );
     QObject::connect( listWidgetLoadedMesh , SIGNAL( itemClicked( QListWidgetItem* ) ) , this , SLOT( ChangeMeshSelected() ) );
 }
 
@@ -24,6 +24,12 @@ void smoothingGui::setWindow( meshQtDisplay WindowMesh )
    m_MyWindowMesh = WindowMesh;
 }
 
+void smoothingGui::setIcon( QIcon Visible , QIcon Unvisible )
+{
+   m_Visible = Visible;
+   m_Unvisible = Unvisible;
+}
+
 void smoothingGui::initialization()
 {
     listWidgetLoadedMesh -> clear();
@@ -34,10 +40,16 @@ void smoothingGui::initialization()
 
     for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh ++ )
     {
-        m_NumberOfIterationList.push_back( 100 );
+        m_NumberOfIterationList.push_back( 500 );
         m_DoSmoothList.push_back( false );
+        m_DisplayList.push_back( false );
         listWidgetLoadedMesh -> addItem( m_MeshList[ IndiceOfMesh ].c_str() );
     }
+
+    checkBoxDisplay -> setEnabled( false );
+    pushButtonRun -> setEnabled( false );
+    spinBoxIteration -> setEnabled( false );
+
 }
 
 void smoothingGui::pushButtonQuitClicked()
@@ -47,35 +59,62 @@ void smoothingGui::pushButtonQuitClicked()
 
 void smoothingGui::ChangeMeshSelected()
 {
-   m_MeshSelected = listWidgetLoadedMesh -> currentRow();
+    if( ! m_MeshList.empty() && m_NumberOfMesh != 0 )
+    {
+        m_MeshSelected = listWidgetLoadedMesh -> currentRow();
 
-   spinBoxIteration -> setValue( m_NumberOfIterationList[ m_MeshSelected ] );
-   checkBoxState -> setChecked( m_DoSmoothList[ m_MeshSelected ] );
+        spinBoxIteration -> setValue( m_NumberOfIterationList[ m_MeshSelected ] );
+        checkBoxDisplay -> setChecked( m_DisplayList[ m_MeshSelected ] );
+    }
+
+    if( m_MeshSelected != -1 )
+    {
+        pushButtonRun -> setEnabled( ! m_DoSmoothList[ m_MeshSelected ] );
+        spinBoxIteration -> setEnabled( true );
+        checkBoxDisplay -> setEnabled( m_DoSmoothList[ m_MeshSelected ] );
+    }
 }
 
 void smoothingGui::ChangeValueSmoothing()
 {
     m_NumberOfIterationList[ m_MeshSelected ] = spinBoxIteration -> value();
     m_MyWindowMesh.setNumberOfIteration( m_MeshSelected , m_NumberOfIterationList[ m_MeshSelected ] );
+    pushButtonRun -> setEnabled( true );
 }
 
-void smoothingGui::ChangeStateSmoothing()
+void smoothingGui::DisplaySmoothing()
 {
-    if( checkBoxState -> isChecked() )
+    if( m_DoSmoothList[ m_MeshSelected ] != false )
     {
-        m_DoSmoothList[ m_MeshSelected ] = true;
+        if( checkBoxDisplay -> isChecked() )
+        {
+            m_DisplayList[ m_MeshSelected ] = true;
+            listWidgetLoadedMesh -> item( m_MeshSelected ) -> setIcon( m_Visible );
+        }
+        else if( ! checkBoxDisplay -> isChecked() )
+        {
+            m_DisplayList[ m_MeshSelected ] = false;
+            listWidgetLoadedMesh -> item( m_MeshSelected ) -> setIcon( m_Unvisible );
+        }
+
+        m_MyWindowMesh.setSmoothing( m_MeshSelected , m_DisplayList[ m_MeshSelected ] );
+        m_MyWindowMesh.updateSmoothing();
+        m_MyWindowMesh.windowUpdate();
     }
-    else
-    {
-        m_DoSmoothList[ m_MeshSelected ] = false;
-    }
-    m_MyWindowMesh.setSmoothing( m_MeshSelected , m_DoSmoothList[ m_MeshSelected ] );
 }
 
 void smoothingGui::applySmoothing()
 {
-    //m_DoSmoothList[ m_MeshSelected ] = true;
-    //m_MyWindowMesh.setSmoothing( m_MeshSelected , m_DoSmoothList[ m_MeshSelected ] );
+    m_DoSmoothList[ m_MeshSelected ] = true;
+    m_MyWindowMesh.setSmoothing( m_MeshSelected , m_DoSmoothList[ m_MeshSelected ] );
+
+    checkBoxDisplay -> setChecked( true );
+    m_DisplayList[ m_MeshSelected ] = true;
+
+    listWidgetLoadedMesh -> item( m_MeshSelected ) -> setIcon( m_Visible );
+
+    checkBoxDisplay -> setEnabled( true );
+    pushButtonRun -> setEnabled( false );
 
     m_MyWindowMesh.updateSmoothing();
     m_MyWindowMesh.windowUpdate();

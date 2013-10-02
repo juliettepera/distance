@@ -31,8 +31,11 @@ class smoothingGui: public QMainWindow, public Ui::SmoothingWindow
 
     public:
         smoothingGui( QWidget * parent = 0, Qt::WFlags f = 0 );
+
         void setMeshList( std::vector <std::string> MeshList );
         void setWindow( meshQtDisplay WindowMesh );
+        void setIcon( QIcon Visible , QIcon Unvisible );
+
         void initialization();
 
     public slots:
@@ -41,15 +44,19 @@ class smoothingGui: public QMainWindow, public Ui::SmoothingWindow
         void applySmoothing();
         void ChangeMeshSelected();
         void ChangeValueSmoothing();
-        void ChangeStateSmoothing();
+        void DisplaySmoothing();
 
     private:
         std::vector <std::string> m_MeshList;
         std::vector <double> m_NumberOfIterationList;
         std::vector <bool> m_DoSmoothList;
+        std::vector <bool> m_DisplayList;
 
         int m_NumberOfMesh;
         int m_MeshSelected;
+
+        QIcon m_Visible;
+        QIcon m_Unvisible;
 
         meshQtDisplay m_MyWindowMesh;
 };

@@ -76,7 +76,7 @@ void meshQtDisplay::windowInit()
         m_ToolList[ IndiceOfMesh ].initialization();
     }
 
-    m_Renderer -> SetBackground( .6 , .5 , .4 );
+    m_Renderer -> SetBackground( 1.0 , .898 , .8 );
     m_Renderer -> SetActiveCamera( m_Camera );
 
     for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh++ )
@@ -180,6 +180,8 @@ void meshQtDisplay::updateColor()
 
 void meshQtDisplay::updateSmoothing()
 {
+    std::cout << " meshQtDisplay : updateSmoothing " << std::endl;
+
     int IndiceOfMesh;
 
     for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh++ )
@@ -193,6 +195,14 @@ void meshQtDisplay::updateSmoothing()
             m_ToolList[ IndiceOfMesh ].getFilter() -> Update();
 
             m_ToolList[ IndiceOfMesh ].changeInputPort( m_ToolList[ IndiceOfMesh ].getFilter() -> GetOutputPort() );
+
+            if( m_ToolList[ IndiceOfMesh ].getFilter() -> GetOutput() -> GetNumberOfPoints() != m_ToolList[ IndiceOfMesh ].getReader() -> GetOutput() -> GetNumberOfPoints() )
+            {
+                QMessageBox MsgBox;
+                MsgBox.setText( " problem occur during the smoothing");
+                MsgBox.exec();
+                m_ToolList[ IndiceOfMesh ].changeInputPort( m_ToolList[ IndiceOfMesh ].getReader() -> GetOutputPort() );
+            }
         }
         else
         {
@@ -206,7 +216,6 @@ void meshQtDisplay::updateSmoothing()
 //*************************************************************************
 void meshQtDisplay::displayInitError( vtkSmartPointer <vtkPolyData> Data , vtkSmartPointer <vtkColorTransferFunction> Lut , int Indice )
 {
-    std::cout << "    meshQtDisplay : displayInitError " << std::endl;
     m_ToolList[ Indice ].setLut( Lut );
     m_ToolList[ Indice ].setPolyDataError( Data );
     m_ToolList[ Indice ].changeInputData( 1 );
@@ -220,7 +229,6 @@ void meshQtDisplay::displayInitError( vtkSmartPointer <vtkPolyData> Data , vtkSm
 
 void meshQtDisplay::chooseDisplayError( int Indice , bool Choice )
 {
-    std::cout << "    meshQtDisplay : chooseDisplayError " << std::endl;
     if( Choice == false )
     {
         m_ToolList[ Indice ].changeInputData( false );
@@ -235,4 +243,26 @@ void meshQtDisplay::chooseDisplayError( int Indice , bool Choice )
     m_MeshWidget -> show();
 }
 
+void meshQtDisplay::typeOfDisplay( int IndiceOfMesh , int Type )
+{
+
+    vtkSmartPointer <vtkActor> Actor = m_ToolList[ IndiceOfMesh ].getActor();
+    vtkSmartPointer <vtkProperty> Property =  Actor->GetProperty();
+
+    if( Type == 1 )
+    {
+        Property -> SetRepresentationToSurface();
+    }
+    else if( Type == 2 )
+    {
+        Property -> SetRepresentationToPoints();
+    }
+    else if( Type == 3 )
+    {
+        Property -> SetRepresentationToWireframe();
+    }
+
+    m_RenderWindow -> Render();
+    m_MeshWidget -> show();
+}
 

@@ -65,6 +65,10 @@ distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  , std::string WorkDire
     QObject::connect( checkBoxSignedDistance , SIGNAL( toggled( bool ) ) , this , SLOT( ChangeSignedDistance() ) );
     QObject::connect( checkBoxError , SIGNAL( toggled( bool ) ) , this , SLOT( ChangeDisplayError() ) );
 
+    QObject::connect( radioButtonSurface , SIGNAL( toggled( bool ) ) , this , SLOT( ChangeTypeOfDisplay() ) );
+    QObject::connect( radioButtonPoints , SIGNAL( toggled( bool ) ) , this , SLOT( ChangeTypeOfDisplay() ) );
+    QObject::connect( radioButtonWireframe , SIGNAL( toggled( bool ) ) , this , SLOT( ChangeTypeOfDisplay() ) );
+
 }
 
 //************************************ LOADING FILES ************************************************
@@ -96,6 +100,7 @@ void distanceGui::OpenBrowseWindowFile()
             m_MinSampleFrequencyList.push_back( 0.5 );
             m_SamplingStepList.push_back( 2 );
             m_DisplayErrorList.push_back( -1 );
+            m_DisplayTypeList.push_back( 1 );
 
             m_MyWindowMesh.addTool( m_MeshList[ m_NumberOfMesh-1 ] );
 
@@ -166,20 +171,25 @@ void distanceGui::OpenBrowseWindowRepository()
 //************************************ SELECTING FILES ************************************************
 void distanceGui::ChangeMeshSelected()
 {
-   std::cout << " distanceGui : ChangeMeshSelected " << std::endl;
-   std::cout << "               previous m_MeshSelected = " << m_MeshSelected << std::endl;
-
    m_MeshSelected = listWidgetLoadedMesh -> currentRow();
-
-   std::cout << "               new m_MeshSelected = " << m_MeshSelected << std::endl;
-   std::cout << "               m_OpacityList[ m_MeshSelected ] = " << m_OpacityList[ m_MeshSelected ] << std::endl;
-   std::cout << "               m_DisplayErrorList[ m_MeshSelected ] = " << m_DisplayErrorList[ m_MeshSelected ] << std::endl;
-
    horizontalSliderOpacity -> setValue( m_OpacityList[ m_MeshSelected ]*100 );
    lcdNumberOpacity -> display( m_OpacityList[ m_MeshSelected ] );
    doubleSpinBoxMinSampFreq -> setValue( m_MinSampleFrequencyList[ m_MeshSelected ] );
    doubleSpinBoxSampStep -> setValue( m_SamplingStepList[ m_MeshSelected ] );
    checkBoxSignedDistance -> setChecked( m_SignedDistanceList[ m_MeshSelected ] );
+
+   if( m_DisplayTypeList[ m_MeshSelected ] == 1 )
+   {
+       radioButtonSurface -> setChecked( true );
+   }
+   else if( m_DisplayTypeList[ m_MeshSelected ] == 2 )
+   {
+       radioButtonPoints -> setChecked( true );
+   }
+   else if( m_DisplayTypeList[ m_MeshSelected ] == 3 )
+   {
+       radioButtonWireframe -> setChecked( true );
+   }
 
    if( m_DisplayErrorList[ m_MeshSelected ] == 0 )
    {
@@ -204,8 +214,6 @@ void distanceGui::ChangeMeshSelected()
        groupBoxDistance -> setEnabled( true );
    }
    groupBoxParameters -> setEnabled( true );
-   menuAdvancedParameters -> setEnabled( true );
-   actionSmoothing -> setEnabled( true );
 }
 
 void distanceGui::InitIcon()
@@ -297,6 +305,9 @@ void distanceGui::DisplayInit()
     pushButtonDisplayAll -> setEnabled( true );
     pushButtonHideAll -> setEnabled( true );
     listWidgetLoadedMesh -> setEnabled( true );
+    menuAdvancedParameters -> setEnabled( true );
+    actionSmoothing -> setEnabled( true );
+
 }
 
 void distanceGui::DisplayReset()
@@ -330,11 +341,14 @@ void distanceGui::DisplayReset()
         groupBoxCamera -> setEnabled( false );
         groupBoxParameters -> setEnabled( false );
         groupBoxDistance -> setEnabled( false );
+        groupBoxErrorParameters -> setEnabled( false );
         menuAdvancedParameters -> setEnabled( false );
 
         pushButtonAdd -> setEnabled( true );
         pushButtonDeleteOne -> setEnabled( false );
         pushButtonDelete -> setEnabled( false );
+        pushButtonDisplayAll -> setEnabled( false );
+        pushButtonHideAll -> setEnabled( false );
         listWidgetLoadedMesh -> setEnabled( false );
 
         actionAddNewFile -> setEnabled( true );
@@ -426,10 +440,34 @@ void distanceGui::HideAll()
     menuAdvancedParameters -> setEnabled( false );
 }
 
+void distanceGui::ChangeTypeOfDisplay()
+{
+    if( ! m_MeshList.empty() && m_MeshSelected != -1 )
+    {
+        if( radioButtonSurface -> isChecked() )
+        {
+            m_DisplayTypeList[ m_MeshSelected ] = 1;
+            m_MyWindowMesh.typeOfDisplay( m_MeshSelected , 1 );
+            std::cout << " display the surface" << std::endl;
+        }
+        else if( radioButtonPoints -> isChecked() )
+        {
+            m_DisplayTypeList[ m_MeshSelected ] = 2;
+            m_MyWindowMesh.typeOfDisplay( m_MeshSelected , 2 );
+            std::cout << " display the points" << std::endl;
+        }
+        else if( radioButtonWireframe -> isChecked() )
+        {
+            m_DisplayTypeList[ m_MeshSelected ] = 3;
+            m_MyWindowMesh.typeOfDisplay( m_MeshSelected , 3 );
+            std::cout << " display the wireframe" << std::endl;
+        }
+    }
+}
+
 //************************************ CHANGING MESH PARAMETERS ************************************************
 void distanceGui::ChangeValueOpacity()
 {
-    std::cout << " distanceGui : ChangeValueOpacity " << std::endl;
     if( ! m_MeshList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
         m_OpacityList[ m_MeshSelected ] = horizontalSliderOpacity -> value()/100.;
@@ -475,6 +513,7 @@ void distanceGui::OpenSmoothingWindow()
     {
         m_MySmoothing.setMeshList( m_MeshList );
         m_MySmoothing.setWindow( m_MyWindowMesh );
+        m_MySmoothing.setIcon( m_VisibleIcon , m_UnvisibleIcon );
         m_MySmoothing.initialization();
         m_MySmoothing.show();
     }
@@ -558,7 +597,6 @@ void distanceGui::buttonFrontClicked()
 //************************************ CHANGING ERROR PARAMETERS ************************************************
 void distanceGui::ChangeSamplingStep()
 {
-    std::cout << " distanceGui : ChangeSamplingStep " << std::endl;
     if( ! m_MeshList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
         m_SamplingStepList[ m_MeshSelected ] = doubleSpinBoxSampStep -> value();
@@ -568,7 +606,6 @@ void distanceGui::ChangeSamplingStep()
 
 void distanceGui::ChangeMinSampleFrequency()
 {
-    std::cout << " distanceGui : ChangeMinSampleFrequency " << std::endl;
     if( ! m_MeshList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
         m_MinSampleFrequencyList[ m_MeshSelected ] = doubleSpinBoxMinSampFreq -> value();
@@ -578,7 +615,6 @@ void distanceGui::ChangeMinSampleFrequency()
 
 void distanceGui::ChangeSignedDistance()
 {
-    std::cout << " distanceGui : ChangeSignedDistance " << std::endl;
     if( ! m_MeshList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
         m_SignedDistanceList[ m_MeshSelected ] = checkBoxSignedDistance -> isChecked();
@@ -588,7 +624,6 @@ void distanceGui::ChangeSignedDistance()
 
 void distanceGui::ChangeDisplayError()
 {
-    std::cout << " distanceGui : ChangeDisplayError " << std::endl;
     if( ! m_MeshList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
         if( checkBoxError -> isEnabled() )
@@ -610,15 +645,6 @@ void distanceGui::ChangeDisplayError()
 //************************************ COMPUTING ERROR ************************************************
 void distanceGui::ApplyDistance()
 {
-    std::cout << " distanceGui : ApplyDistance " << std::endl;
-
-    std::cout << "               m_SelectedItemA = " << m_SelectedItemA << std::endl;
-    std::cout << "               m_SelectedItemB = " << m_SelectedItemB << std::endl;
-    std::cout << "               m_OpacityList[ m_SelectedItemA ] = " << m_OpacityList[ m_SelectedItemA ] << std::endl;
-    std::cout << "               m_OpacityList[ m_SelectedItemB ] = " << m_OpacityList[ m_SelectedItemB ] << std::endl;
-    std::cout << "               m_DisplayErrorList[ m_SelectedItemA ] = " << m_DisplayErrorList[ m_SelectedItemA ] << std::endl;
-    std::cout << "               m_DisplayErrorList[ m_SelectedItemB ] = " << m_DisplayErrorList[ m_SelectedItemB ] << std::endl;
-
     if( m_SelectedItemA != -1 && m_SelectedItemB != -1 )
     {
         m_MyTestMeshValmet.CalculateError();
@@ -646,25 +672,10 @@ void distanceGui::ApplyDistance()
         MsgBox.setText( " choose first the reference file to apply the distance error ");
         MsgBox.exec();
     }
-
-    std::cout << "               after computing... " << std::endl;
-
-    std::cout << "               m_SelectedItemA = " << m_SelectedItemA << std::endl;
-    std::cout << "               m_SelectedItemB = " << m_SelectedItemB << std::endl;
-    std::cout << "               m_OpacityList[ m_SelectedItemA ] = " << m_OpacityList[ m_SelectedItemA ] << std::endl;
-    std::cout << "               m_OpacityList[ m_SelectedItemB ] = " << m_OpacityList[ m_SelectedItemB ] << std::endl;
-    std::cout << "               m_DisplayErrorList[ m_SelectedItemA ] = " << m_DisplayErrorList[ m_SelectedItemA ] << std::endl;
-    std::cout << "               m_DisplayErrorList[ m_SelectedItemB ] = " << m_DisplayErrorList[ m_SelectedItemB ] << std::endl;
 }
 
 void distanceGui::DisplayError()
 {
-    std::cout << " distanceGui : DisplayError " << std::endl;
-
-    std::cout << "               m_MeshSelected = " << m_MeshSelected << std::endl;
-    std::cout << "               m_OpacityList[ m_MeshSelected ] = " << m_OpacityList[ m_MeshSelected ] << std::endl;
-    std::cout << "               m_DisplayErrorList[ m_MeshSelected ] = " << m_DisplayErrorList[ m_MeshSelected ] << std::endl;
-
     if( ! m_MeshList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
         if( m_DisplayErrorList[ m_MeshSelected ] == 0 )
@@ -690,19 +701,23 @@ void distanceGui::AvailableMesh()
     {
         if( IndiceOfMesh != m_SelectedItemA )
         {
-           comboBoxMeshB ->setItemIcon( IndiceOfMesh , m_OkIcon );
+           comboBoxMeshB -> setItemIcon( IndiceOfMesh , m_OkIcon );
+           QStandardItemModel* Model = qobject_cast< QStandardItemModel* >( comboBoxMeshB -> model() );
+           QStandardItem* Item = Model -> item( IndiceOfMesh );
+           Item -> setSelectable( true );
         }
         else
         {
            comboBoxMeshB ->setItemIcon( IndiceOfMesh , m_NotOkIcon );
+           QStandardItemModel* Model = qobject_cast< QStandardItemModel* >( comboBoxMeshB -> model() );
+           QStandardItem* Item = Model -> item( IndiceOfMesh );
+           Item -> setSelectable( false );
         }
     }
 }
 
 void distanceGui::SelectMeshB()
 {
-    std::cout << " distanceGui : SelectMeshB " << std::endl;
-
     if( m_SelectedItemA != -1 )
     {
         m_SelectedItemB = comboBoxMeshB -> currentItem();

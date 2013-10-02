@@ -7,6 +7,9 @@
 #include <vtkRenderWindow.h>
 #include <vtkSmoothPolyDataFilter.h>
 
+// Qt Libraries
+#include <QMessageBox>
+
 
 // Qt libraries
 #include <qwidget.h>
@@ -48,6 +51,8 @@ class meshQtDisplay
 
         void displayInitError(vtkSmartPointer<vtkPolyData> Data , vtkSmartPointer<vtkColorTransferFunction> Lut , int Indice);
         void chooseDisplayError(int Indice , bool Choice );
+
+        void typeOfDisplay(int IndiceOfMesh, int Type);
 
 
     private:

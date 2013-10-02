@@ -200,13 +200,13 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>460</y>
+      <y>510</y>
       <width>461</width>
       <height>71</height>
      </rect>
     </property>
     <property name="title">
-     <string>ERROR</string>
+     <string>DISPLAY DISTANCES</string>
     </property>
     <widget class="QComboBox" name="comboBoxMeshB">
      <property name="geometry">
@@ -370,7 +370,7 @@
       <x>10</x>
       <y>310</y>
       <width>461</width>
-      <height>131</height>
+      <height>181</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -465,6 +465,48 @@
       <string>Display Error</string>
      </property>
     </widget>
+    <widget class="QRadioButton" name="radioButtonSurface">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>140</y>
+       <width>109</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Surface</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButtonPoints">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>140</y>
+       <width>71</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Points</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButtonWireframe">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>140</y>
+       <width>109</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Wireframe</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBoxErrorParameters">
     <property name="enabled">
@@ -473,13 +515,13 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>550</y>
+      <y>600</y>
       <width>461</width>
       <height>181</height>
      </rect>
     </property>
     <property name="title">
-     <string>ERROR PARAMETERS</string>
+     <string>DISPLAY DISTANCES PARAMETERS</string>
     </property>
     <widget class="QPushButton" name="pushButtonApply">
      <property name="geometry">

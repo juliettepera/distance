@@ -19,6 +19,8 @@
 #include <QColorDialog>
 #include <QCheckBox>
 #include <QFileInfo>
+#include <QStandardItem>
+#include <QStandardItemModel>
 
 // vtk Libraries
 #include <vtkSmartPointer.h>
@@ -63,6 +65,8 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        void DisplayAll();
        void HideAll();
 
+       void ChangeTypeOfDisplay();
+
        void ChangeMeshSelected();
 
        void DisplayInit();
@@ -98,6 +102,8 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        int m_NumberOfDisplay;
        int m_SelectedItemA;
        int m_SelectedItemB;
+
+
        std::string m_WorkDirectory;
 
        QIcon m_VisibleIcon;
@@ -126,6 +132,7 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        std::vector <double> m_SamplingStepList;
        std::vector <bool> m_SignedDistanceList;
        std::vector <int> m_DisplayErrorList;
+       std::vector <int> m_DisplayTypeList;
 
        vtkSmartPointer <vtkPolyData> m_ComputedData;
        vtkSmartPointer <vtkColorTransferFunction> m_Lut;
