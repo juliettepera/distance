@@ -24,8 +24,8 @@ INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}  ${
 ADD_DEFINITIONS( -DQT_GUI_LIBS -DQT_CORE_LIB -DQT3_SUPPORT )
 
 # generate moc and ui files
-QT4_WRAP_CPP( QtProject_HEADERS_MOC distanceGui.h smoothingGui.h )
-QT4_WRAP_UI( UI_FILES distanceGui.ui smoothingGui.ui )
+QT4_WRAP_CPP( QtProject_HEADERS_MOC distanceGui.h smoothingGui.h downSamplingGui.h)
+QT4_WRAP_UI( UI_FILES distanceGui.ui smoothingGui.ui downSamplingGui.ui )
 
 # set the sources files
 SET( Dsources 
@@ -43,6 +43,9 @@ meshQtDisplay.h
 
 smoothingGui.cxx
 smoothingGui.h
+
+downSamplingGui.cxx
+downSamplingGui.cxx
 
 testMeshValmet.cxx
 testMeshValmet.h

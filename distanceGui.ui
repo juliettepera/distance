@@ -26,7 +26,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>3DMeshMetric</string>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -432,6 +432,9 @@
      <property name="numDigits">
       <number>5</number>
      </property>
+     <property name="value" stdset="0">
+      <double>1.000000000000000</double>
+     </property>
     </widget>
     <widget class="QPushButton" name="pushButtonColor">
      <property name="geometry">
@@ -657,6 +660,7 @@
      <string>Advanced parameters</string>
     </property>
     <addaction name="actionSmoothing"/>
+    <addaction name="actionDownSampling"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuAdvancedParameters"/>
@@ -679,9 +683,6 @@
    </property>
   </action>
   <action name="actionSmoothing">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
    <property name="text">
     <string>Smoothing</string>
    </property>
@@ -700,6 +701,11 @@
    </property>
    <property name="text">
     <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionDownSampling">
+   <property name="text">
+    <string>DownSampling</string>
    </property>
   </action>
  </widget>

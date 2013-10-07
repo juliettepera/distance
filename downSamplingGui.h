@@ -1,5 +1,5 @@
-#ifndef SMOOTHINGGUI_H
-#define SMOOTHINGGUI_H
+#ifndef DOWNSAMPLINGGUI_H
+#define DOWNSAMPLINGGUI_H
 
 // Qt libraries
 #include <QFont>
@@ -24,40 +24,37 @@
 // My Libraries
 #include "meshQtDisplay.h"
 #include "displayTools.h"
-#include "ui_smoothingGui.h"
+#include "ui_downSamplingGui.h"
 
-class smoothingGui: public QMainWindow, public Ui::SmoothingWindow
+class downSamplingGui: public QMainWindow, public Ui::downSamplingWindow
 {
     Q_OBJECT
 
     public:
-        smoothingGui( QWidget * parent = 0, Qt::WFlags f = 0 );
 
+        downSamplingGui( QWidget * parent = 0, Qt::WFlags f = 0 );
+
+        void setMeshList( std::vector <std::string> MeshList );
         void setWindow( meshQtDisplay WindowMesh );
-        void setIcon( QIcon Visible , QIcon Unvisible );
+        void initialization();
         void reset();
         void addOne( std::string Name );
         void deleteOne( int IndiceOfMesh );
+        void setToolList();
 
     public slots:
 
         void pushButtonQuitClicked();
         void ChangeMeshSelected();
-
-        void ChangeValueSmoothing();
-        void ChangeDisplaySmoothing();
-        void applySmoothing();
+        void ChangeValueDensity();
+        void applyDownSampling();
 
     private:
-        std::vector <double> m_NumberOfIterationList;
-        std::vector <bool> m_DisplayList;
-        std::vector <bool> m_SmoothList;
+        std::vector <double> m_DensityList;
+        std::vector <int> m_TypeList;
 
         int m_NumberOfMesh;
         int m_MeshSelected;
-
-        QIcon m_Visible;
-        QIcon m_Unvisible;
 
         meshQtDisplay m_MyWindowMesh;
         displayTools m_ActivTool;

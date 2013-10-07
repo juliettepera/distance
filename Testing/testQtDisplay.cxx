@@ -24,11 +24,11 @@ int main( int argc , char* argv[] )
 
     testQtDisplay.windowInit();
 
-    testQtDisplay.setColor( 1 , 1.0 , 0.0 , 0.5 );
-    testQtDisplay.setOpacity( 0 , 0.5 );
+    //testQtDisplay.setColor( 1 , 1.0 , 0.0 , 0.5 );
+    //testQtDisplay.setOpacity( 0 , 0.5 );
 
-    testQtDisplay.updateColor();
-    testQtDisplay.updateOpacity();
+    //testQtDisplay.updateColor();
+    //testQtDisplay.updateOpacity();
 
     testQtDisplay.windowUpdate();
 

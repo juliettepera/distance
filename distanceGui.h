@@ -33,6 +33,7 @@
 // My libraries
 #include "meshQtDisplay.h"
 #include "smoothingGui.h"
+#include "downSamplingGui.h"
 #include "testMeshValmet.h"
 #include "ui_distanceGui.h"
 
@@ -76,6 +77,7 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        void ChooseColor();
 
        void OpenSmoothingWindow();
+       void OpenDownSamplingWindow();
 
        void buttonFrontClicked();
        void buttonBackClicked();
@@ -91,7 +93,7 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        void ApplyDistance();
        void SelectMeshB();
        void ChangeDisplayError();
-            
+
    private:
 
        int m_NumberOfMesh;
@@ -144,6 +146,8 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        meshQtDisplay m_MyWindowMesh;
        smoothingGui m_MySmoothing;
        testMeshValmet m_MyTestMeshValmet;
+       downSamplingGui m_MyDownSampling;
+       displayTools m_ActivTool;
 
 };
 

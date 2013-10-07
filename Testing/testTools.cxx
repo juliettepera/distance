@@ -2,7 +2,7 @@
 
 int main( int argc , char* argv[] )
 {
-    displayTools testTool(1);
+    /*displayTools testTool(1);
 
     // test Name
     std::string inputName = "/work/jpera/Data/Data_Slicer3/Registered_condyle_V2.vtk";
@@ -21,8 +21,8 @@ int main( int argc , char* argv[] )
     vtkSmartPointer <vtkPolyDataReader> inputReader = vtkSmartPointer <vtkPolyDataReader>::New();
     vtkSmartPointer <vtkPolyDataReader> outputReader = vtkSmartPointer <vtkPolyDataReader>::New();
 
-    testTool.setReader( inputReader );
-    outputReader = testTool.getReader();
+    //testTool.setReader( inputReader );
+    //outputReader = testTool.getReader();
 
     if( inputReader != outputReader )
     {
@@ -34,8 +34,8 @@ int main( int argc , char* argv[] )
     vtkSmartPointer <vtkPolyData> inputData = vtkSmartPointer <vtkPolyData>::New();
     vtkSmartPointer <vtkPolyData> outputData = vtkSmartPointer <vtkPolyData>::New();
 
-    testTool.setPolyData( inputData );
-    outputData = testTool.getPolyData();
+    //testTool.setPolyData( inputData );
+    //outputData = testTool.getPolyData();
 
     if( inputData != outputData )
     {
@@ -143,7 +143,7 @@ int main( int argc , char* argv[] )
     testTool.initialization();
 
     outputData = testTool.getPolyData();
-    outputReader = testTool.getReader();
+    //outputReader = testTool.getReader();
     outputMapper = testTool.getMapper();
     outputActor = testTool.getActor();
 
@@ -162,6 +162,6 @@ int main( int argc , char* argv[] )
     }
 
     std::cout << " No Failure !!! " << std::endl;
-    return EXIT_SUCCESS;
+    return EXIT_SUCCESS;*/
 
 }

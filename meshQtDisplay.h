@@ -5,14 +5,11 @@
 #include <QVTKWidget.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
-#include <vtkSmoothPolyDataFilter.h>
+#include <vtkCamera.h>
 
 // Qt Libraries
-#include <QMessageBox>
-
-
-// Qt libraries
-#include <qwidget.h>
+//#include <QMessageBox>
+//#include <qwidget.h>
 
 // My Libraries
 #include "displayTools.h"
@@ -20,6 +17,7 @@
 class meshQtDisplay
 {
     public:
+
         meshQtDisplay();
 
         void setCameraX( int x );
@@ -36,31 +34,18 @@ class meshQtDisplay
 
         void windowInit();
         void windowUpdate();
+
         void windowClear();
         void windowClearOne( int IndiceOfMesh );
+
         void updatePositionCamera();
-
-        void setOpacity( int IndiceOfMesh , double Opacity );
-        void setColor(int IndiceOfMesh , double Red , double Green, double Blue);
-        void setSmoothing( int IndiceOfMesh , bool Smooth );
-        void setNumberOfIteration( int IndiceOfMesh , int Number );
-
-        void updateOpacity();
-        void updateColor();
-        void updateSmoothing();
 
         void displayInitError(vtkSmartPointer<vtkPolyData> Data , vtkSmartPointer<vtkColorTransferFunction> Lut , int Indice);
         void chooseDisplayError(int Indice , bool Choice );
 
-        void typeOfDisplay(int IndiceOfMesh, int Type);
-
-
     private:
-        QVTKWidget *m_MeshWidget;
 
-        int m_NumberOfMesh;
-        std::vector <displayTools::displayTools> m_ToolList;
-        std::vector <bool> m_ErrorList;
+        QVTKWidget *m_MeshWidget;
 
         vtkSmartPointer <vtkRenderer> m_Renderer;
         vtkSmartPointer <vtkRenderWindow> m_RenderWindow;
@@ -72,6 +57,10 @@ class meshQtDisplay
         int m_CameraY;
         int m_CameraZ;
 
+        int m_NumberOfMesh;
+
+        std::vector <displayTools::displayTools> m_ToolList;
+        std::vector <bool> m_ErrorList;
 };
 
 #endif

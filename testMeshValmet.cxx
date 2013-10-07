@@ -2,9 +2,6 @@
 
 testMeshValmet::testMeshValmet()
 {
-    //m_FinalData = vtkSmartPointer <vtkPolyData> ::New();
-    //m_Lut = vtkSmartPointer <vtkColorTransferFunction>::New();
-
     m_Pargs.sampling_step = 0.5/100;
     m_Pargs.min_sample_freq = 2;
     m_Pargs.do_symmetric = 1;           // 1: A2B; 2: B2A; 3: Do symmetric
@@ -62,7 +59,6 @@ testMeshValmet::testMeshValmet()
 //***************************** SET ALL THE PARAMETERS WE WILL NEED LATER ***********************************
 void testMeshValmet::SetFileName1( QString FileName1 )
 {
-    std::cout << "    testMeshValmet : setFileName1 " << std::endl;
     if( m_Pargs.m1_fname )
     {
         delete []m_Pargs.m1_fname ;
@@ -73,7 +69,6 @@ void testMeshValmet::SetFileName1( QString FileName1 )
 
 void testMeshValmet::SetFileName2( QString FileName2 )
 {
-    std::cout << "    testMeshValmet : setFileName2 " << std::endl;
     if( m_Pargs.m2_fname )
     {
         delete []m_Pargs.m2_fname ;
@@ -84,38 +79,32 @@ void testMeshValmet::SetFileName2( QString FileName2 )
 
 void testMeshValmet::SetDoSymmetric( int Symmetric )
 {
-    std::cout << "    testMeshValmet : setDoSymmetric " << std::endl;
     m_Pargs.do_symmetric = Symmetric;
 }
 
 void testMeshValmet::SetSamplingStep( double SamplingStep )
 {
-    std::cout << "    testMeshValmet : setSamplingStep " << std::endl;
     m_Pargs.sampling_step = SamplingStep/100;
 }
 
 void testMeshValmet::SetMinSampleFrequency( double MinSampleFrequency )
 {
-    std::cout << "    testMeshValmet : setMinSampleFrequency" << std::endl;
     m_Pargs.min_sample_freq = MinSampleFrequency;
 }
 
 void testMeshValmet::SetSignedDistance( bool SignedDistance )
 {
-    std::cout << "    testMeshValmet : setSignedDistance " << std::endl;
     m_Pargs.signeddist = SignedDistance;
 }
 
 //***************************** ACCESSOR TO THE FINAL POLYDATA THAT WE WILL DISPLAY *************************
 vtkSmartPointer <vtkPolyData> testMeshValmet::GetFinalData()
 {
-    std::cout << "    testMeshValmet : getFinalData " << std::endl;
     return m_FinalData;
 }
 
 vtkSmartPointer <vtkColorTransferFunction> testMeshValmet::GetLut()
 {
-    std::cout << "    testMeshValmet : getLut " << std::endl;
     return m_Lut;
 }
 
@@ -123,11 +112,8 @@ vtkSmartPointer <vtkColorTransferFunction> testMeshValmet::GetLut()
 //************************************** COMPUTE THE ERROR ***************************************
 void testMeshValmet::CalculateError()
 {
-    std::cout << "    testMeshValmet : CalculateError " << std::endl;
     m_FinalData = vtkSmartPointer <vtkPolyData> ::New();
     m_Lut = vtkSmartPointer <vtkColorTransferFunction>::New();
-    //memset(&m_ModelError1,0,sizeof(m_ModelError1));
-    //memset(&m_ModelError2,0,sizeof(m_ModelError2));
 
     m_Out = NULL;
     m_Out = outbuf_new( stdio_puts , stdout );
@@ -231,7 +217,6 @@ void testMeshValmet::CalculateError()
 //********************************* CREATE THE FINAL POLYDATA ***********************************
 void testMeshValmet::drawVertexErrorT()
 {
-  std::cout << "    testMeshValmet : drawVertexErrorT " << std::endl;
   vtkSmartPointer <vtkPoints> Points = vtkSmartPointer <vtkPoints>::New();
   vtkSmartPointer <vtkCellArray> Polys = vtkSmartPointer <vtkCellArray>::New();
   vtkSmartPointer <vtkDoubleArray> Scalars = vtkSmartPointer <vtkDoubleArray>::New();
@@ -512,7 +497,6 @@ void testMeshValmet::drawVertexErrorT()
 
 void testMeshValmet::CreateLutError()
 {
-    std::cout << "    testMeshValmet : CreateLutError " << std::endl;
     double mmax,mmin;
     int inter = 5;
 
