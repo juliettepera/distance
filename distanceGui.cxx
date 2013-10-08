@@ -674,7 +674,7 @@ void distanceGui::ApplyDistance()
     {       
         m_MyTestMeshValmet.CalculateError();
 
-        m_ComputedData = m_MyTestMeshValmet.GetFinalData();
+        m_ComputedData -> ShallowCopy( m_MyTestMeshValmet.GetFinalData() );
         m_Lut = m_MyTestMeshValmet.GetLut();
 
         m_DisplayErrorList[ m_SelectedItemA ] = 1;
@@ -748,13 +748,11 @@ void distanceGui::SelectMeshB()
     {
         m_SelectedItemB = comboBoxMeshB -> currentItem();
 
-        std::cout << " item A : " << m_SelectedItemA << " item B : " << m_SelectedItemB << std::endl;
-
         displayTools ToolMeshA = m_MyWindowMesh.getTool( m_SelectedItemA );
         displayTools ToolMeshB = m_MyWindowMesh.getTool( m_SelectedItemB );
 
-        m_FileName1 = QString::fromStdString(ToolMeshA.getName());
-        m_FileName2 = QString::fromStdString(ToolMeshB.getName());
+        m_FileName1 = QString::fromStdString( ToolMeshA.getName() );
+        m_FileName2 = QString::fromStdString( ToolMeshB.getName() );
 
         m_MyTestMeshValmet.SetFileName1( m_FileName1 );
         m_MyTestMeshValmet.SetFileName2( m_FileName2 );

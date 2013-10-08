@@ -46,12 +46,11 @@ class downSamplingGui: public QMainWindow, public Ui::downSamplingWindow
 
         void pushButtonQuitClicked();
         void ChangeMeshSelected();
-        void ChangeValueDensity();
+        void ChangeValueDecimate();
         void applyDownSampling();
 
     private:
-        std::vector <double> m_DensityList;
-        std::vector <int> m_TypeList;
+        std::vector <double> m_DecimateList;
 
         int m_NumberOfMesh;
         int m_MeshSelected;

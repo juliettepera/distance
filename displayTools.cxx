@@ -10,8 +10,9 @@ displayTools::displayTools( int Indice )
     m_Actor = vtkSmartPointer <vtkActor>::New() ;
 
     m_Lut = vtkSmartPointer <vtkColorTransferFunction>::New();
-    m_Sampler = vtkSmartPointer <vtkPolyDataPointSampler>::New();
+
     m_Filter = vtkSmartPointer <vtkSmoothPolyDataFilter>::New();
+    m_Decimer = vtkSmartPointer <vtkDecimatePro>::New() ;
 
     m_Opacity = 1.0;
 
@@ -20,7 +21,7 @@ displayTools::displayTools( int Indice )
     m_Smoothing = false;
     m_NumberOfIterationSmooth = 100;
 
-    m_Density = 0.5;
+    m_Decimate = 0;
     m_Type = 1;
 
     m_Reference = false;
@@ -67,10 +68,10 @@ void displayTools::setNumberOfIterationSmooth( int Number )
     m_NumberOfIterationSmooth = Number;
 }
 
-void displayTools::setDensity( double Density )
+void displayTools::setDecimate( double Decimate )
 {
-    std::cout << " set density " << std::endl;
-    m_Density = Density;
+    std::cout << " set Decimate " << std::endl;
+    m_Decimate = Decimate;
 }
 
 void displayTools::setType( int Type )
@@ -106,9 +107,9 @@ vtkSmartPointer<vtkSmoothPolyDataFilter> displayTools::getFilter()
     return m_Filter;
 }
 
-vtkSmartPointer<vtkPolyDataPointSampler> displayTools::getSampler()
+vtkSmartPointer<vtkDecimatePro> displayTools::getDecimer()
 {
-    return m_Sampler;
+    return m_Decimer;
 }
 
 //**************************************** GET THE DIFFERENT PARAMETERS ******************************************
@@ -150,14 +151,17 @@ int displayTools::getType()
 
 //************************************************* INITIALIZATION ************************************************
 void displayTools::initialization()
-{
-    std:: cout << "initialization()" << std::endl;
+{   
     vtkSmartPointer <vtkPolyDataReader> Reader = vtkSmartPointer <vtkPolyDataReader>::New();
+    vtkSmartPointer <vtkTriangleFilter> Triangler = vtkSmartPointer <vtkTriangleFilter>::New();
 
     Reader -> SetFileName( m_Name.c_str() );
     Reader -> Update();
 
-    m_PolyData = Reader -> GetOutput();
+    Triangler -> SetInputData( Reader -> GetOutput() );
+    Triangler -> Update();
+
+    m_PolyData = Triangler -> GetOutput();
 
     m_Mapper -> SetInputData( m_PolyData );
 
@@ -176,8 +180,6 @@ void displayTools::updateActorProperties()
 
 void displayTools::updateDisplayProperties()
 {
-    std::cout << "updateDisplayProperties()" << std::endl;
-
     vtkSmartPointer <vtkProperty> Property = vtkSmartPointer <vtkProperty>::New();
     Property = m_Actor->GetProperty();
 
@@ -224,7 +226,7 @@ void displayTools::changeMapperInputPort( int Choice )
     }
     else if( Choice == 3 )
     {
-        m_Mapper -> SetInputData( m_Sampler -> GetOutput() );
+        m_Mapper -> SetInputData( m_Decimer -> GetOutput() );
         if( m_Reference == true )
         {
             m_Mapper -> SetLookupTable( m_Lut );
@@ -246,64 +248,48 @@ void displayTools::changeInputData( bool Choice )
 //*********************************************** UPDATE THE FILTER **********************************************
 void displayTools::changeDataFilter()
 {
+    int NumberOfPoints = 0;
+
    if( m_Reference == true )
    {
         m_Filter -> SetInputData( m_PolyDataError );
+        NumberOfPoints = m_PolyDataError -> GetNumberOfPoints();
    }
    else if( m_Reference == false )
    {
        m_Filter -> SetInputData( m_PolyData );
+       NumberOfPoints = m_PolyData -> GetNumberOfPoints();
    }
    m_Filter -> SetNumberOfIterations( m_NumberOfIterationSmooth );
    m_Filter -> Update();
+
+   if( NumberOfPoints != m_Filter -> GetOutput() -> GetNumberOfPoints() )
+   {
+       QMessageBox MsgBox;
+       MsgBox.setText( " lost points during smoothing ");
+       MsgBox.exec();
+   }
+
 }
 
-
-//*********************************************** UPDATE THE SAMPLER **********************************************
-void displayTools::changeDataSampler()
+//*********************************************** UPDATE THE DECIMER **********************************************
+void displayTools::changeDataDecimer()
 {
-   std::cout << "changeDataSampler()" << std::endl;
+   std::cout << "changeDataDecimer()" << std::endl;
 
    if( m_Reference == true )
    {
-        m_Sampler -> SetInputData( m_PolyDataError );
+        m_Decimer -> SetInputData( m_PolyDataError );
    }
    else if( m_Reference == false )
    {
-       m_Sampler -> SetInputData( m_PolyData );
+       m_Decimer -> SetInputData( m_PolyData );
    }
-   m_Sampler -> SetDistance( m_Density );
-   m_Sampler -> Update();
+   m_Decimer -> SetTargetReduction( m_Decimate );
+   m_Decimer -> Update();
 }
 
-/*void displayTools::updateSamplerSetup()
-{
-    if( m_Type == 1 )
-    {
-        std::cout << " surface -> pas de downsampling " << std::endl;
-    }
-    else if( m_Type == 2 )
-    {
-        std::cout << " points -> downsampling " << std::endl;
 
-        if( m_Reference == false )
-        {
-            std::cout << " data normal en entree " << std::endl;
-            m_Sampler -> SetInputData( m_PolyData );
-        }
-        else if( m_Reference == true )
-        {
-            std::cout << " data error en entree " << std::endl;
-            m_Sampler -> SetInputData( m_PolyDataError );
-        }
-        m_Sampler -> SetDistance( m_Density );
-        m_Sampler -> Update();
-    }
-    else if( m_Type == 3 )
-    {
-        std::cout << " wireframe -> je sais pas encore comment downsampler " << std::endl;
-    }
-}*/
 
 
 

@@ -62,6 +62,7 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkPolyDataNormals.h>
+#include  <vtkTriangleFilter.h>
 
 // Other Libraries
 #include <time.h>

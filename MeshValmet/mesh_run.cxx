@@ -281,10 +281,15 @@ vtkSmartPointer <vtkPolyData> ConvertFileToData( char* File )
 {
     vtkSmartPointer <vtkPolyData> Data = vtkSmartPointer <vtkPolyData> ::New();
     vtkSmartPointer <vtkPolyDataReader> Reader = vtkSmartPointer <vtkPolyDataReader> ::New();
+    vtkSmartPointer <vtkTriangleFilter> Triangler = vtkSmartPointer <vtkTriangleFilter>::New();
 
     Reader -> SetFileName( File );
     Reader -> Update();
-    Data = Reader -> GetOutput();
+
+    Triangler -> SetInputData( Reader -> GetOutput() );
+    Triangler -> Update();
+
+    Data = Triangler -> GetOutput();
 
     return Data;
 }

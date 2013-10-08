@@ -12,6 +12,11 @@
 #include <vtkSmoothPolyDataFilter.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkPolyDataPointSampler.h>
+#include <vtkDecimatePro.h>
+#include <vtkTriangleFilter.h>
+
+// Qt Libraries
+#include <QMessageBox>
 
 // Other Libraries
 #include <string>
@@ -32,7 +37,7 @@ class displayTools
         void setSmoothing( bool Smoothing );
         void setNumberOfIterationSmooth( int Number );
         void setLut( vtkSmartPointer <vtkColorTransferFunction> Lut );
-        void setDensity( double Density );
+        void setDecimate( double Decimate );
         void setType( int Type );
 
         std::string getName();
@@ -40,7 +45,7 @@ class displayTools
         vtkSmartPointer <vtkActor> getActor();
         vtkSmartPointer<vtkPolyData> getPolyData();
         vtkSmartPointer<vtkSmoothPolyDataFilter> getFilter();
-        vtkSmartPointer<vtkPolyDataPointSampler> getSampler();
+        vtkSmartPointer<vtkDecimatePro> getDecimer();
         double getOpacity();
         double getRed();
         double getBlue();
@@ -57,10 +62,8 @@ class displayTools
         void updateActorProperties();
         void updateDisplayProperties();
 
-        //void updateSamplerSetup();
-        void changeDataSampler();
+        void changeDataDecimer();
         void changeDataFilter();
-        //vtkAlgorithmOutput *getOutputFilter();
 
     private:
 
@@ -74,7 +77,7 @@ class displayTools
         vtkSmartPointer <vtkActor> m_Actor;
 
         vtkSmartPointer <vtkSmoothPolyDataFilter> m_Filter;
-        vtkSmartPointer <vtkPolyDataPointSampler> m_Sampler;
+        vtkSmartPointer <vtkDecimatePro> m_Decimer;
 
         vtkSmartPointer <vtkColorTransferFunction> m_Lut;
 
@@ -84,7 +87,7 @@ class displayTools
         double m_Green;
         bool m_Smoothing;
         int m_NumberOfIterationSmooth;
-        double m_Density;
+        double m_Decimate;
         int m_Type;
 
         bool m_Reference;

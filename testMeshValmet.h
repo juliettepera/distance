@@ -48,7 +48,7 @@ class testMeshValmet: public QMainWindow
         void SetMinSampleFrequency( double MinSampleFrequency );
         void SetSignedDistance( bool SignedDistance );
 
-        vtkSmartPointer<vtkPolyData> GetFinalData();
+        vtkSmartPointer <vtkPolyData> GetFinalData();
         vtkSmartPointer <vtkColorTransferFunction> GetLut();
 
         void CalculateError();
@@ -60,7 +60,6 @@ class testMeshValmet: public QMainWindow
 
         vtkSmartPointer <vtkPolyData> m_FinalData;
         vtkSmartPointer <vtkColorTransferFunction> m_Lut;
-
 
         struct args m_Pargs;
 
