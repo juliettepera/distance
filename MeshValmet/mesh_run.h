@@ -89,20 +89,14 @@ BEGIN_DECL
 
 /* To store the parsed arguments */
 struct args {
-  double sampling_step; /* The sampling step, as fraction of the bounding box
-                         * diagonal of model 2. */
-  char *m1_fname; /* filename of model 1 */
-  char *m2_fname; /* filename of model 2 */
-  int  no_gui;    /* text only flag */
-  int quiet;      /* do not display extra info flag*/
-  int verb_analysis; /* verbose analysis */
-  int min_sample_freq;  /* Minimum sampling frequency to enforce on each
-                         * triangle */
-  int do_symmetric; /*1: A2B; 2: B2A; 3: Do symmetric*/
-  int do_wlog; /* log the output into an external window */
-  int do_texture; /* enables the display of error as a texture mapped
-                   * on the model */
+
+  char *m1_fname; // filename of model 1
+  char *m2_fname; // filename of model 2
+  double sampling_step; // The sampling step, as fraction of the bounding box diagonal of model 2.
   bool signeddist;
+  int min_sample_freq;  // Minimum sampling frequency to enforce on each triangle
+  int quiet;      // do not display extra info flag
+  int verb_analysis; // verbose analysis
 };
 
 

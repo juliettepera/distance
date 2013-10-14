@@ -1,4 +1,4 @@
-#include "../meshQtDisplay.h"
+#include "../display.h"
 #include <QApplication>
 #include <QMainWindow>
 
@@ -6,7 +6,7 @@
 int main( int argc , char* argv[] )
 {
 
-    QApplication app(argc,argv);
+    /*QApplication app(argc,argv);
     QMainWindow *mainWindow = new QMainWindow;
     //*********************************************************
 
@@ -35,7 +35,7 @@ int main( int argc , char* argv[] )
     //*********************************************************
     mainWindow -> setCentralWidget( widget );
     mainWindow -> show();
-    return app.exec();
+    return app.exec();*/
 
 }
 

@@ -1,8 +1,11 @@
+#/tools/Qt/Qt4.8.2/Qt4.8.2_linux64_THL/bin/qmake                                                                                                                                                           
+#/tools/VTK/VTK_6.0.0/VTK_6.0.0_linux64_dyn_release_Qt4.8.2_Python2.7.5/lib/cmake/vtk-6.0   
+
 # minimum version required
 CMAKE_MINIMUM_REQUIRED( VERSION 2.6 ) 
 
 # name of the project
-PROJECT( distanceGui )
+PROJECT( 3DMeshMetric )
 
 # sub-directory of the executable
 SET(EXECUTABLE_OUTPUT_PATH bin)
@@ -24,31 +27,29 @@ INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}  ${
 ADD_DEFINITIONS( -DQT_GUI_LIBS -DQT_CORE_LIB -DQT3_SUPPORT )
 
 # generate moc and ui files
-QT4_WRAP_CPP( QtProject_HEADERS_MOC distanceGui.h smoothingGui.h downSamplingGui.h)
-QT4_WRAP_UI( UI_FILES distanceGui.ui smoothingGui.ui downSamplingGui.ui )
+QT4_WRAP_CPP( QtProject_HEADERS_MOC meshMetricGui.h )
+QT4_WRAP_UI( UI_FILES meshMetricGui.ui )
 
 # set the sources files
 SET( Dsources 
 
 main.cxx 
 
-distanceGui.cxx 
-distanceGui.h
+meshMetricGui.h
+meshMetricGui.cxx
 
-displayTools.cxx
-displayTools.h
+data.h
+data.cxx
 
-meshQtDisplay.cxx 
-meshQtDisplay.h
+processing.h
+processing.cxx
 
-smoothingGui.cxx
-smoothingGui.h
+display.h
+display.cxx
 
-downSamplingGui.cxx
-downSamplingGui.cxx
-
-testMeshValmet.cxx
 testMeshValmet.h
+testMeshValmet.cxx
+
 
 MeshValmet/3dmodel.h
 

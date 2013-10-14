@@ -9,6 +9,7 @@
 
 // My libraries
 #include "data.h"
+#include "testMeshValmet.h"
 
 // QT libraries
 #include <QMessageBox>
@@ -16,6 +17,7 @@
 // VTK libraries
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
+#include <vtkColorTransferFunction.h>
 
 // OTHER libraries
 #include <string>
@@ -26,9 +28,13 @@ class processing
 {
     public:
         processing();
-        int processSmoothing( data Data );
-        int processDownSampling( data Data );
-        int processError( data Data1 , data Data2 );
+        int processSmoothing(dataM &Data );
+        int processDownSampling( dataM &Data );
+        int processError(dataM &Data1 , dataM &Data2 );
+        //void describePolyData( vtkSmartPointer <vtkPolyData> Data );
+
+    private:
+        testMeshValmet m_MyMeshValmet;
 };
 
 #endif

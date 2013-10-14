@@ -17,23 +17,30 @@ downSamplingGui::downSamplingGui(QWidget * parent , Qt::WFlags f  ): QMainWindow
 }
 
 //***********************************************************************************
-void downSamplingGui::setWindow( meshQtDisplay WindowMesh )
+void downSamplingGui::setWindow( display WindowMesh )
 {
    m_MyWindowMesh = WindowMesh;
 }
 
+void downSamplingGui::setData( std::vector <data::data> DataList )
+{
+    m_DataList = DataList;
+}
+
+void downSamplingGui::setProcess( processing Process )
+{
+    m_MyProcess = Process;
+}
 
 //***********************************************************************************
 void downSamplingGui::reset()
 {
-    m_DecimateList.clear();
     listWidgetLoadedMesh->clear();
 }
 
 void downSamplingGui::addOne( std::string Name )
 {
     m_NumberOfMesh++;
-    m_DecimateList.push_back( 0 );
     listWidgetLoadedMesh -> addItem( Name.c_str() );
 }
 

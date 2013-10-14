@@ -73,12 +73,8 @@ void mesh_run(const struct args *args, struct model_error *model1,
   memset(stats,0,sizeof(*stats));
   memset(stats_rev,0,sizeof(*stats_rev));
 
-
   m1info = (struct model_info*) xa_malloc(sizeof(*m1info));
   m2info = (struct model_info*) xa_malloc(sizeof(*m2info));
-
-  //outbuf_printf(out,"Reading %s ... ",args -> m1_fname);
-  //outbuf_flush(out);
 
   start_time = clock();
 
@@ -90,9 +86,6 @@ void mesh_run(const struct args *args, struct model_error *model1,
   //outbuf_flush(out);
 
   start_time = clock();
-
-  //outbuf_printf(out,"Reading %s ... ",args -> m2_fname);
-  //outbuf_flush(out);
 
   vtkSmartPointer <vtkPolyData> Data2 = vtkSmartPointer <vtkPolyData>::New();
   Data2 = ConvertFileToData( args->m2_fname );
@@ -115,10 +108,8 @@ void mesh_run(const struct args *args, struct model_error *model1,
   *abs_sampling_step = args->sampling_step*bbox2_diag;
   *abs_sampling_dens = 1/((*abs_sampling_step)*(*abs_sampling_step));
 
-  //outbuf_printf(out,"\nSampling_step : %f\n",*abs_sampling_step);
-  
-  /* Print available model information */
-  /*outbuf_printf(out,"\n\tModel information\n(degenerate faces ignored for manifold/closed info)\n\n");
+  outbuf_printf(out,"\nSampling_step : %f\n",*abs_sampling_step);
+  outbuf_printf(out,"\n\tModel information\n(degenerate faces ignored for manifold/closed info)\n\n");
   outbuf_printf(out,"Number of vertices:\t\t%11d\t%11d\n", model1->mesh->num_vert , model2->mesh->num_vert );
   outbuf_printf(out,"Number of triangles:\t\t%11d\t%11d\n", model1->mesh->num_faces , model2->mesh->num_faces );
   outbuf_printf(out,"Degenerate triangles:\t\t%11d\t%11d\n", m1info->n_degenerate , m2info->n_degenerate );
@@ -128,123 +119,69 @@ void mesh_run(const struct args *args, struct model_error *model1,
   outbuf_printf(out,"Originally oriented:\t\t%11s\t%11s\n", (m1info->orig_oriented ? "yes" : "no") , (m2info->orig_oriented ? "yes" : "no") );
   outbuf_printf(out,"Orientable:\t\t\t%11s\t%11s\n", (m1info->orientable ? "yes" : "no") , (m2info->orientable ? "yes" : "no") );
   outbuf_printf(out,"Closed:\t\t\t%11s\t%11s\n" , (m1info->closed ? "yes" : "no") , (m2info->closed ? "yes" : "no") );
-  outbuf_flush(out);*/
 
-  if(args->do_symmetric == 1 )
-  {
 
-    //outbuf_printf( out , "\n\tCompute the distance from A to B\n" );
-
-    /* Compute the distance from one model to the other */
-    dist_surf_surf(model1,model2->mesh,*abs_sampling_dens,args->min_sample_freq,
+  //********************************************************************************************************************************
+  /* Compute the distance from one model to the other */
+  dist_surf_surf(model1,model2->mesh,*abs_sampling_dens,args->min_sample_freq,
                    stats,1,(args->quiet ? NULL : progress));
 
-    /* Print results */
-    /*outbuf_printf(out,"Surface area:\t%11g\t%11g\n", stats->m1_area , stats->m2_area );
+  outbuf_printf( out,"Surface area:\t%11g\t%11g\n", stats->m1_area , stats->m2_area );
+  outbuf_flush(out);
 
-    outbuf_printf(out,"Min:\t%11g\t%11g\n" , stats->min_dist , fabs(stats->min_dist/bbox2_diag)*100 );
-    outbuf_printf(out,"Max:\t%11g\t%11g\n", stats->max_dist , fabs(stats->max_dist/bbox2_diag)*100 );
-    outbuf_printf(out,"Mean:\t%11g\t%11g\n" , stats->mean_dist , fabs(stats->mean_dist/bbox2_diag)*100 );
-    outbuf_printf(out,"RMS:\t%11g\t%11g\n", stats->rms_dist , fabs(stats->rms_dist/bbox2_diag)*100 );
-    outbuf_printf(out,"\n");
-    outbuf_flush(out);*/
-  }
-  if(args->do_symmetric == 2 )
-  { 
-     //outbuf_printf( out , "\n\tCompute the distance from B to A\n" );
+  /* Print results */
+  outbuf_printf( out , "\n\tCompute the distance from A to B\n" );
+  outbuf_printf(out,"Min:\t%11g\t%11g\n" , stats->min_dist , fabs(stats->min_dist/bbox2_diag)*100 );
+  outbuf_printf(out,"Max:\t%11g\t%11g\n", stats->max_dist , fabs(stats->max_dist/bbox2_diag)*100 );
+  outbuf_printf(out,"Mean:\t%11g\t%11g\n" , stats->mean_dist , fabs(stats->mean_dist/bbox2_diag)*100 );
+  outbuf_printf(out,"RMS:\t%11g\t%11g\n", stats->rms_dist , fabs(stats->rms_dist/bbox2_diag)*100 );
+  outbuf_printf(out,"\n");
+  outbuf_flush(out);
 
-     /* Invert models and recompute distance */
-     dist_surf_surf(model2,model1->mesh,*abs_sampling_dens,args->min_sample_freq,
-                   stats_rev,0,(args->quiet ? NULL : progress));
-
-     /*outbuf_printf(out,"Min:\t%11g\t%11g\n" , stats->min_dist , fabs(stats->min_dist/bbox2_diag)*100 );
-     outbuf_printf(out,"Max:\t%11g\t%11g\n", stats->max_dist , fabs(stats->max_dist/bbox2_diag)*100 );
-     outbuf_printf(out,"Mean:\t%11g\t%11g\n" , stats->mean_dist , fabs(stats->mean_dist/bbox2_diag)*100 );
-     outbuf_printf(out,"RMS:\t%11g\t%11g\n", stats->rms_dist , fabs(stats->rms_dist/bbox2_diag)*100 );
-     outbuf_printf(out,"\n");
-     outbuf_flush(out);*/
-   }
-
-  /*outbuf_printf(out,"\tAbsolute\t%%BBox diag\tExpected samples\n\t\tmodel 2\tmodel 1\tmodel 2\n");
-                
-                
-  if (args->do_symmetric == 1) 
-  {
-    outbuf_printf(out,"Sampling step:   \t%8g\t   %7g     \t   %7d\t%7d\n",
+  outbuf_printf(out,"\tAbsolute\t%%BBox diag\tExpected samples\n\t\tmodel 2\tmodel 1\tmodel 2\n");
+  outbuf_printf(out,"Sampling step:   \t%8g\t   %7g     \t   %7d\t%7d\n",
                   *abs_sampling_step,(*abs_sampling_step)/bbox2_diag*100,
                   (int)(stats->m1_area*(*abs_sampling_dens)),0);
-    outbuf_printf(out,"\n");
-  }
-  else if(args->do_symmetric == 2)
-  {
-    outbuf_printf(out,"Sampling step:   \t%8g\t   %7g     \t   %7d\t%7d\n",
-                  *abs_sampling_step,(*abs_sampling_step)/bbox2_diag*100,
-                  (int)0,
-                  (int)(stats->m2_area*(*abs_sampling_dens)));
-    outbuf_printf(out,"\n");
-  } 
+  outbuf_printf(out,"\n");
 
   outbuf_printf(out,"        \t    Total\t    Avg. / triangle\t\t"
                   "Tot (%%) area of\n"
                   "        \t         \tmodel 1 \tmodel 2 \t"
                   "sampled triang.\n");
   
-  if(args->do_symmetric == 1 )
-    outbuf_printf(out,"Samples (1->2):\t%9d\t%7.2g\t%15.2g\t%18.2f\n",
+
+  outbuf_printf(out,"Samples (1->2):\t%9d\t%7.2g\t%15.2g\t%18.2f\n",
                   stats->m1_samples,
                   ((double)stats->m1_samples)/model1->mesh->num_faces,
                   ((double)stats->m1_samples)/model2->mesh->num_faces,
                   stats->st_m1_area/stats->m1_area*100.0);
-  if(args->do_symmetric == 2 )
-    outbuf_printf(out,"Samples (2->1):\t%9d\t%7.2g\t%15.2g\t%18.2f\n",
-                  stats_rev->m1_samples,
-                  ((double)stats_rev->m1_samples)/model1->mesh->num_faces,
-                  ((double)stats_rev->m1_samples)/model2->mesh->num_faces,
-                  stats_rev->st_m1_area/stats_rev->m1_area*100.0);
   outbuf_printf(out,"\n");
   
   outbuf_printf(out,"                                \t     "
                   "X\t    Y\t   Z\t   Total\n");
-  if(args->do_symmetric == 1 )
-   outbuf_printf(out,"Partitioning grid size (1 to 2):\t%6d\t%5d\t%4d\t%8d\n",
+
+  outbuf_printf(out,"Partitioning grid size (1 to 2):\t%6d\t%5d\t%4d\t%8d\n",
                   stats->grid_sz.x,stats->grid_sz.y,stats->grid_sz.z,
                   stats->grid_sz.x*stats->grid_sz.y*stats->grid_sz.z);
-  if(args->do_symmetric == 2 )
-    outbuf_printf(out,"Partitioning grid size (2 to 1):\t%6d\t%5d\t%4d\t%8d\n",
-                  stats_rev->grid_sz.x,stats_rev->grid_sz.y,stats_rev->grid_sz.z,
-                  stats_rev->grid_sz.x*stats_rev->grid_sz.y*stats_rev->grid_sz.z);
-  if(args->do_symmetric == 1 )
-    outbuf_printf(out,"\nAvg. number of triangles per non-empty cell (1 to 2):"
+
+  outbuf_printf(out,"\nAvg. number of triangles per non-empty cell (1 to 2):"
                   "\t%.2f\n",stats->n_t_p_nec);
-  if(args->do_symmetric == 2 )
-    /*outbuf_printf(out,"Avg. number of triangles per non-empty cell (2 to 1):"
-                  "\t%.2f\n",stats_rev->n_t_p_nec);
-  if(args->do_symmetric == 1 )
-    outbuf_printf(out,
+  outbuf_printf(out,
                   "Proportion of non-empty cells (1 to 2):          \t%.2f%%\n",
                   (double)stats->n_ne_cells/(stats->grid_sz.x*stats->grid_sz.y*
-                                            stats->grid_sz.z)*100.0);
-  if(args->do_symmetric == 2 )
-    outbuf_printf(out,
-                  "Proportion of non-empty cells (2 to 1):          \t%.2f%%\n",
-                  (double)stats_rev->n_ne_cells/
-                  (stats_rev->grid_sz.x*stats_rev->grid_sz.y*
-                   stats_rev->grid_sz.z)*100.0);
-                   
+                                            stats->grid_sz.z)*100.0);            
   outbuf_printf(out,"\n");
   outbuf_printf(out,"Analysis and measuring time (secs.):\t%.2f\n",
                 (double)(clock()-start_time)/CLOCKS_PER_SEC);
-  outbuf_flush(out);*/
+  outbuf_flush(out);
 
 //--------------------------------------------------------------------------------------
   /* Get the per vertex error metric */
   nv_empty = nf_empty = 0; /* keep compiler happy */
-  if(args->do_symmetric == 1 )
-  {
 
     calc_vertex_error( model1 , &nv_empty , &nf_empty );
 
-    /*if (nv_empty>0) {
+    if (nv_empty>0) {
        outbuf_printf(out,
                       "WARNING: %.2f%% of vertices (%i out of %i) have no error "
                       "samples\n",100.0*nv_empty/model1->mesh->num_vert,
@@ -255,27 +192,10 @@ void mesh_run(const struct args *args, struct model_error *model1,
                       "WARNING: %.2f%% of faces (%i out of %i) have no error "
                       "samples\n",100.0*nf_empty/model1->mesh->num_faces,
                       nf_empty,model1->mesh->num_faces);
-    }*/
-  }
-  if(args->do_symmetric == 2 )
-  {
-      //outbuf_printf(out,"in mesh_run\n");
-    calc_vertex_error(model2,&nv_empty,&nf_empty);
-    /*if (nv_empty>0) {
-        outbuf_printf(out,
-                      "WARNING: %.2f%% of vertices (%i out of %i) have no error "
-                      "samples\n",100.0*nv_empty/model1->mesh->num_vert,
-                      nv_empty,model1->mesh->num_vert);
     }
-    if (nf_empty>0) {
-        outbuf_printf(out,
-                      "WARNING: %.2f%% of faces (%i out of %i) have no error "
-                      "samples\n",100.0*nf_empty/model1->mesh->num_faces,
-                      nf_empty,model1->mesh->num_faces);
-    }*/
-  }
-  //outbuf_flush(out);
+  outbuf_flush(out);
 }
+
 
 vtkSmartPointer <vtkPolyData> ConvertFileToData( char* File )
 {
@@ -293,6 +213,7 @@ vtkSmartPointer <vtkPolyData> ConvertFileToData( char* File )
 
     return Data;
 }
+
 
 model* ConvertDataToModel( vtkSmartPointer <vtkPolyData> Data )
 {

@@ -1,6 +1,6 @@
 #include "data.h"
 
-data::data( std::string Name )
+dataM::dataM( std::string Name )
 {
     // init the basic data
     m_Name = Name;
@@ -24,7 +24,7 @@ data::data( std::string Name )
     m_Decimer = vtkSmartPointer <vtkDecimatePro>::New();
 
     // init the error parameters
-    m_MinSamplingFrequency = 2.0;
+    m_MinSamplingFrequency = 2;
     m_SamplingStep = 0.5;
     m_SignedDistance = false;
     m_DisplayError = false;
@@ -35,7 +35,7 @@ data::data( std::string Name )
 /* initialize the reading of the file, create the polydata, update the properties of the
 *  file, the type of display, connect the mapper to the actor
 */
-void data::initialization()
+void dataM::initialization()
 {
     vtkSmartPointer <vtkPolyDataReader> Reader = vtkSmartPointer <vtkPolyDataReader>::New();
     vtkSmartPointer <vtkTriangleFilter> Triangler = vtkSmartPointer <vtkTriangleFilter>::New();
@@ -46,7 +46,7 @@ void data::initialization()
     Triangler -> SetInputData( Reader -> GetOutput() );
     Triangler -> Update();
 
-    m_PolyData -> ShallowCopy( Triangler -> GetOutput() );
+    m_PolyData = Triangler -> GetOutput();
 
     m_Mapper -> SetInputData( m_PolyData );
 
@@ -58,7 +58,7 @@ void data::initialization()
 
 /* update the properties of the file ( opacity and color )
  */
-void data::updateActorProperties()
+void dataM::updateActorProperties()
 {
     m_Actor -> GetProperty() -> SetOpacity( m_Opacity );
     m_Actor -> GetProperty() -> SetColor( m_Red , m_Green , m_Blue );
@@ -68,7 +68,7 @@ void data::updateActorProperties()
  * type = 1 : surface | 2 : points | 3 : wireframe
  * return 0 in case of success and 1 in case of error
  **/
-int data::updateTypeOfDisplay()
+int dataM::updateTypeOfDisplay()
 {
     if( m_Type == 1 )
     {
@@ -98,7 +98,7 @@ int data::updateTypeOfDisplay()
  * choice = 1 : data ( with or without error ) | 2 : data smoothed | 3 : data downsampled
  * return 0 in case of success and 1 in case of error
  */
-int data::changeMapperInput( int Choice )
+int dataM::changeMapperInput( int Choice )
 {
     m_Mapper = vtkSmartPointer <vtkPolyDataMapper>::New();
 
@@ -122,178 +122,202 @@ int data::changeMapperInput( int Choice )
         return 1;
     }
 
-    m_Actor -> SetMapper( m_Mapper );
+    changeActivScalar();
     return 0;
 }
 
+void dataM::changeActivScalar()
+{
+    m_Mapper -> SetLookupTable( m_Lut );
+    m_Mapper ->SetScalarModeToUsePointFieldData();
+
+    if( m_DisplayError == true )
+    {
+        m_Mapper -> SelectColorArray( "Error" );
+    }
+    else if( m_DisplayError == false )
+    {
+        m_Mapper -> SelectColorArray( "Original" );
+    }
+
+    m_Actor -> SetMapper( m_Mapper );
+}
 
 // Set the basic data
-void data::setName( std::string Name )
+void dataM::setName( std::string Name )
 {
     m_Name = Name;
 }
 
-void data::setPolyData( vtkSmartPointer<vtkPolyData> PolyData )
+void dataM::setPolyData( vtkSmartPointer<vtkPolyData> PolyData )
 {
-    m_PolyData -> ShallowCopy( PolyData );
+    m_PolyData = PolyData;
 }
 
 // Get the basic data
-std::string data::getName()
+std::string dataM::getName()
 {
     return m_Name;
 }
 
-vtkSmartPointer<vtkPolyDataMapper> data::getMapper()
+vtkSmartPointer<vtkPolyDataMapper> dataM::getMapper()
 {
     return m_Mapper;
 }
 
-vtkSmartPointer <vtkActor> data::getActor()
+vtkSmartPointer <vtkActor> dataM::getActor()
 {
     return m_Actor;
 }
 
-vtkSmartPointer<vtkPolyData> data::getPolyData()
+void dataM::getPolyData( vtkSmartPointer <vtkPolyData> &NewData )
 {
-    return m_PolyData;
+    vtkSmartPointer <vtkIdList> IdList = vtkSmartPointer <vtkIdList>::New();
+
+    IdList -> SetNumberOfIds( m_PolyData -> GetNumberOfCells() );
+    for ( vtkIdType Id = 0 ; Id < m_PolyData -> GetNumberOfCells() ; Id++ )
+    {
+        IdList -> SetId( Id , Id );
+    }
+    NewData -> DeepCopy( m_PolyData );
+    NewData -> CopyCells( m_PolyData , IdList );
 }
 
 // Set the File properties
-void data::setOpacity( double Opacity )
+void dataM::setOpacity( double Opacity )
 {
     m_Opacity = Opacity;
 }
 
-void data::setColor( double Red , double Green , double Blue )
+void dataM::setColor( double Red , double Green , double Blue )
 {
     m_Red = Red;
     m_Green = Green;
     m_Blue = Blue;
 }
 
-void data::setType( int Type )
+void dataM::setType( int Type )
 {
     m_Type = Type;
 }
 
 // Get the file properties
-double data::getOpacity()
+double dataM::getOpacity()
 {
     return m_Opacity;
 }
 
-double data::getRed()
+double dataM::getRed()
 {
     return m_Red;
 }
 
-double data::getGreen()
+double dataM::getGreen()
 {
     return m_Green;
 }
 
-double data::getBlue()
+double dataM::getBlue()
 {
     return m_Blue;
 }
 
-int data::getType()
+int dataM::getType()
 {
     return m_Type;
 }
 
 // Set the smoothing parameters
-void data::setNumberOfIterationSmooth( int Number )
+void dataM::setNumberOfIterationSmooth( int Number )
 {
     m_NumberOfIterationSmooth = Number;
 }
 
 // Get the smoothing parameters
-int data::getNumberOfIterationSmooth()
+int dataM::getNumberOfIterationSmooth()
 {
     return m_NumberOfIterationSmooth;
 }
 
-vtkSmartPointer <vtkSmoothPolyDataFilter> data::getSmoother()
+vtkSmartPointer <vtkSmoothPolyDataFilter> dataM::getSmoother()
 {
     return m_Smoother;
 }
 
 // Set the downSampling parameters
-void data::setDecimate(double Decimate)
+void dataM::setDecimate(double Decimate)
 {
     m_Decimate = Decimate;
 }
 
-double data::getDecimate()
+double dataM::getDecimate()
 {
     return m_Decimate;
 }
 
-vtkSmartPointer <vtkDecimatePro> data::getDecimer()
+vtkSmartPointer <vtkDecimatePro> dataM::getDecimer()
 {
     return m_Decimer;
 }
 
 // Set the error parameters
-void data::setMinSamplingFrequency( double MinSamplingFrequency )
+void dataM::setMinSamplingFrequency( int MinSamplingFrequency )
 {
     m_MinSamplingFrequency = MinSamplingFrequency;
 }
 
-void data::setSamplingStep( double SamplingStep )
+void dataM::setSamplingStep( double SamplingStep )
 {
     m_SamplingStep = SamplingStep;
 }
 
-void data::setSignedDistance( bool SignedDistance )
+void dataM::setSignedDistance( bool SignedDistance )
 {
     m_SignedDistance = SignedDistance;
 }
 
-void data::setDisplayError( bool DisplayError )
+void dataM::setDisplayError( bool DisplayError )
 {
     m_DisplayError = DisplayError;
 }
 
-void data::setPolyDataError( vtkSmartPointer <vtkPolyData> PolyDataError )
+void dataM::setPolyDataError( vtkSmartPointer <vtkPolyData> PolyDataError )
 {
-    m_PolyDataError -> ShallowCopy( PolyDataError );
+    m_PolyDataError = PolyDataError ;
 }
 
-void data::setLut( vtkSmartPointer <vtkColorTransferFunction> Lut )
+void dataM::setLut( vtkSmartPointer <vtkColorTransferFunction> Lut )
 {
     m_Lut = Lut;
 }
 
 // Get the error parameters
-double data::getMinSamplingFrequency()
+int dataM::getMinSamplingFrequency()
 {
     return m_MinSamplingFrequency;
 }
 
-double data::getSamplingStep()
+double dataM::getSamplingStep()
 {
     return m_SamplingStep;
 }
 
-bool data::getSignedDistance()
+bool dataM::getSignedDistance()
 {
     return m_SignedDistance;
 }
 
-bool data::getDisplayError()
+bool dataM::getDisplayError()
 {
     return m_DisplayError;
 }
 
-vtkSmartPointer <vtkPolyData> data::getPolyDataError()
+vtkSmartPointer <vtkPolyData> dataM::getPolyDataError()
 {
     return m_PolyDataError;
 }
 
-vtkSmartPointer <vtkColorTransferFunction> data::getLut()
+vtkSmartPointer <vtkColorTransferFunction> dataM::getLut()
 {
     return m_Lut;
 }

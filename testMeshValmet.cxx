@@ -3,33 +3,25 @@
 testMeshValmet::testMeshValmet()
 {
     m_Pargs.sampling_step = 0.5/100;
-    m_Pargs.min_sample_freq = 2;
-    m_Pargs.do_symmetric = 1;           // 1: A2B; 2: B2A; 3: Do symmetric
+    m_Pargs.min_sample_freq = 2.0;
     m_Pargs.signeddist = false;
 
-    m_Pargs.do_texture = false;
-    m_Pargs.verb_analysis = false;
-    m_Pargs.do_wlog = 0;
-    m_Pargs.no_gui = 1;
-    m_Pargs.quiet = 0;
+    m_Pargs.verb_analysis = false; // ???
+    m_Pargs.quiet = 0; // ???
 
     //m_ModelError1
     //m_ModelError2
-
-    //m_Out;
-
     //m_Stats;
     //m_StatsRev;
-
     //m_AbsSamplingStep;
     //m_AbsSamplingDens;
 
-    m_DiceCoefficient[0] = 0.0;
-    m_IntUnionRatio[0] = 0.0;
+    m_DiceCoefficient[0] = 0.0; // ????
+    m_IntUnionRatio[0] = 0.0; // ????
 
-    m_Middle = 0;
+    m_Middle = 0; // ????
 
-    m_Downsampling = 1;
+    m_Downsampling = 1; // ????
 
     for (float i=0;i<256;i++)
     {
@@ -57,37 +49,66 @@ testMeshValmet::testMeshValmet()
 }
 
 //***************************** SET ALL THE PARAMETERS WE WILL NEED LATER ***********************************
-void testMeshValmet::SetFileName1( QString FileName1 )
+void testMeshValmet::SetFileName1( std::string FileName1 )
 {
     if( m_Pargs.m1_fname )
     {
         delete []m_Pargs.m1_fname ;
     }
     m_Pargs.m1_fname = new char[ FileName1.size() ];
-    strcpy( m_Pargs.m1_fname , FileName1.toStdString().c_str() ) ;
+    strcpy( m_Pargs.m1_fname , FileName1.c_str() ) ;
 }
 
-void testMeshValmet::SetFileName2( QString FileName2 )
+void testMeshValmet::SetFileName2( std::string FileName2 )
 {
     if( m_Pargs.m2_fname )
     {
         delete []m_Pargs.m2_fname ;
     }
     m_Pargs.m2_fname = new char[ FileName2.size() ];
-    strcpy( m_Pargs.m2_fname , FileName2.toStdString().c_str() ) ;
+    strcpy( m_Pargs.m2_fname , FileName2.c_str() ) ;
 }
 
-void testMeshValmet::SetDoSymmetric( int Symmetric )
+/*void testMeshValmet::SetData1( vtkSmartPointer <vtkPolyData> Data1 )
 {
-    m_Pargs.do_symmetric = Symmetric;
-}
+    std::cout << " setData1 " << std::endl;
+
+    m_PolyData1 = vtkSmartPointer <vtkPolyData>::New();
+    vtkSmartPointer <vtkIdList> IdList = vtkSmartPointer <vtkIdList>::New();
+
+    IdList -> SetNumberOfIds( Data1 -> GetNumberOfCells() );
+    for( vtkIdType Id = 0 ; Id < Data1 -> GetNumberOfCells() ; Id++ )
+    {
+        IdList -> SetId( Id , Id );
+    }
+
+    m_PolyData1 -> DeepCopy( Data1 );
+    m_PolyData1 -> CopyCells( Data1 , IdList );
+
+    std::cout << " done " << std::endl;
+}*/
+
+/*void testMeshValmet::SetData2(vtkSmartPointer<vtkPolyData> Data2 )
+{
+    m_PolyData2 = vtkSmartPointer <vtkPolyData>::New();
+    vtkSmartPointer <vtkIdList> IdList = vtkSmartPointer <vtkIdList>::New();
+
+    IdList -> SetNumberOfIds( Data2 -> GetNumberOfCells() );
+    for ( vtkIdType Id = 0 ; Id < Data2 -> GetNumberOfCells() ; Id++ )
+    {
+        IdList -> SetId( Id , Id );
+    }
+
+    m_PolyData2 -> DeepCopy( Data2 );
+    m_PolyData2 -> CopyCells( Data2 , IdList );
+}*/
 
 void testMeshValmet::SetSamplingStep( double SamplingStep )
 {
     m_Pargs.sampling_step = SamplingStep/100;
 }
 
-void testMeshValmet::SetMinSampleFrequency( double MinSampleFrequency )
+void testMeshValmet::SetMinSampleFrequency( int MinSampleFrequency )
 {
     m_Pargs.min_sample_freq = MinSampleFrequency;
 }
@@ -112,18 +133,22 @@ vtkSmartPointer <vtkColorTransferFunction> testMeshValmet::GetLut()
 //************************************** COMPUTE THE ERROR ***************************************
 void testMeshValmet::CalculateError()
 {
+    printf( "computing error:\n\t-MeshA: %s\n\t-MeshB: %s\n" , m_Pargs.m1_fname , m_Pargs.m2_fname );
+    printf( "\t-Sampling Step: %f\n\t-Min Sampling Frequency: %d\n\t-Signed Distance: %d\n" , m_Pargs.sampling_step , m_Pargs.min_sample_freq , m_Pargs.signeddist );
+    fflush( stdout );
+
     m_FinalData = vtkSmartPointer <vtkPolyData> ::New();
     m_Lut = vtkSmartPointer <vtkColorTransferFunction>::New();
 
     m_Out = NULL;
     m_Out = outbuf_new( stdio_puts , stdout );
 
-    printf( " test 1 ");
+    printf( "\nmesh_run...");
     fflush( stdout );
 
     mesh_run( &m_Pargs , &m_ModelError1 , &m_ModelError2 , m_Out , NULL , &m_Stats , &m_StatsRev , &m_AbsSamplingStep , &m_AbsSamplingDens );
 
-    printf( " test 2 ");
+    printf( "...done\n");
     fflush( stdout );
 
     int num_vert1 = m_ModelError1.mesh->num_vert;
@@ -172,19 +197,23 @@ void testMeshValmet::CalculateError()
       T2[3*i+2] = face_list[i].f2+1;
     }
 
+    printf( "\nComputeRobustVolumeOverlap...");
+    fflush( stdout );
+
     ComputeRobustVolumeOverlap( L1 , L2 , num_vert1 , num_vert2 , T1 , T2 , num_faces1 , num_faces2 , m_DiceCoefficient , m_IntUnionRatio );
+
+    printf( "\n... ComputeRobustVolumeOverlap done\n");
+    fflush( stdout );
 
     delete [] L1;
     delete [] L2;
     delete [] T1;
     delete [] T2;
 
-    int t = m_Pargs.do_symmetric;
+    //int t = m_Pargs.do_symmetric;
     bool signedd = m_Pargs.signeddist;
 
     // dmin dmax are updated according to signedd
-    if(t == 1)
-    {
       if(signedd)
       {
         m_Dmax = m_ModelError1.max_error;
@@ -195,23 +224,19 @@ void testMeshValmet::CalculateError()
         m_Dmax = m_ModelError1.abs_max_error;
         m_Dmin = m_ModelError1.abs_min_error;
       }
-    }
-    else if(t == 2)
-    {
-      if(signedd)
-      {
-          m_Dmax = m_ModelError2.max_error;
-          m_Dmin = m_ModelError2.min_error;
-      }
-      else
-      {
-          m_Dmax = m_ModelError2.abs_max_error;
-          m_Dmin = m_ModelError2.abs_min_error;
-      }
-    }
+
+    printf( "\ndrawVertexErrorT..." );
+    fflush( stdout );
 
     drawVertexErrorT();
+
+    printf( "...done\n\nCreateLutError...");
+    fflush( stdout );
+
     CreateLutError();
+
+    printf( "...done\n");
+    fflush( stdout );
 }
 
 //********************************* CREATE THE FINAL POLYDATA ***********************************
@@ -219,8 +244,8 @@ void testMeshValmet::drawVertexErrorT()
 {
   vtkSmartPointer <vtkPoints> Points = vtkSmartPointer <vtkPoints>::New();
   vtkSmartPointer <vtkCellArray> Polys = vtkSmartPointer <vtkCellArray>::New();
-  vtkSmartPointer <vtkDoubleArray> Scalars = vtkSmartPointer <vtkDoubleArray>::New();
-
+  vtkSmartPointer <vtkDoubleArray> ScalarsError = vtkSmartPointer <vtkDoubleArray>::New();
+  vtkSmartPointer <vtkDoubleArray> ScalarsConst = vtkSmartPointer <vtkDoubleArray>::New();
   int k,i,j,jmax,n;
   vertex_t u,v;
   vertex_t a,b,c;
@@ -256,21 +281,24 @@ void testMeshValmet::drawVertexErrorT()
       vertex[2] = a.z;
 
       Points->InsertPoint( index , vertex );
-      Scalars->InsertTuple1( index++ , m_ModelError1.verror[cur_face->f0] ); // pb aqui !!
+      ScalarsError->InsertTuple1( index++ , m_ModelError1.verror[cur_face->f0] );
+      ScalarsConst->InsertTuple1( index , 1.0 );
 
       vertex[0] = b.x;
       vertex[1] = b.y;
       vertex[2] = b.z;
 
       Points->InsertPoint(index,vertex);
-      Scalars->InsertTuple1(index++, m_ModelError1.verror[cur_face->f1]);
+      ScalarsError->InsertTuple1(index++, m_ModelError1.verror[cur_face->f1]);
+      ScalarsConst->InsertTuple1( index , 1.0 );
 
       vertex[0] = v3.x;
       vertex[1] = v3.y;
       vertex[2] = v3.z;
 
       Points->InsertPoint(index,vertex);
-      Scalars->InsertTuple1(index++,m_ModelError1.fe[k].serror[0]);//?
+      ScalarsError->InsertTuple1(index++,m_ModelError1.fe[k].serror[0]);//?
+      ScalarsConst->InsertTuple1( index , 1.0 );
 
       f[0] = index - 3;
       f[1] = index - 2;
@@ -283,21 +311,24 @@ void testMeshValmet::drawVertexErrorT()
       vertex[2] = a.z;
 
       Points->InsertPoint(index,vertex);
-      Scalars->InsertTuple1(index++, m_ModelError1.verror[cur_face->f0]);
+      ScalarsError->InsertTuple1(index++, m_ModelError1.verror[cur_face->f0]);
+      ScalarsConst->InsertTuple1( index , 1.0 );
 
       vertex[0] = v3.x;
       vertex[1] = v3.y;
       vertex[2] = v3.z;
 
       Points->InsertPoint(index,vertex);
-      Scalars->InsertTuple1(index++, m_ModelError1.fe[k].serror[0]);//?
+      ScalarsError->InsertTuple1(index++, m_ModelError1.fe[k].serror[0]);//?
+      ScalarsConst->InsertTuple1( index , 1.0 );
 
       vertex[0] = c.x;
       vertex[1] = c.y;
       vertex[2] = c.z;
 
       Points->InsertPoint(index,vertex);
-      Scalars->InsertTuple1(index++, m_ModelError1.verror[cur_face->f2]);
+      ScalarsError->InsertTuple1(index++, m_ModelError1.verror[cur_face->f2]);
+      ScalarsConst->InsertTuple1( index , 1.0 );
 
       f[0] = index - 3;
       f[1] = index - 2;
@@ -310,21 +341,24 @@ void testMeshValmet::drawVertexErrorT()
       vertex[2] = b.z;
 
       Points->InsertPoint(index,vertex);
-      Scalars->InsertTuple1(index++, m_ModelError1.verror[cur_face->f1]);
+      ScalarsError->InsertTuple1(index++, m_ModelError1.verror[cur_face->f1]);
+      ScalarsConst->InsertTuple1( index , 1.0 );
 
       vertex[0] = c.x;
       vertex[1] = c.y;
       vertex[2] = c.z;
 
       Points->InsertPoint(index,vertex);
-      Scalars->InsertTuple1(index++, m_ModelError1.verror[cur_face->f2]);
+      ScalarsError->InsertTuple1(index++, m_ModelError1.verror[cur_face->f2]);
+      ScalarsConst->InsertTuple1( index , 1.0 );
 
       vertex[0] = v3.x;
       vertex[1] = v3.y;
       vertex[2] = v3.z;
 
       Points->InsertPoint(index,vertex);
-      Scalars->InsertTuple1(index++, m_ModelError1.fe[k].serror[0]);//?
+      ScalarsError->InsertTuple1(index++, m_ModelError1.fe[k].serror[0]);//?
+      ScalarsConst->InsertTuple1( index , 1.0 );
 
       f[0] = index - 3;
       f[1] = index - 2;
@@ -341,21 +375,24 @@ void testMeshValmet::drawVertexErrorT()
       vertex[2] = m_ModelError1.mesh->vertices[cur_face->f0].z;
 
       Points->InsertPoint(index,vertex);
-      Scalars->InsertTuple1(index++, m_ModelError1.verror[cur_face->f0]);
+      ScalarsError->InsertTuple1(index++, m_ModelError1.verror[cur_face->f0]);
+      ScalarsConst->InsertTuple1( index , 1.0 );
 
       vertex[0] = m_ModelError1.mesh->vertices[cur_face->f1].x;
       vertex[1] = m_ModelError1.mesh->vertices[cur_face->f1].y;
       vertex[2] = m_ModelError1.mesh->vertices[cur_face->f1].z;
 
       Points->InsertPoint(index,vertex);
-      Scalars->InsertTuple1(index++, m_ModelError1.verror[cur_face->f1]);
+      ScalarsError->InsertTuple1(index++, m_ModelError1.verror[cur_face->f1]);
+      ScalarsConst->InsertTuple1( index , 1.0 );
 
       vertex[0] = m_ModelError1.mesh->vertices[cur_face->f2].x;
       vertex[1] = m_ModelError1.mesh->vertices[cur_face->f2].y;
       vertex[2] = m_ModelError1.mesh->vertices[cur_face->f2].z;
 
       Points->InsertPoint(index,vertex);
-      Scalars->InsertTuple1(index++, m_ModelError1.verror[cur_face->f2]);
+      ScalarsError->InsertTuple1(index++, m_ModelError1.verror[cur_face->f2]);
+      ScalarsConst->InsertTuple1( index , 1.0 );
 
       f[0] = index - 3;
       f[1] = index - 2;
@@ -428,21 +465,24 @@ void testMeshValmet::drawVertexErrorT()
             vertex[2] = v0.z;
 
             Points->InsertPoint(index,vertex);
-            Scalars->InsertTuple1(index++, m_ModelError1.fe[k].serror[l0]);//?
+            ScalarsError->InsertTuple1(index++, m_ModelError1.fe[k].serror[l0]);//?
+            ScalarsConst->InsertTuple1( index , 1.0 );
 
             vertex[0] = v1.x;
             vertex[1] = v1.y;
             vertex[2] = v1.z;
 
             Points->InsertPoint(index,vertex);
-            Scalars->InsertTuple1(index++, m_ModelError1.fe[k].serror[l1]);//?
+            ScalarsError->InsertTuple1(index++, m_ModelError1.fe[k].serror[l1]);//?
+            ScalarsConst->InsertTuple1( index , 1.0 );
 
             vertex[0] = v2.x;
             vertex[1] = v2.y;
             vertex[2] = v2.z;
 
             Points->InsertPoint(index,vertex);
-            Scalars->InsertTuple1(index++, m_ModelError1.fe[k].serror[l2]);//?
+            ScalarsError->InsertTuple1(index++, m_ModelError1.fe[k].serror[l2]);//?
+            ScalarsConst->InsertTuple1( index , 1.0 );
 
             f[0] = index - 3;
             f[1] = index - 2;
@@ -463,21 +503,24 @@ void testMeshValmet::drawVertexErrorT()
             vertex[2] = v3.z;
 
             Points->InsertPoint(index,vertex);
-            Scalars->InsertTuple1(index++, m_ModelError1.fe[k].serror[l3]);//?
+            ScalarsError->InsertTuple1(index++, m_ModelError1.fe[k].serror[l3]);//?
+            ScalarsConst->InsertTuple1( index , 1.0 );
 
             vertex[0] = v2.x;
             vertex[1] = v2.y;
             vertex[2] = v2.z;
 
             Points->InsertPoint(index,vertex);
-            Scalars->InsertTuple1(index++, m_ModelError1.fe[k].serror[l2]);
+            ScalarsError->InsertTuple1(index++, m_ModelError1.fe[k].serror[l2]);
+            ScalarsConst->InsertTuple1( index , 1.0 );
 
             vertex[0] = v1.x;
             vertex[1] = v1.y;
             vertex[2] = v1.z;
 
             Points->InsertPoint(index,vertex);
-            Scalars->InsertTuple1(index++, m_ModelError1.fe[k].serror[l1]);
+            ScalarsError->InsertTuple1(index++, m_ModelError1.fe[k].serror[l1]);
+            ScalarsConst->InsertTuple1( index , 1.0 );
 
             f[0] = index - 3;
             f[1] = index - 2;
@@ -492,7 +535,11 @@ void testMeshValmet::drawVertexErrorT()
 
   m_FinalData -> SetPoints( Points );
   m_FinalData -> SetPolys( Polys );
-  m_FinalData -> GetPointData() -> SetScalars( Scalars );
+  ScalarsError -> SetName( "Error" );
+  ScalarsConst -> SetName( "Original" );
+  m_FinalData -> GetPointData() -> AddArray( ScalarsError );
+  m_FinalData -> GetPointData() -> AddArray( ScalarsConst );
+  //m_FinalData -> GetPointData() -> SetScalars( ScalarsConst );
 }
 
 void testMeshValmet::CreateLutError()

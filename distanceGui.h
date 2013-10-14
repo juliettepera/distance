@@ -31,10 +31,12 @@
 #include <iostream>
 
 // My libraries
-#include "meshQtDisplay.h"
-#include "smoothingGui.h"
-#include "downSamplingGui.h"
+#include "data.h"
+#include "processing.h"
+#include "display.h"
 #include "testMeshValmet.h"
+//#include "smoothingGui.h"
+//#include "downSamplingGui.h"
 #include "ui_distanceGui.h"
 
 // My class
@@ -61,6 +63,8 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
 
        void OpenBrowseWindowFile();
        void OpenBrowseWindowRepository();
+
+
        void DeleteOneFile();
 
        void DisplayAll();
@@ -86,13 +90,13 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        void buttonUpClicked();
        void buttonDownClicked();
 
-       void ChangeMinSampleFrequency();
-       void ChangeSamplingStep();
-       void ChangeSignedDistance();
+       //void ChangeMinSampleFrequency();
+       //void ChangeSamplingStep();
+       //void ChangeSignedDistance();
 
-       void ApplyDistance();
+       //void ApplyDistance();
        void SelectMeshB();
-       void ChangeDisplayError();
+       //void ChangeDisplayError();
 
    private:
 
@@ -128,13 +132,14 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
 
        QColor m_Color;
 
-       std::vector <std::string> m_MeshList;
-       std::vector <double> m_OpacityList;
+       //std::vector <std::string> m_MeshList;
+       std::vector <data::data> m_DataList;
+       /*std::vector <double> m_OpacityList;
        std::vector <double> m_MinSampleFrequencyList;
        std::vector <double> m_SamplingStepList;
        std::vector <bool> m_SignedDistanceList;
        std::vector <int> m_DisplayErrorList;
-       std::vector <int> m_DisplayTypeList;
+       std::vector <int> m_DisplayTypeList;*/
 
        vtkSmartPointer <vtkPolyData> m_ComputedData;
        vtkSmartPointer <vtkColorTransferFunction> m_Lut;
@@ -143,11 +148,12 @@ class distanceGui : public QMainWindow, public Ui::MainWindow
        QString m_FileName2;
 
        QVTKWidget *m_WidgetMesh;
-       meshQtDisplay m_MyWindowMesh;
-       smoothingGui m_MySmoothing;
+       display m_MyWindowMesh;
+
+       //smoothingGui m_MySmoothing;
        testMeshValmet m_MyTestMeshValmet;
-       downSamplingGui m_MyDownSampling;
-       displayTools m_ActivTool;
+       //downSamplingGui m_MyDownSampling;
+       //displayTools m_ActivTool;
 
 };
 

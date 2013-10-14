@@ -1,5 +1,5 @@
-#ifndef DATA_H
-#define DATA_H
+#ifndef DATAM_H
+#define DATAM_H
 
 /* CLASS WHERE ALL THE DATA NEEDED FOR ONE FILE ARE STOCKED --> NO PROCESSING DONE HERE
  *  -> NAME
@@ -26,6 +26,7 @@
 #include <vtkColorTransferFunction.h>
 #include <vtkProperty.h>
 #include <vtkTriangleFilter.h>
+#include <vtkAbstractArray.h>
 
 // QT libraries
 #include <QMessageBox>
@@ -37,14 +38,15 @@
 
 
 
-class data
+class dataM
 {
     public:
-        data( std::string Name );
+        dataM( std::string Name = "" );
         void initialization();
         void updateActorProperties();
         int updateTypeOfDisplay();
         int changeMapperInput( int Choice );
+        void changeActivScalar();
 
         // Set the basic data
             void setName( std::string Name );
@@ -54,7 +56,7 @@ class data
             std::string getName();
             vtkSmartPointer<vtkPolyDataMapper> getMapper();
             vtkSmartPointer <vtkActor> getActor();
-            vtkSmartPointer<vtkPolyData> getPolyData();
+            void getPolyData(vtkSmartPointer<vtkPolyData> &NewData);
 
         // Set the File properties
             void setOpacity( double Opacity );
@@ -83,7 +85,7 @@ class data
             vtkSmartPointer <vtkDecimatePro> getDecimer();
 
         // Set the error parameters
-            void setMinSamplingFrequency( double MinSamplingFrequency );
+            void setMinSamplingFrequency(int MinSamplingFrequency );
             void setSamplingStep( double SamplingStep );
             void setSignedDistance( bool SignedDistance );
             void setDisplayError( bool DisplayError );
@@ -91,7 +93,7 @@ class data
             void setLut( vtkSmartPointer <vtkColorTransferFunction> Lut );
 
         // Get the error parameters
-            double getMinSamplingFrequency();
+            int getMinSamplingFrequency();
             double getSamplingStep();
             bool getSignedDistance();
             bool getDisplayError();
@@ -117,7 +119,7 @@ class data
         vtkSmartPointer <vtkDecimatePro> m_Decimer;
 
         bool m_DisplayError;
-        double m_MinSamplingFrequency;
+        int m_MinSamplingFrequency;
         double m_SamplingStep;
         bool m_SignedDistance;
         vtkSmartPointer <vtkPolyData> m_PolyDataError;

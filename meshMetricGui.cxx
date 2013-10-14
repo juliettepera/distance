@@ -27,6 +27,10 @@ meshMetricGui::meshMetricGui( QWidget *parent , Qt::WFlags f , std::string WorkD
     actionSaveFile -> setShortcut( QKeySequence("Ctrl+S") );
     actionQuit -> setShortcut( QKeySequence("Ctrl+Q") );
 
+    QStringList List;
+    List << "2" << "0.5" << "0.2" << "0.1" << "0.05" << "0.02" ;
+    comboBoxSamplingStep -> addItems( List );
+
     // connections
     QObject::connect( actionQuit , SIGNAL( triggered() ) , qApp , SLOT( quit() ) );
 
@@ -63,6 +67,12 @@ meshMetricGui::meshMetricGui( QWidget *parent , Qt::WFlags f , std::string WorkD
     QObject::connect( pushButtonRunDecimate , SIGNAL( clicked() ) , this , SLOT( ApplyDecimate() ) );
 
     QObject::connect( comboBoxMeshB , SIGNAL( activated( int ) ) , this , SLOT( SelectMeshB() ) );
+    QObject::connect( spinBoxMinSampFreq , SIGNAL( valueChanged( int ) ), this, SLOT( ChangeMinSampleFrequency() ) );
+    QObject::connect( comboBoxSamplingStep , SIGNAL( activated( int ) ), this, SLOT( ChangeSamplingStep() ) );
+    QObject::connect( radioButtonSignedDistance , SIGNAL( toggled( bool ) ), this, SLOT( ChangeSignedDistance() ) );
+    QObject::connect( radioButtonAbsoluteDistance , SIGNAL( toggled( bool ) ), this, SLOT( ChangeSignedDistance() ) );
+    QObject::connect( checkBoxError , SIGNAL( toggled( bool ) ) , this , SLOT( ChangeDisplayError() ) );
+    QObject::connect( pushButtonApply , SIGNAL( clicked() ) , this , SLOT( ApplyDistance() ) );
 
 
 
@@ -247,23 +257,23 @@ void meshMetricGui::DeleteOneFile()
         spinBoxDecimate -> setValue( spinBoxDecimate -> maximum() );
         radioButtonPoints -> setChecked( true );
         lineEditMeshA -> clear();
+        checkBoxError -> setChecked( false );
 
+        tabWidgetVisualization -> setEnabled( false );
+        tabWidgetError -> setEnabled( false );
+        pushButtonDeleteOne -> setEnabled( false );
     }
 
     if( m_DataList.empty() )
     {
         groupBoxCamera -> setEnabled( false );
-        tabWidgetVisualization -> setEnabled( false );
-        tabWidgetError -> setEnabled( false );
-
-        pushButtonAdd -> setEnabled( true );
-        pushButtonDeleteOne -> setEnabled( false );
         pushButtonDelete -> setEnabled( false );
         listWidgetLoadedMesh -> setEnabled( false );
+        actionSaveFile -> setEnabled( false );
 
+        pushButtonAdd -> setEnabled( true );
         actionAddNewFile -> setEnabled( true );
         actionAddNewRepository -> setEnabled( true );
-        actionSaveFile -> setEnabled( false );
         actionQuit -> setEnabled( true );
     }
 }
@@ -286,13 +296,11 @@ void meshMetricGui::DeleteAllFiles()
         spinBoxIteration -> setValue( spinBoxIteration -> maximum() );
         spinBoxDecimate -> setValue( spinBoxDecimate -> maximum() );
         radioButtonPoints -> setChecked( true );
+        checkBoxError -> setChecked( false );
         listWidgetLoadedMesh -> clear();
         comboBoxMeshB -> clear();
         lineEditMeshA -> clear();
-    }
 
-    if( m_DataList.empty() )
-    {
         groupBoxCamera -> setEnabled( false );
         tabWidgetVisualization -> setEnabled( false );
         tabWidgetError -> setEnabled( false );
@@ -329,14 +337,14 @@ void meshMetricGui::DisplayInit()
     ChangeIcon( m_VisibleIcon );
 
     groupBoxCamera -> setEnabled( true );
+
     groupBoxVisualization -> setEnabled( true );
+    checkBoxError -> setEnabled( false );
+
     pushButtonDelete -> setEnabled( true );
-    pushButtonDeleteOne -> setEnabled( true );
     pushButtonDisplayAll -> setEnabled( true );
     pushButtonHideAll -> setEnabled( true );
     listWidgetLoadedMesh -> setEnabled( true );
-    actionSmoothing -> setEnabled( true );
-    actionDownSampling -> setEnabled( true );
 }
 
 void meshMetricGui::DisplayAll()
@@ -447,6 +455,7 @@ void meshMetricGui::buttonFrontClicked()
 void meshMetricGui::ChangeMeshSelected()
 {
    m_MeshSelected = listWidgetLoadedMesh -> currentRow();
+
    horizontalSliderOpacity -> setValue( m_DataList[ m_MeshSelected ].getOpacity()*100 );
    lcdNumberOpacity -> display( m_DataList[ m_MeshSelected ].getOpacity() );
 
@@ -462,6 +471,27 @@ void meshMetricGui::ChangeMeshSelected()
    {
        radioButtonWireframe -> setChecked( true );
    }
+
+   spinBoxMinSampFreq -> setValue( m_DataList[ m_MeshSelected ].getMinSamplingFrequency() );
+
+   if( m_DataList[ m_MeshSelected ].getSignedDistance() == true )
+   {
+       radioButtonSignedDistance -> setChecked( true );
+   }
+   else if( m_DataList[ m_MeshSelected ].getSignedDistance() == false )
+   {
+       radioButtonAbsoluteDistance -> setChecked( true );
+   }
+
+   if( m_DataList[ m_MeshSelected ].getDisplayError() == true )
+   {
+       checkBoxError -> setChecked( true );
+   }
+   else if( m_DataList[ m_MeshSelected ].getDisplayError() == false )
+   {
+       checkBoxError -> setChecked( false );
+   }
+
 
    QFileInfo File = QString::fromStdString( m_DataList[ m_MeshSelected ].getName() );
    lineEditMeshA -> setText( File.fileName() );
@@ -482,7 +512,6 @@ void meshMetricGui::ResetSelectedFile()
     {
         m_DataList[ m_MeshSelected ].initialization();
         m_MyWindowMesh.updateWindow();
-
     }
 }
 
@@ -617,18 +646,80 @@ void meshMetricGui::SelectMeshB()
     if( m_SelectedItemA != -1 )
     {
         m_SelectedItemB = comboBoxMeshB -> currentItem();
-
-        m_FileName1 = QString::fromStdString( m_DataList[ m_SelectedItemA ].getName() );
-        m_FileName2 = QString::fromStdString( m_DataList[ m_SelectedItemB ].getName() );
-
-        m_MyMeshValmet.SetFileName1( m_FileName1 );
-        m_MyMeshValmet.SetFileName2( m_FileName2 );
-     }
+    }
     else
     {
         QMessageBox MsgBox;
         MsgBox.setText( " choose first the file you want to apply the distance error ");
         MsgBox.exec();
+    }
+}
+
+void meshMetricGui::ChangeMinSampleFrequency()
+{
+    if( ! m_DataList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
+    {
+        m_DataList[ m_MeshSelected ].setMinSamplingFrequency( spinBoxMinSampFreq -> value() );
+    }
+}
+
+void meshMetricGui::ChangeSamplingStep()
+{
+    if( ! m_DataList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
+    {
+        double value;
+        value = ( comboBoxSamplingStep -> currentText() ).toDouble();
+        m_DataList[ m_MeshSelected ].setSamplingStep( value );
+    }
+}
+
+void meshMetricGui::ChangeSignedDistance()
+{
+    if( ! m_DataList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
+    {
+        if( radioButtonSignedDistance -> isChecked() )
+        {
+            m_DataList[ m_MeshSelected ].setSignedDistance( true );
+        }
+        else if( radioButtonAbsoluteDistance -> isChecked() )
+        {
+            m_DataList[ m_MeshSelected ].setSignedDistance( false );
+        }
+    }
+}
+
+void meshMetricGui::ChangeDisplayError()
+{
+    if( ! m_DataList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
+    {
+        if( checkBoxError -> isChecked() )
+        {
+            m_DataList[ m_MeshSelected ].setDisplayError( true );
+        }
+        else if( ! checkBoxError -> isChecked() )
+        {
+            m_DataList[ m_MeshSelected ].setDisplayError( false );
+        }
+
+        m_DataList[ m_MeshSelected ].changeActivScalar();
+        m_MyWindowMesh.updateWindow();
+    }
+}
+
+void meshMetricGui::ApplyDistance()
+{
+    if( m_SelectedItemA != -1 && m_SelectedItemB != -1 )
+    {
+        checkBoxError -> setChecked( true );
+        checkBoxError -> setEnabled( true );
+
+        m_MyProcess.processError( m_DataList[ m_SelectedItemA ] , m_DataList[ m_SelectedItemB ] );
+
+        m_DataList[ m_SelectedItemB ].setOpacity( 0.0 );
+        ChangeIcon( m_UnvisibleIcon , m_SelectedItemB );
+        m_DataList[ m_SelectedItemB ].updateActorProperties();
+
+        m_MyWindowMesh.updateWindow();
     }
 }
 

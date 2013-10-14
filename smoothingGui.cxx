@@ -19,7 +19,7 @@ smoothingGui::smoothingGui(QWidget * parent , Qt::WFlags f ): QMainWindow( paren
 }
 
 //***********************************************************************************
-void smoothingGui::setWindow( meshQtDisplay WindowMesh )
+void smoothingGui::setWindow( display WindowMesh )
 {
    m_MyWindowMesh = WindowMesh;
 }
@@ -30,11 +30,19 @@ void smoothingGui::setIcon( QIcon Visible , QIcon Unvisible )
    m_Unvisible = Unvisible;
 }
 
+void smoothingGui::setData( std::vector <data::data> DataList )
+{
+    m_DataList = DataList;
+}
+
+void smoothingGui::setProcess( processing Process )
+{
+    m_MyProcess = Process;
+}
+
 //***********************************************************************************
 void smoothingGui::reset()
 {
-    m_DisplayList.clear();
-    m_NumberOfIterationList.clear();
     m_SmoothList.clear();
     listWidgetLoadedMesh->clear();
 }
@@ -42,16 +50,13 @@ void smoothingGui::reset()
 void smoothingGui::addOne( std::string Name )
 {
     m_NumberOfMesh++;
-    m_NumberOfIterationList.push_back( 500 );
-    m_DisplayList.push_back( false );
     m_SmoothList.push_back( false );
     listWidgetLoadedMesh -> addItem( Name.c_str() );
 }
 
 void smoothingGui::deleteOne( int IndiceOfMesh )
 {
-    m_NumberOfIterationList.erase( m_NumberOfIterationList.begin() + IndiceOfMesh );
-    m_DisplayList.erase( m_DisplayList.begin() + IndiceOfMesh );
+    m_DataList.erase( m_DataList.begin() + IndiceOfMesh );
     m_SmoothList.erase( m_SmoothList.begin() + IndiceOfMesh );
     delete listWidgetLoadedMesh -> item( IndiceOfMesh );
     m_NumberOfMesh--;
@@ -72,15 +77,13 @@ void smoothingGui::ChangeMeshSelected()
 
         if( m_MeshSelected != -1 )
         {
-            spinBoxIteration -> setValue( m_NumberOfIterationList[ m_MeshSelected ] );
+            spinBoxIteration -> setValue( m_DataList[ m_MeshSelected ].getNumberOfIterationSmooth() );
             spinBoxIteration -> setEnabled( true );
 
-            checkBoxDisplay -> setChecked( m_DisplayList[ m_MeshSelected ] );
+            checkBoxDisplay -> setChecked( m_DataList[ m_MeshSelected ].getDisplaySmoothing() );
             checkBoxDisplay -> setEnabled( m_SmoothList[ m_MeshSelected ] );
 
-            pushButtonRun -> setEnabled( ! m_DisplayList[ m_MeshSelected ] );
-
-            m_ActivTool = m_MyWindowMesh.getTool( m_MeshSelected );          
+            pushButtonRun -> setEnabled( ! m_DataList[ m_MeshSelected ].getDisplaySmoothing() );
         }
     }
 }
@@ -90,9 +93,8 @@ void smoothingGui::ChangeValueSmoothing()
 {
     if( m_MeshSelected != -1 )
     {
-        m_NumberOfIterationList[ m_MeshSelected ] = spinBoxIteration -> value();
-        m_ActivTool.setNumberOfIterationSmooth( m_NumberOfIterationList[ m_MeshSelected ] );
-
+        m_DataList[ m_MeshSelected ].setNumberOfIterationSmooth( spinBoxIteration -> value() );
+        
         pushButtonRun -> setEnabled( true );
         checkBoxDisplay -> setEnabled( false );
     }
@@ -102,18 +104,17 @@ void smoothingGui::ChangeDisplaySmoothing()
 {
     if( m_MeshSelected != -1 )
     {
-        m_DisplayList[ m_MeshSelected ] = checkBoxDisplay -> isChecked();
-        m_ActivTool.setSmoothing( m_DisplayList[ m_MeshSelected ] );
+        m_DataList.[ m_MeshSelected ].setDisplaySmoothing( checkBoxDisplay -> isChecked() );
 
         if( checkBoxDisplay -> isChecked() )
         {
-            m_ActivTool.changeMapperInputPort( 2 );
+            m_DataList[ m_MeshSelected ].changeMapperInputPort( 2 );
         }
         else if( ! checkBoxDisplay -> isChecked() )
         {
-            m_ActivTool.changeMapperInputPort( 1 );
+            m_DataList[ m_MeshSelected ].changeMapperInputPort( 1 );
         }
-        m_MyWindowMesh.windowUpdate();
+        m_MyWindowMesh.updateWindow();
     }
 }
 
@@ -121,11 +122,11 @@ void smoothingGui::applySmoothing()
 {
     if( m_MeshSelected != -1 )
     {
-        m_DisplayList[ m_MeshSelected ] = true;
+        m_DataList[ m_MeshSelected ].setDisplaySmoothing( true );
         m_SmoothList[ m_MeshSelected ] = true;
 
-        m_ActivTool.changeDataFilter();
-        m_MyWindowMesh.windowUpdate();
+        m_MyProcess.processSmoothing( m_DataList[ m_MeshSelected ] );
+        m_MyWindowMesh.updateWindow();
 
         checkBoxDisplay -> setChecked( true );
         checkBoxDisplay -> setEnabled( true );

@@ -22,8 +22,9 @@
 #include <iostream>
 
 // My Libraries
-#include "meshQtDisplay.h"
-#include "displayTools.h"
+#include "display.h"
+#include "data.h"
+#include "processing.h"
 #include "ui_smoothingGui.h"
 
 class smoothingGui: public QMainWindow, public Ui::SmoothingWindow
@@ -33,14 +34,16 @@ class smoothingGui: public QMainWindow, public Ui::SmoothingWindow
     public:
         smoothingGui( QWidget * parent = 0, Qt::WFlags f = 0 );
 
-        void setWindow( meshQtDisplay WindowMesh );
+        void setWindow( display WindowMesh );
+        void setProcess( processing Process );
         void setIcon( QIcon Visible , QIcon Unvisible );
+        void setData( std::vector <data::data> DataList );
+
         void reset();
         void addOne( std::string Name );
         void deleteOne( int IndiceOfMesh );
 
     public slots:
-
         void pushButtonQuitClicked();
         void ChangeMeshSelected();
 
@@ -49,8 +52,6 @@ class smoothingGui: public QMainWindow, public Ui::SmoothingWindow
         void applySmoothing();
 
     private:
-        std::vector <double> m_NumberOfIterationList;
-        std::vector <bool> m_DisplayList;
         std::vector <bool> m_SmoothList;
 
         int m_NumberOfMesh;
@@ -59,8 +60,9 @@ class smoothingGui: public QMainWindow, public Ui::SmoothingWindow
         QIcon m_Visible;
         QIcon m_Unvisible;
 
-        meshQtDisplay m_MyWindowMesh;
-        displayTools m_ActivTool;
+        display m_MyWindowMesh;
+        processing m_MyProcess;
+        std::vector <data::data> m_DataList;
 };
 
 #endif

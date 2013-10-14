@@ -46,7 +46,7 @@ distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  , std::string WorkDire
     QObject::connect( pushButtonLeft , SIGNAL( clicked() ) , this , SLOT( buttonLeftClicked() ) );
     QObject::connect( pushButtonUp , SIGNAL( clicked() ) , this , SLOT( buttonUpClicked() ) );
     QObject::connect( pushButtonDown , SIGNAL( clicked() ) , this , SLOT( buttonDownClicked() ) );
-    QObject::connect( pushButtonApply , SIGNAL( clicked() ) , this , SLOT( ApplyDistance() ) );
+    //QObject::connect( pushButtonApply , SIGNAL( clicked() ) , this , SLOT( ApplyDistance() ) );
     QObject::connect( pushButtonDelete , SIGNAL( clicked() ) , this , SLOT( DisplayReset() ) );
     QObject::connect( pushButtonColor , SIGNAL( clicked() ) , this , SLOT( ChooseColor() ) );
     QObject::connect( pushButtonAdd , SIGNAL( clicked() ) , this , SLOT( OpenBrowseWindowFile() ) );
@@ -55,8 +55,8 @@ distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  , std::string WorkDire
     QObject::connect( pushButtonHideAll , SIGNAL( clicked() ) , this , SLOT( HideAll() ) );
 
 
-    QObject::connect( doubleSpinBoxMinSampFreq , SIGNAL( valueChanged( double ) ) , this , SLOT( ChangeMinSampleFrequency() ) );
-    QObject::connect( doubleSpinBoxSampStep , SIGNAL( valueChanged( double ) ) , this , SLOT( ChangeSamplingStep() ) );
+    //QObject::connect( doubleSpinBoxMinSampFreq , SIGNAL( valueChanged( double ) ) , this , SLOT( ChangeMinSampleFrequency() ) );
+    //QObject::connect( doubleSpinBoxSampStep , SIGNAL( valueChanged( double ) ) , this , SLOT( ChangeSamplingStep() ) );
 
     QObject::connect( horizontalSliderOpacity , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueOpacity() ) );
 
@@ -64,8 +64,8 @@ distanceGui::distanceGui(QWidget * parent , Qt::WFlags f  , std::string WorkDire
 
     QObject::connect( comboBoxMeshB , SIGNAL( activated( int ) ) , this , SLOT( SelectMeshB() ) );
 
-    QObject::connect( checkBoxSignedDistance , SIGNAL( toggled( bool ) ) , this , SLOT( ChangeSignedDistance() ) );
-    QObject::connect( checkBoxError , SIGNAL( toggled( bool ) ) , this , SLOT( ChangeDisplayError() ) );
+    //QObject::connect( checkBoxSignedDistance , SIGNAL( toggled( bool ) ) , this , SLOT( ChangeSignedDistance() ) );
+    //QObject::connect( checkBoxError , SIGNAL( toggled( bool ) ) , this , SLOT( ChangeDisplayError() ) );
 
     QObject::connect( radioButtonSurface , SIGNAL( toggled( bool ) ) , this , SLOT( ChangeTypeOfDisplay() ) );
     QObject::connect( radioButtonPoints , SIGNAL( toggled( bool ) ) , this , SLOT( ChangeTypeOfDisplay() ) );
@@ -88,36 +88,29 @@ void distanceGui::OpenBrowseWindowFile()
 
         if( !lineEditLoad->text().isEmpty() )
         {
-            m_MeshList.push_back( ( lineEditLoad -> text() ).toStdString() );
-            m_NumberOfMesh++;
+            m_DataList.push_back( ( lineEditLoad -> text() ).toStdString() );
 
             QFileInfo File = ( lineEditLoad -> text() );
 
             listWidgetLoadedMesh -> addItem( File.fileName().toStdString().c_str() );
-            listWidgetLoadedMesh -> item( m_NumberOfMesh - 1 ) -> setIcon( m_UnvisibleIcon );
+            listWidgetLoadedMesh -> item( m_NumberOfMesh ) -> setIcon( m_UnvisibleIcon );
 
             comboBoxMeshB -> addItem( m_NotOkIcon , File.fileName().toStdString().c_str() );
 
-            m_OpacityList.push_back( 1.0 );
-            m_SignedDistanceList.push_back( false );
-            m_MinSampleFrequencyList.push_back( 0.5 );
-            m_SamplingStepList.push_back( 2 );
-            m_DisplayErrorList.push_back( -1 );
-            m_DisplayTypeList.push_back( 1 );
+            m_MyWindowMesh.addData( m_DataList[ m_NumberOfMesh ].getActor() );
+            //m_MySmoothing.addOne( File.fileName().toStdString() );
+            //m_MyDownSampling.addOne( File.fileName().toStdString() );
 
-            m_MyWindowMesh.addTool( m_MeshList[ m_NumberOfMesh-1 ] );
-            m_MySmoothing.addOne( File.fileName().toStdString() );
-            m_MyDownSampling.addOne( File.fileName().toStdString() );
+            m_NumberOfMesh++;
 
         }
       }
+
+      browseMesh.clear();
+      delete lineEditLoad;
+      DisplayInit();
+
     }
-
-    browseMesh.clear();
-    delete lineEditLoad;
-
-    DisplayInit();
-
 }
 
 void distanceGui::OpenBrowseWindowRepository()
@@ -127,7 +120,6 @@ void distanceGui::OpenBrowseWindowRepository()
 
     if( !dir.isEmpty() )
     {
-
         QDir vtkDir( dir );
         vtkDir.setFilter( QDir::NoDotAndDotDot | QDir::Files );
         vtkDir.setNameFilters( QStringList() << "*.vtk" );
@@ -148,73 +140,64 @@ void distanceGui::OpenBrowseWindowRepository()
 
         for( int i = 0 ; i < FileList.size() ; i++ )
         {
-            m_MeshList.push_back( FileList.at(i).canonicalFilePath().toStdString().c_str()  );
-            std::cout << FileList.at(i).canonicalFilePath().toStdString().c_str() << std::endl;
-            m_NumberOfMesh++;
+            m_DataList.push_back( FileList.at(i).canonicalFilePath().toStdString() );
 
             listWidgetLoadedMesh -> addItem( FileList.at(i).fileName().toStdString().c_str() );
             listWidgetLoadedMesh -> item( m_NumberOfMesh - 1 ) -> setIcon( m_UnvisibleIcon );
 
             comboBoxMeshB -> addItem( m_NotOkIcon , FileList.at(i).fileName().toStdString().c_str() );
 
-            m_OpacityList.push_back( 1.0 );
-            m_SignedDistanceList.push_back( false );
-            m_MinSampleFrequencyList.push_back( 0.5 );
-            m_SamplingStepList.push_back( 2 );
-            m_DisplayErrorList.push_back( -1 );
-            m_DisplayTypeList.push_back( 1 );
+            m_MyWindowMesh.addData( m_DataList[ m_NumberOfMesh ].getActor() );
+            //m_MySmoothing.addOne( FileList.at(i).fileName().toStdString() );
+            //m_MyDownSampling.addOne( FileList.at(i).fileName().toStdString() );
 
-            m_MyWindowMesh.addTool( m_MeshList[ m_NumberOfMesh-1 ] );
-            m_MySmoothing.addOne( FileList.at(i).fileName().toStdString() );
-            m_MyDownSampling.addOne( FileList.at(i).fileName().toStdString() );
+            m_NumberOfMesh++;
 
         }
 
         FileList.clear();
+        DisplayInit();
     }
-
-    DisplayInit();
 }
 
 //************************************ SELECTING FILES ************************************************
 void distanceGui::ChangeMeshSelected()
 {
    m_MeshSelected = listWidgetLoadedMesh -> currentRow();
-   horizontalSliderOpacity -> setValue( m_OpacityList[ m_MeshSelected ]*100 );
-   lcdNumberOpacity -> display( m_OpacityList[ m_MeshSelected ] );
-   doubleSpinBoxMinSampFreq -> setValue( m_MinSampleFrequencyList[ m_MeshSelected ] );
-   doubleSpinBoxSampStep -> setValue( m_SamplingStepList[ m_MeshSelected ] );
-   checkBoxSignedDistance -> setChecked( m_SignedDistanceList[ m_MeshSelected ] );
-   m_ActivTool = m_MyWindowMesh.getTool( m_MeshSelected );
+   horizontalSliderOpacity -> setValue( m_DataList[ m_MeshSelected ].getOpacity() );
+   lcdNumberOpacity -> display( m_DataList[ m_MeshSelected ].getOpacity() );
+   doubleSpinBoxMinSampFreq -> setValue( m_DataList[ m_MeshSelected ].getMinSamplingFrequency() );
+   doubleSpinBoxSampStep -> setValue( m_DataList[ m_MeshSelected ].getSamplingStep() );
+   checkBoxSignedDistance -> setChecked( m_DataList[ m_MeshSelected ].getSignedDistance() );
 
-   if( m_DisplayTypeList[ m_MeshSelected ] == 1 )
+   if( m_DataList[ m_MeshSelected ].getType() == 1 )
    {
        radioButtonSurface -> setChecked( true );
    }
-   else if( m_DisplayTypeList[ m_MeshSelected ] == 2 )
+   else if( m_DataList[ m_MeshSelected ].getType() == 2 )
    {
        radioButtonPoints -> setChecked( true );
    }
-   else if( m_DisplayTypeList[ m_MeshSelected ] == 3 )
+   else if( m_DataList[ m_MeshSelected ].getType() == 3 )
    {
        radioButtonWireframe -> setChecked( true );
    }
 
-   if( m_DisplayErrorList[ m_MeshSelected ] == 0 )
+   if( m_DataList[ m_MeshSelected ].getDisplayError() == false )
    {
         checkBoxError -> setEnabled( true );
         checkBoxError -> setChecked( false );
    }
-   if( m_DisplayErrorList[ m_MeshSelected ] == 1 )
+   if( m_DataList[ m_MeshSelected ].getDisplayError() == true )
    {
         checkBoxError -> setEnabled( true );
         checkBoxError -> setChecked( true );
    }
-   if( m_DisplayErrorList[ m_MeshSelected ] == -1 )
+   /*if( m_DisplayErrorList[ m_MeshSelected ] == -1 )
    {
         checkBoxError -> setEnabled( false );
         checkBoxError -> setChecked( false );
-   }
+   }*/
 
    AvailableMesh();
 
@@ -224,6 +207,8 @@ void distanceGui::ChangeMeshSelected()
    }
    groupBoxParameters -> setEnabled( true );
 }
+
+
 
 void distanceGui::InitIcon()
 {
@@ -296,15 +281,17 @@ void distanceGui::DisplayInit()
 {
     if( m_NumberOfDisplay == 0 )
     {
-        m_MyWindowMesh.setSizeH(  scrollAreaMesh -> height()  );
-        m_MyWindowMesh.setSizeW( scrollAreaMesh -> width() );
-        m_MyWindowMesh.setMeshWidget( m_WidgetMesh );
+       m_MyWindowMesh.setSizeH(  scrollAreaMesh -> height()  );
+       m_MyWindowMesh.setSizeW( scrollAreaMesh -> width() );
+       m_MyWindowMesh.setMeshWidget( m_WidgetMesh );
+
+       std::cout << "window init" << std::endl;
     }
 
-    m_MyWindowMesh.windowInit();
-    m_MyWindowMesh.windowUpdate();
-
+    m_MyWindowMesh.initWindow();
+    m_MyWindowMesh.updateWindow();
     m_NumberOfDisplay++;
+
     ChangeIcon( m_VisibleIcon );
 
     groupBoxCamera -> setEnabled( true );
@@ -322,9 +309,9 @@ void distanceGui::DisplayInit()
 
 void distanceGui::DisplayReset()
 {
-    if( ! m_MeshList.empty() && m_NumberOfDisplay != 0 )
+    if( ! m_DataList.empty() && m_NumberOfDisplay != 0 )
     {
-        m_MyWindowMesh.windowClear();
+        m_MyWindowMesh.deleteAll();
 
         m_NumberOfDisplay = 0;
         m_NumberOfMesh = 0;
@@ -336,22 +323,13 @@ void distanceGui::DisplayReset()
         lcdNumberOpacity -> display( horizontalSliderOpacity -> maximum()  );
 
         listWidgetLoadedMesh -> clear();
-        m_MeshList.clear();
-        m_OpacityList.clear();
-        m_MinSampleFrequencyList.clear();
-        m_SamplingStepList.clear();
-        m_SignedDistanceList.clear();
-        m_DisplayTypeList.clear();
-        m_DisplayErrorList.clear();
         comboBoxMeshB->clear();
 
-        m_MySmoothing.reset();
-        m_MyDownSampling.reset();
-
-        m_MyWindowMesh.windowUpdate();
+        //m_MySmoothing.reset();
+        //m_MyDownSampling.reset();
     }
 
-    if( m_MeshList.empty() )
+    if( m_DataList.empty() )
     {
         groupBoxCamera -> setEnabled( false );
         groupBoxParameters -> setEnabled( false );
@@ -375,24 +353,17 @@ void distanceGui::DisplayReset()
 
 void distanceGui::DeleteOneFile()
 {
-    if( ! m_MeshList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
+    if( ! m_DataList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
 
-        m_MeshList.erase( m_MeshList.begin() + m_MeshSelected );
-        m_OpacityList.erase( m_OpacityList.begin() + m_MeshSelected );
-        m_MinSampleFrequencyList.erase( m_MinSampleFrequencyList.begin() + m_MeshSelected );
-        m_SamplingStepList.erase( m_SamplingStepList.begin() + m_MeshSelected );
-        m_SignedDistanceList.erase( m_SignedDistanceList.begin() + m_MeshSelected );
-        m_DisplayErrorList.erase( m_DisplayErrorList.begin() + m_MeshSelected );
-        m_DisplayTypeList.erase( m_DisplayTypeList.begin() + m_MeshSelected );
-
+        m_DataList.erase( m_DataList.begin() + m_MeshSelected );
         delete listWidgetLoadedMesh->item( m_MeshSelected );
         comboBoxMeshB -> removeItem( m_MeshSelected );
 
-        m_MySmoothing.deleteOne( m_MeshSelected );
-        m_MyDownSampling.deleteOne( m_MeshSelected );
-        m_MyWindowMesh.windowClearOne( m_MeshSelected );
-        m_MyWindowMesh.windowUpdate();
+        //m_MySmoothing.deleteOne( m_MeshSelected );
+       // m_MyDownSampling.deleteOne( m_MeshSelected );
+
+        m_MyWindowMesh.deleteData( m_MeshSelected );
 
         m_NumberOfMesh--;
         m_MeshSelected = -1;
@@ -400,7 +371,7 @@ void distanceGui::DeleteOneFile()
         m_SelectedItemB = -1;
     }
 
-    if( m_MeshList.empty() )
+    if( m_DataList.empty() )
     {
         groupBoxCamera -> setEnabled( false );
         groupBoxParameters -> setEnabled( false );
@@ -424,14 +395,13 @@ void distanceGui::DisplayAll()
     int IndiceOfMesh;
     for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh++ )
     {
-        m_OpacityList[ IndiceOfMesh ] = 1.0;
-        m_MyWindowMesh.getTool( IndiceOfMesh ).setOpacity( 1.0 );
+        m_DataList[ IndiceOfMesh ].setOpacity( 1.0 );
         horizontalSliderOpacity -> setValue( 1.0 );
         lcdNumberOpacity -> display( 1.0 );
         ChangeIcon( m_VisibleIcon , IndiceOfMesh );
-        m_MyWindowMesh.getTool( IndiceOfMesh ).updateActorProperties();
+        m_DataList[ IndiceOfMesh ].updateActorProperties();
     }
-    m_MyWindowMesh.windowUpdate();
+    m_MyWindowMesh.updateWindow();
 
     groupBoxParameters -> setEnabled( false );
     groupBoxDistance -> setEnabled( false );
@@ -443,17 +413,13 @@ void distanceGui::HideAll()
     int IndiceOfMesh;
     for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh++ )
     {
-        m_ActivTool = m_MyWindowMesh.getTool( IndiceOfMesh );
-
-        m_OpacityList[ IndiceOfMesh ] = 0.0;
+        m_DataList[ IndiceOfMesh ].setOpacity( 0.0 );
         horizontalSliderOpacity -> setValue( 0.0 );
         lcdNumberOpacity -> display( 0.0 );
         ChangeIcon( m_UnvisibleIcon , IndiceOfMesh );
-
-        m_ActivTool.setOpacity( 0.0 );
-        m_ActivTool.updateActorProperties();
+        m_DataList[ IndiceOfMesh ].updateActorProperties();
     }
-    m_MyWindowMesh.windowUpdate();
+    m_MyWindowMesh.updateWindow();
 
     groupBoxParameters -> setEnabled( false );
     groupBoxDistance -> setEnabled( false );
@@ -462,39 +428,37 @@ void distanceGui::HideAll()
 
 void distanceGui::ChangeTypeOfDisplay()
 {
-    if( ! m_MeshList.empty() && m_MeshSelected != -1 )
+    if( ! m_DataList.empty() && m_MeshSelected != -1 )
     {
         if( radioButtonSurface -> isChecked() )
         {
-            m_DisplayTypeList[ m_MeshSelected ] = 1;           
+            m_DataList[ m_MeshSelected ].setType( 1 );
         }
         else if( radioButtonPoints -> isChecked() )
         {
-            m_DisplayTypeList[ m_MeshSelected ] = 2;
+             m_DataList[ m_MeshSelected ].setType( 2 );
         }
         else if( radioButtonWireframe -> isChecked() )
         {
-            m_DisplayTypeList[ m_MeshSelected ] = 3;
+             m_DataList[ m_MeshSelected ].setType( 3 );
         }
 
-        m_ActivTool.setType( m_DisplayTypeList[ m_MeshSelected ] );
-        m_ActivTool.updateDisplayProperties();
-        m_MyWindowMesh.windowUpdate();
+        m_DataList[ m_MeshSelected ].updateActorProperties();
+        m_MyWindowMesh.updateWindow();
     }
 }
 
 //************************************ CHANGING MESH PARAMETERS ************************************************
 void distanceGui::ChangeValueOpacity()
 {
-    if( ! m_MeshList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
+    if( ! m_DataList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
-        m_OpacityList[ m_MeshSelected ] = horizontalSliderOpacity -> value()/100.;
-        lcdNumberOpacity -> display( m_OpacityList[ m_MeshSelected ] );
+        m_DataList[ m_MeshSelected ].setOpacity( horizontalSliderOpacity -> value()/100. );
+        lcdNumberOpacity -> display( m_DataList[ m_MeshSelected ].getOpacity() );
 
-        m_ActivTool.setOpacity( m_OpacityList[ m_MeshSelected ] );
-        m_ActivTool.updateActorProperties();
+        m_DataList[ m_MeshSelected ].updateActorProperties();
 
-        if( m_OpacityList[ m_MeshSelected ] == 0 )
+        if( m_DataList[ m_MeshSelected ].getOpacity() == 0 )
         {
             ChangeIcon( m_UnvisibleIcon , m_MeshSelected );
         }
@@ -503,23 +467,22 @@ void distanceGui::ChangeValueOpacity()
             ChangeIcon( m_VisibleIcon , m_MeshSelected );
         }
 
-        m_MyWindowMesh.windowUpdate();
+        m_MyWindowMesh.updateWindow();
     }
 }
 
 void distanceGui::ChooseColor()
 {
-    if( ! m_MeshList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
+    if( ! m_DataList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
-        m_DisplayErrorList[ m_MeshSelected ] = 0;
-        m_MyWindowMesh.chooseDisplayError( m_MeshSelected , false );
+        m_DataList[ m_MeshSelected ].setDisplayError( false );
 
         m_Color = QColorDialog::getColor( Qt::white , this );
 
-        m_ActivTool.setColor( m_Color.redF(), m_Color.greenF() , m_Color.blueF() );
-        m_ActivTool.updateActorProperties();
+        m_DataList[ m_MeshSelected ].setColor( m_Color.redF(), m_Color.greenF() , m_Color.blueF() );
+        m_DataList[ m_MeshSelected ].updateActorProperties();
 
-        m_MyWindowMesh.windowUpdate();
+        m_MyWindowMesh.updateWindow();
     }
 }
 
@@ -527,21 +490,21 @@ void distanceGui::ChooseColor()
 //************************************ ADVANCED PARAMETERS ************************************************
 void distanceGui::OpenSmoothingWindow()
 {
-    if( !m_MeshList.empty() )
+   /* if( !m_DataList.empty() )
     {
         m_MySmoothing.setWindow( m_MyWindowMesh );
         m_MySmoothing.setIcon( m_VisibleIcon , m_UnvisibleIcon );
         m_MySmoothing.show();
-    }
+    }*/
 }
 
 void distanceGui::OpenDownSamplingWindow()
 {
-    if( !m_MeshList.empty() )
+    /*if( !m_DataList.empty() )
     {
         m_MyDownSampling.setWindow( m_MyWindowMesh );
         m_MyDownSampling.show();
-    }
+    }*/
 }
 
 
@@ -549,7 +512,7 @@ void distanceGui::OpenDownSamplingWindow()
 void distanceGui::DisplayUpdateCamera()
 {
     m_MyWindowMesh.updatePositionCamera();
-    m_MyWindowMesh.windowUpdate();
+    m_MyWindowMesh.updateWindow();
 }
 
 void distanceGui::buttonUpClicked()
@@ -620,7 +583,7 @@ void distanceGui::buttonFrontClicked()
 
 
 //************************************ CHANGING ERROR PARAMETERS ************************************************
-void distanceGui::ChangeSamplingStep()
+/*void distanceGui::ChangeSamplingStep()
 {
     if( ! m_MeshList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
@@ -715,7 +678,7 @@ void distanceGui::DisplayError()
             m_MyWindowMesh.chooseDisplayError( m_MeshSelected , true );
         }
     }
-}
+}*/
 
 //************************************ LOADING FILES FOR ERROR ************************************************
 void distanceGui::AvailableMesh()
@@ -748,11 +711,8 @@ void distanceGui::SelectMeshB()
     {
         m_SelectedItemB = comboBoxMeshB -> currentItem();
 
-        displayTools ToolMeshA = m_MyWindowMesh.getTool( m_SelectedItemA );
-        displayTools ToolMeshB = m_MyWindowMesh.getTool( m_SelectedItemB );
-
-        m_FileName1 = QString::fromStdString( ToolMeshA.getName() );
-        m_FileName2 = QString::fromStdString( ToolMeshB.getName() );
+        m_FileName1 = QString::fromStdString( m_DataList[ m_SelectedItemA ].getName() );
+        m_FileName2 = QString::fromStdString( m_DataList[ m_SelectedItemB ].getName() );
 
         m_MyTestMeshValmet.SetFileName1( m_FileName1 );
         m_MyTestMeshValmet.SetFileName2( m_FileName2 );

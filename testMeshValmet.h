@@ -26,6 +26,8 @@
 #include <QFileDialog>
 #include <QObject>
 #include <QProgressDialog>
+#include <QMessageBox>
+
 
 // Other Libraries
 #include <iostream>
@@ -34,6 +36,8 @@
 // MeshValmet Libraries
 #include "MeshValmet/mesh_run.h"
 
+#include "data.h"
+
 
 class testMeshValmet: public QMainWindow
 {
@@ -41,11 +45,12 @@ class testMeshValmet: public QMainWindow
     public:
         testMeshValmet();
 
-        void SetFileName1( QString FileName2 );
-        void SetFileName2( QString FileName2 );
-        void SetDoSymmetric( int Symmetric );
+        void SetFileName1( std::string FileName1 );
+        void SetFileName2( std::string FileName2 );
+        //void SetData1(vtkSmartPointer<vtkPolyData> Data1 );
+        //void SetData2( vtkSmartPointer<vtkPolyData> Data2 );
         void SetSamplingStep( double SamplingStep );
-        void SetMinSampleFrequency( double MinSampleFrequency );
+        void SetMinSampleFrequency( int MinSampleFrequency );
         void SetSignedDistance( bool SignedDistance );
 
         vtkSmartPointer <vtkPolyData> GetFinalData();
@@ -59,6 +64,8 @@ class testMeshValmet: public QMainWindow
     private:
 
         vtkSmartPointer <vtkPolyData> m_FinalData;
+        vtkSmartPointer <vtkPolyData> m_PolyData1;
+        vtkSmartPointer <vtkPolyData> m_PolyData2;
         vtkSmartPointer <vtkColorTransferFunction> m_Lut;
 
         struct args m_Pargs;

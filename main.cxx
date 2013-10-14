@@ -1,5 +1,5 @@
 // My library
-#include "distanceGui.h"
+#include "meshMetricGui.h"
 
 int main( int argc , char* argv[] )
 {
@@ -10,7 +10,7 @@ int main( int argc , char* argv[] )
       QWidget * parent = 0;
       Qt::WFlags f = 0;
 
-      distanceGui myMainWindow( parent , f , argvStr );
+      meshMetricGui myMainWindow( parent , f , argvStr );
 
       myMainWindow.show();
 

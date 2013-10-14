@@ -42,6 +42,7 @@ void meshQtDisplay::setMeshWidget( QVTKWidget *MeshWidget )
 {
     m_MeshWidget = MeshWidget;
 }
+
 //********************************************* ACESS THE ATTRIBUTS  ********************************************
 displayTools::displayTools meshQtDisplay::getTool( int IndiceOfMesh )
 {

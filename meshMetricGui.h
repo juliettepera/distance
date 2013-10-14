@@ -12,6 +12,7 @@
 #include <QFileDialog>
 #include <QColorDialog>
 #include <QStandardItemModel>
+#include <QMessageBox>
 
 // VTK libraries
 #include <QVTKWidget.h>
@@ -20,7 +21,6 @@
 #include "data.h"
 #include "processing.h"
 #include "display.h"
-#include "testMeshValmet.h"
 #include "ui_meshMetricGui.h"
 
 // Other Libraries
@@ -82,16 +82,17 @@ class meshMetricGui : public QMainWindow , public Ui::MainWindow
         // function for the distance
             void AvailableMesh();
             void SelectMeshB();
-            //void ChangeMinSampleFrequency();
-            //void ChangeSamplingStep();
-            //void ChangeSignedDistance();
-            //void ApplyDistance();
+            void ChangeMinSampleFrequency();
+            void ChangeSamplingStep();
+            void ChangeSignedDistance();
+            void ChangeDisplayError();
+            void ApplyDistance();
 
     private:
         // attributs for the files
             int m_NumberOfMesh;
             int m_MeshSelected;
-            std::vector <data::data> m_DataList;
+            std::vector <dataM::dataM> m_DataList;
             QColor m_Color;
 
         // attributs for the display
@@ -124,12 +125,10 @@ class meshMetricGui : public QMainWindow , public Ui::MainWindow
             QString m_Reset;
 
         // attributs for the smoothing, down sampling , error
-            QString m_FileName1;
-            QString m_FileName2;
             int m_SelectedItemA;
             int m_SelectedItemB;
             processing m_MyProcess;
-            testMeshValmet m_MyMeshValmet;
+
 };
 
 #endif

@@ -1,9 +1,9 @@
 # test 1
-ADD_EXECUTABLE( testTools testTools.cxx ../displayTools.cxx )
-TARGET_LINK_LIBRARIES( testTools ${VTK_LIBRARIES} )
-ADD_TEST(NAME testTools COMMAND $<TARGET_FILE:testTools> )
+ADD_EXECUTABLE( testData testTools.cxx ../data.cxx )
+TARGET_LINK_LIBRARIES( testData ${VTK_LIBRARIES} )
+ADD_TEST(NAME testData COMMAND $<TARGET_FILE:testData> )
 
 # test 2
-ADD_EXECUTABLE( testQtDisplay testQtDisplay.cxx ../meshQtDisplay.cxx ../displayTools.cxx )
-TARGET_LINK_LIBRARIES( testQtDisplay ${VTK_LIBRARIES} ${QT_LIBRARIES} )
-ADD_TEST(NAME testQtDisplay COMMAND $<TARGET_FILE:testQtDisplay> )
+ADD_EXECUTABLE( testDisplay testQtDisplay.cxx ../display.cxx ../data.cxx )
+TARGET_LINK_LIBRARIES( testDisplay ${VTK_LIBRARIES} ${QT_LIBRARIES} )
+ADD_TEST(NAME testDisplay COMMAND $<TARGET_FILE:testDisplay> )

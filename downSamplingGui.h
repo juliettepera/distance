@@ -22,8 +22,9 @@
 #include <iostream>
 
 // My Libraries
-#include "meshQtDisplay.h"
-#include "displayTools.h"
+#include "display.h"
+#include "data.h"
+#include "processing.h"
 #include "ui_downSamplingGui.h"
 
 class downSamplingGui: public QMainWindow, public Ui::downSamplingWindow
@@ -31,32 +32,30 @@ class downSamplingGui: public QMainWindow, public Ui::downSamplingWindow
     Q_OBJECT
 
     public:
-
         downSamplingGui( QWidget * parent = 0, Qt::WFlags f = 0 );
 
-        void setMeshList( std::vector <std::string> MeshList );
-        void setWindow( meshQtDisplay WindowMesh );
-        void initialization();
+        void setWindow( display WindowMesh );
+        void setProcess( processing Process );
+        void setData( std::vector <data::data> DataList );
+
         void reset();
         void addOne( std::string Name );
         void deleteOne( int IndiceOfMesh );
-        void setToolList();
 
     public slots:
-
         void pushButtonQuitClicked();
         void ChangeMeshSelected();
+
         void ChangeValueDecimate();
         void applyDownSampling();
 
     private:
-        std::vector <double> m_DecimateList;
-
         int m_NumberOfMesh;
         int m_MeshSelected;
 
-        meshQtDisplay m_MyWindowMesh;
-        displayTools m_ActivTool;
+        display m_MyWindowMesh;
+        processing m_MyProcess;
+        std::vector <data::data> m_DataList;
 };
 
 #endif
