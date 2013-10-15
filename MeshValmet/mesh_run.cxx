@@ -54,12 +54,12 @@
  * results. All normal (non error) output is printed through the output buffer
  * out. If not NULL the progress object is used to report the progress. */
 
-void mesh_run(const struct args *args, struct model_error *model1,
-              struct model_error *model2,
-              struct outbuf *out,
-              struct prog_reporter *progress, struct dist_surf_surf_stats *stats,
-              struct dist_surf_surf_stats *stats_rev, double *abs_sampling_step,
-              double *abs_sampling_dens)
+void mesh_run(const struct args *args,
+              struct model_error *model1, struct model_error *model2,
+              vtkSmartPointer <vtkPolyData> Data1 , vtkSmartPointer <vtkPolyData> Data2,
+              struct outbuf *out, struct prog_reporter *progress,
+              struct dist_surf_surf_stats *stats, struct dist_surf_surf_stats *stats_rev,
+              double *abs_sampling_step, double *abs_sampling_dens)
 {
 
   clock_t start_time;
@@ -78,8 +78,8 @@ void mesh_run(const struct args *args, struct model_error *model1,
 
   start_time = clock();
 
-  vtkSmartPointer <vtkPolyData> Data1 = vtkSmartPointer <vtkPolyData>::New();
-  Data1 = ConvertFileToData(  args->m1_fname  );
+  //vtkSmartPointer <vtkPolyData> Data1 = vtkSmartPointer <vtkPolyData>::New();
+  //Data1 = ConvertFileToData(  args->m1_fname  );
   model1->mesh = ConvertDataToModel( Data1 );
 
   //outbuf_printf(out,"Done (%.2f secs)\n", (double)(clock()-start_time)/CLOCKS_PER_SEC);
@@ -87,8 +87,8 @@ void mesh_run(const struct args *args, struct model_error *model1,
 
   start_time = clock();
 
-  vtkSmartPointer <vtkPolyData> Data2 = vtkSmartPointer <vtkPolyData>::New();
-  Data2 = ConvertFileToData( args->m2_fname );
+  //vtkSmartPointer <vtkPolyData> Data2 = vtkSmartPointer <vtkPolyData>::New();
+  //Data2 = ConvertFileToData( args->m2_fname );
   model2->mesh = ConvertDataToModel( Data2 );
 
   //outbuf_printf(out,"Done (%.2f secs)\n", (double)(clock()-start_time)/CLOCKS_PER_SEC);
@@ -215,15 +215,24 @@ vtkSmartPointer <vtkPolyData> ConvertFileToData( char* File )
 }
 
 
-model* ConvertDataToModel( vtkSmartPointer <vtkPolyData> Data )
+model* ConvertDataToModel(vtkSmartPointer <vtkPolyData> data )
 {
+
+    /*vtkSmartPointer <vtkPolyData> Data = vtkSmartPointer <vtkPolyData> ::New();
+    Data -> DeepCopy( polyData );
+
+    if( testPolyData( Data , polyData ) == 1 )
+    {
+        std::cout << " copy data false " << std::endl;
+    }*/
+
     model *Model = new model;
 
     vtkSmartPointer <vtkPoints> Points = vtkSmartPointer <vtkPoints> ::New();
     vtkSmartPointer <vtkCellArray> Polys = vtkSmartPointer <vtkCellArray> ::New();
 
-    Points = Data -> GetPoints();
-    Polys = Data -> GetPolys();
+    Points = data -> GetPoints();
+    Polys = data -> GetPolys();
 
     vtkIdType NumberOfPoints = Points -> GetNumberOfPoints();
     vtkIdType NumberOfCells = Polys -> GetNumberOfCells();
@@ -291,7 +300,7 @@ model* ConvertDataToModel( vtkSmartPointer <vtkPolyData> Data )
             Bmax.z = Vertices[ Id ].z;
         }
      }
-
+    Polys->InitTraversal();
     while( Polys -> GetNextCell( Row , f ) )
     {
         Faces[ i ].f0 = f[ 0 ];
@@ -310,7 +319,81 @@ model* ConvertDataToModel( vtkSmartPointer <vtkPolyData> Data )
     Model->face_normals = NULL;
     Model->builtin_normals = 1;
 
+    for( int i = 0 ; i < Model->num_faces ; i++ )
+    {
+        int a = Model->faces[i].f0;
+        a;
+    }
+
     return Model;
 }
+
+int testPolyData( vtkSmartPointer <vtkPolyData> inData , vtkSmartPointer <vtkPolyData> outData )
+{
+    // comparer pointeurs
+    std::cout << "          -number of points  " << std::endl;
+    if( outData -> GetNumberOfPoints() != inData -> GetNumberOfPoints() )
+    {
+        std::cout << " ERROR : number of points " << std::endl;
+        return 1;
+    }
+
+    std::cout << "          -number of cells  " << std::endl;
+    if( outData -> GetNumberOfCells() != inData -> GetNumberOfCells() )
+    {
+        std::cout << " ERROR : number of cells " << std::endl;
+        return 1;
+    }
+    vtkIdType b = outData -> GetNumberOfCells();
+
+
+    std::cout << "          -get points  " << std::endl;
+    vtkIdType Id = 0;
+    double inV[3];
+    double outV[3];
+
+    for( Id = 0 ; Id < inData -> GetNumberOfPoints() ; Id++ )
+    {
+        inData -> GetPoints() -> GetPoint( Id , inV );
+        outData -> GetPoints() -> GetPoint( Id , outV );
+        if( inV[0] != outV[0] || inV[1] != outV[1] || inV[2] != outV[2] )
+        {
+            std::cout << " ERROR :  points " << std::endl;
+            return 1;
+        }
+
+    }
+
+    std::cout << "          -get cells  " << std::endl;
+    vtkSmartPointer <vtkIdList> inF = vtkSmartPointer <vtkIdList>::New();
+    vtkSmartPointer <vtkIdList> outF = vtkSmartPointer <vtkIdList>::New();
+    vtkSmartPointer <vtkCellArray> inPolys = vtkSmartPointer <vtkCellArray> ::New();
+    vtkSmartPointer <vtkCellArray> outPolys = vtkSmartPointer <vtkCellArray> ::New();
+    inPolys = inData -> GetPolys();
+    outPolys = outData -> GetPolys();
+
+    for( Id = 0 ; Id < b ; Id++ )
+    {
+        inPolys -> GetCell( Id , inF );
+        outPolys -> GetCell( Id , outF );
+
+        vtkIdType c = inF->GetNumberOfIds();
+        vtkIdType d = outF->GetNumberOfIds();
+        if( c!= d && c != 3 )
+        {
+            return 1 ;
+        }
+        for( vtkIdType i = 0 ; i < c ; i++ )
+        {
+            if( inF->GetId(i) != outF->GetId(i) )
+            {
+                std::cout << " ERROR :  cells " << std::endl;
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
 
 #endif

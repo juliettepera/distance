@@ -69,39 +69,27 @@ void testMeshValmet::SetFileName2( std::string FileName2 )
     strcpy( m_Pargs.m2_fname , FileName2.c_str() ) ;
 }
 
-/*void testMeshValmet::SetData1( vtkSmartPointer <vtkPolyData> Data1 )
+void testMeshValmet::SetData1( vtkSmartPointer <vtkPolyData> Data1 )
 {
-    std::cout << " setData1 " << std::endl;
-
     m_PolyData1 = vtkSmartPointer <vtkPolyData>::New();
-    vtkSmartPointer <vtkIdList> IdList = vtkSmartPointer <vtkIdList>::New();
+    m_PolyData1 = Data1;
 
-    IdList -> SetNumberOfIds( Data1 -> GetNumberOfCells() );
-    for( vtkIdType Id = 0 ; Id < Data1 -> GetNumberOfCells() ; Id++ )
+    /*if( testPolyData( m_PolyData1 , Data1 ) == 1 )
     {
-        IdList -> SetId( Id , Id );
-    }
+        std::cout << " copy data1 false " << std::endl;
+    }*/
+}
 
-    m_PolyData1 -> DeepCopy( Data1 );
-    m_PolyData1 -> CopyCells( Data1 , IdList );
-
-    std::cout << " done " << std::endl;
-}*/
-
-/*void testMeshValmet::SetData2(vtkSmartPointer<vtkPolyData> Data2 )
+void testMeshValmet::SetData2(vtkSmartPointer<vtkPolyData> Data2 )
 {
     m_PolyData2 = vtkSmartPointer <vtkPolyData>::New();
-    vtkSmartPointer <vtkIdList> IdList = vtkSmartPointer <vtkIdList>::New();
+    m_PolyData2 = Data2;
 
-    IdList -> SetNumberOfIds( Data2 -> GetNumberOfCells() );
-    for ( vtkIdType Id = 0 ; Id < Data2 -> GetNumberOfCells() ; Id++ )
+    /*if( testPolyData( m_PolyData2 , Data2 ) == 1 )
     {
-        IdList -> SetId( Id , Id );
-    }
-
-    m_PolyData2 -> DeepCopy( Data2 );
-    m_PolyData2 -> CopyCells( Data2 , IdList );
-}*/
+        std::cout << " copy data2 false " << std::endl;
+    }*/
+}
 
 void testMeshValmet::SetSamplingStep( double SamplingStep )
 {
@@ -146,7 +134,7 @@ void testMeshValmet::CalculateError()
     printf( "\nmesh_run...");
     fflush( stdout );
 
-    mesh_run( &m_Pargs , &m_ModelError1 , &m_ModelError2 , m_Out , NULL , &m_Stats , &m_StatsRev , &m_AbsSamplingStep , &m_AbsSamplingDens );
+    mesh_run( &m_Pargs , &m_ModelError1 , &m_ModelError2 , m_PolyData1 , m_PolyData2 , m_Out , NULL , &m_Stats , &m_StatsRev , &m_AbsSamplingStep , &m_AbsSamplingDens );
 
     printf( "...done\n");
     fflush( stdout );
@@ -539,7 +527,6 @@ void testMeshValmet::drawVertexErrorT()
   ScalarsConst -> SetName( "Original" );
   m_FinalData -> GetPointData() -> AddArray( ScalarsError );
   m_FinalData -> GetPointData() -> AddArray( ScalarsConst );
-  //m_FinalData -> GetPointData() -> SetScalars( ScalarsConst );
 }
 
 void testMeshValmet::CreateLutError()
@@ -585,5 +572,72 @@ void testMeshValmet::CreateLutError()
           m_Lut->AddRGBPoint((float)(m_Middle+(mmin-m_Middle)*i/(double)inter),m_Lookuptable[128+i*22].R/(float)255,m_Lookuptable[128+i*22].G/(float)255,m_Lookuptable[128+i*22].B/(float)255);
 
       }
+}
+
+int testMeshValmet::testPolyData( vtkSmartPointer <vtkPolyData> inData , vtkSmartPointer <vtkPolyData> outData )
+{
+    // comparer pointeurs
+    std::cout << "          -number of points  " << std::endl;
+    if( outData -> GetNumberOfPoints() != inData -> GetNumberOfPoints() )
+    {
+        std::cout << " ERROR : number of points " << std::endl;
+        return 1;
+    }
+
+    std::cout << "          -number of cells  " << std::endl;
+    if( outData -> GetNumberOfCells() != inData -> GetNumberOfCells() )
+    {
+        std::cout << " ERROR : number of cells " << std::endl;
+        return 1;
+    }
+    vtkIdType b = outData -> GetNumberOfCells();
+
+
+    std::cout << "          -get points  " << std::endl;
+    vtkIdType Id = 0;
+    double inV[3];
+    double outV[3];
+
+    for( Id = 0 ; Id < inData -> GetNumberOfPoints() ; Id++ )
+    {
+        inData -> GetPoints() -> GetPoint( Id , inV );
+        outData -> GetPoints() -> GetPoint( Id , outV );
+        if( inV[0] != outV[0] || inV[1] != outV[1] || inV[2] != outV[2] )
+        {
+            std::cout << " ERROR :  points " << std::endl;
+            return 1;
+        }
+
+    }
+
+    std::cout << "          -get cells  " << std::endl;
+    vtkSmartPointer <vtkIdList> inF = vtkSmartPointer <vtkIdList>::New();
+    vtkSmartPointer <vtkIdList> outF = vtkSmartPointer <vtkIdList>::New();
+    vtkSmartPointer <vtkCellArray> inPolys = vtkSmartPointer <vtkCellArray> ::New();
+    vtkSmartPointer <vtkCellArray> outPolys = vtkSmartPointer <vtkCellArray> ::New();
+    inPolys = inData -> GetPolys();
+    outPolys = outData -> GetPolys();
+
+    for( Id = 0 ; Id < b ; Id++ )
+    {
+        inPolys -> GetCell( Id , inF );
+        outPolys -> GetCell( Id , outF );
+
+        vtkIdType c = inF->GetNumberOfIds();
+        vtkIdType d = outF->GetNumberOfIds();
+        if( c!= d && c != 3 )
+        {
+            return 1 ;
+        }
+        for( vtkIdType i = 0 ; i < c ; i++ )
+        {
+            if( inF->GetId(i) != outF->GetId(i) )
+            {
+                std::cout << " ERROR :  cells " << std::endl;
+                return 1;
+            }
+        }
+    }
+    return 0;
 }
 

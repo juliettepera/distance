@@ -18,7 +18,7 @@
 #include <QVTKWidget.h>
 
 // My libraries
-#include "data.h"
+#include "dataM.h"
 #include "processing.h"
 #include "display.h"
 #include "ui_meshMetricGui.h"

@@ -106,14 +106,16 @@ struct args {
  * results. All normal (non error) output is printed through the output buffer
  * out. If not NULL the progress object is used to report the progress. */
 void mesh_run(const struct args *args, struct model_error *model1,
-              struct model_error *model2,
+              struct model_error *model2, vtkSmartPointer <vtkPolyData> Data1, vtkSmartPointer <vtkPolyData> Data2,
               struct outbuf *out,
               struct prog_reporter *progress, struct dist_surf_surf_stats *stats,
               struct dist_surf_surf_stats *stats_rev, double *abs_sampling_step,
               double *abs_sampling_dens);
 
-model* ConvertDataToModel( vtkSmartPointer <vtkPolyData> Data );
+model* ConvertDataToModel(vtkSmartPointer <vtkPolyData> data );
 vtkSmartPointer <vtkPolyData> ConvertFileToData( char* File );
+
+int testPolyData( vtkSmartPointer <vtkPolyData> inData , vtkSmartPointer <vtkPolyData> outData );
 
 END_DECL
 #undef END_DECL

@@ -21,7 +21,7 @@ FIND_PACKAGE( Qt4 REQUIRED )
 INCLUDE( ${QT_USE_FILE} )
 
 # include the directories for the binary and sources files
-INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}  ${QT_INCLUDE_DIR} )
+INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${QT_INCLUDE_DIR} )
 
 # ?????
 ADD_DEFINITIONS( -DQT_GUI_LIBS -DQT_CORE_LIB -DQT3_SUPPORT )
@@ -38,8 +38,8 @@ main.cxx
 meshMetricGui.h
 meshMetricGui.cxx
 
-data.h
-data.cxx
+dataM.h
+dataM.cxx
 
 processing.h
 processing.cxx
@@ -49,7 +49,6 @@ display.cxx
 
 testMeshValmet.h
 testMeshValmet.cxx
-
 
 MeshValmet/3dmodel.h
 

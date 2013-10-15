@@ -36,7 +36,7 @@
 // MeshValmet Libraries
 #include "MeshValmet/mesh_run.h"
 
-#include "data.h"
+#include "dataM.h"
 
 
 class testMeshValmet: public QMainWindow
@@ -47,8 +47,8 @@ class testMeshValmet: public QMainWindow
 
         void SetFileName1( std::string FileName1 );
         void SetFileName2( std::string FileName2 );
-        //void SetData1(vtkSmartPointer<vtkPolyData> Data1 );
-        //void SetData2( vtkSmartPointer<vtkPolyData> Data2 );
+        void SetData1(vtkSmartPointer<vtkPolyData> Data1 );
+        void SetData2( vtkSmartPointer<vtkPolyData> Data2 );
         void SetSamplingStep( double SamplingStep );
         void SetMinSampleFrequency( int MinSampleFrequency );
         void SetSignedDistance( bool SignedDistance );
@@ -57,9 +57,15 @@ class testMeshValmet: public QMainWindow
         vtkSmartPointer <vtkColorTransferFunction> GetLut();
 
         void CalculateError();
-        friend void mesh_run(const args *args, model_error *model1, model_error *model2, outbuf *out, prog_reporter *progress, dist_surf_surf_stats *stats, dist_surf_surf_stats *stats_rev, double *abs_sampling_step, double *abs_sampling_dens);
+        friend void mesh_run(const args *args,
+                             model_error *model1, model_error *model2,
+                             vtkSmartPointer <vtkPolyData> Data1 , vtkSmartPointer <vtkPolyData> Data2 ,
+                             outbuf *out, prog_reporter *progress,
+                             dist_surf_surf_stats *stats, dist_surf_surf_stats *stats_rev,
+                             double *abs_sampling_step, double *abs_sampling_dens);
         void drawVertexErrorT();
         void CreateLutError();
+        int testPolyData( vtkSmartPointer <vtkPolyData> inData , vtkSmartPointer <vtkPolyData> outData );
 
     private:
 

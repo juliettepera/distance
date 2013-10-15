@@ -8,7 +8,7 @@
  */
 
 // My libraries
-#include "data.h"
+#include "dataM.h"
 #include "testMeshValmet.h"
 
 // QT libraries
@@ -31,7 +31,7 @@ class processing
         int processSmoothing(dataM &Data );
         int processDownSampling( dataM &Data );
         int processError(dataM &Data1 , dataM &Data2 );
-        //void describePolyData( vtkSmartPointer <vtkPolyData> Data );
+        int testPolyData( vtkSmartPointer <vtkPolyData> inData , vtkSmartPointer <vtkPolyData> outData );
 
     private:
         testMeshValmet m_MyMeshValmet;
