@@ -10,34 +10,24 @@ processing::processing()
  * else, it the original data
  * return 0 in case there is no error and 1 in case there is error
  */
-int processing::processSmoothing( dataM &Data )
+vtkSmartPointer <vtkPolyData> processing::processSmoothing( vtkSmartPointer <vtkPolyData> polyData , int nbIteration )
 {
-    std::cout << " doing smoothing ... " << std::endl;
-
     vtkSmartPointer <vtkPolyData> SmoothedData = vtkSmartPointer<vtkPolyData>::New();
-    SmoothedData = Data.getPolyData();
-    Data.getSmoother() -> SetInputData( SmoothedData );
+    vtkSmartPointer <vtkSmoothPolyDataFilter> smoother = vtkSmartPointer <vtkSmoothPolyDataFilter>::New();
 
-    int NumberOfPoints = SmoothedData -> GetNumberOfPoints();
+    smoother -> SetInputData( polyData );
+    smoother -> SetNumberOfIterations( nbIteration );
+    smoother -> Update();
 
-    Data.getSmoother() -> SetNumberOfIterations( Data.getNumberOfIterationSmooth() );
-    Data.getSmoother() -> Update();
-    SmoothedData =  Data.getSmoother() -> GetOutput();
+    SmoothedData =  smoother -> GetOutput();
 
-    if( NumberOfPoints != SmoothedData -> GetNumberOfPoints() )
+    if( polyData -> GetNumberOfPoints() != SmoothedData -> GetNumberOfPoints() )
     {
         QMessageBox MsgBox;
-        MsgBox.setText( " ERROR : PROCESSING SMOOTHING ");
+        MsgBox.setText( " WARNING : PROCESSING SMOOTHING ");
         MsgBox.exec();
-        return 1;
     }
-
-    Data.setPolyData( SmoothedData );
-    Data.changeMapperInput( 2 );
-
-    std::cout << " ... smoothing done " << std::endl;
-
-    return 0;
+    return SmoothedData;
 }
 
 /* process the downsampling of the choosen file
@@ -46,30 +36,24 @@ int processing::processSmoothing( dataM &Data )
  * else, it the original data
  * return 0 in case there is no error and 1 in case there is error
  */
-int processing::processDownSampling(dataM &Data )
+vtkSmartPointer <vtkPolyData> processing::processDownSampling(vtkSmartPointer<vtkPolyData> polyData , double nbDecimate )
 {
-    vtkSmartPointer <vtkPolyData> DecimatedData = vtkSmartPointer<vtkPolyData>::New();
-    DecimatedData = Data.getPolyData();
-    Data.getDecimer() -> SetInputData( DecimatedData );
+    vtkSmartPointer <vtkPolyData> DecimatedData = vtkSmartPointer <vtkPolyData>::New();
+    vtkSmartPointer <vtkDecimatePro> Decimer = vtkSmartPointer <vtkDecimatePro>::New();
 
-    Data.getDecimer() -> SetTargetReduction( Data.getDecimate() );
-    Data.getDecimer() -> Update();
+    Decimer -> SetInputData( polyData );
+    Decimer -> SetTargetReduction( nbDecimate );
+    Decimer -> Update();
 
-    DecimatedData = Data.getDecimer() -> GetOutput();
+    DecimatedData = Decimer -> GetOutput();
 
     if( DecimatedData -> GetNumberOfPoints() == 0 )
     {
         QMessageBox MsgBox;
         MsgBox.setText( " ERROR : PROCESSING DOWN SAMPLING ");
         MsgBox.exec();
-        return 1;
     }
-
-    Data.setPolyData( DecimatedData );
-
-    Data.changeMapperInput( 3 );
-
-    return 0;
+    return DecimatedData;
 }
 
 /* process the downsampling of the choosen file
@@ -83,8 +67,6 @@ int processing::processError( dataM &Data1 , dataM &Data2 )
     vtkSmartPointer <vtkPolyData> ErrorData = vtkSmartPointer<vtkPolyData>::New();
     vtkSmartPointer <vtkColorTransferFunction> ErrorLut = vtkSmartPointer <vtkColorTransferFunction>::New();
 
-    m_MyMeshValmet.SetFileName1( Data1.getName() );
-    m_MyMeshValmet.SetFileName2( Data2.getName() );
     m_MyMeshValmet.SetData1( Data1.getPolyData() );
     m_MyMeshValmet.SetData2( Data2.getPolyData() );
     m_MyMeshValmet.SetSignedDistance( Data1.getSignedDistance() );
@@ -99,7 +81,7 @@ int processing::processError( dataM &Data1 , dataM &Data2 )
     Data1.setPolyData( ErrorData );
     Data1.setLut( ErrorLut );
 
-    Data1.changeMapperInput( 1 );
+    Data1.changeMapperInput();
 
     return 0;
 }

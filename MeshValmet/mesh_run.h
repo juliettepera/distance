@@ -90,13 +90,15 @@ BEGIN_DECL
 /* To store the parsed arguments */
 struct args {
 
-  char *m1_fname; // filename of model 1
-  char *m2_fname; // filename of model 2
+  //char *m1_fname; // filename of model 1
+  //char *m2_fname; // filename of model 2
   double sampling_step; // The sampling step, as fraction of the bounding box diagonal of model 2.
   bool signeddist;
   int min_sample_freq;  // Minimum sampling frequency to enforce on each triangle
   int quiet;      // do not display extra info flag
   int verb_analysis; // verbose analysis
+  vtkSmartPointer <vtkPolyData> Data1;
+  vtkSmartPointer <vtkPolyData> Data2;
 };
 
 
@@ -106,7 +108,7 @@ struct args {
  * results. All normal (non error) output is printed through the output buffer
  * out. If not NULL the progress object is used to report the progress. */
 void mesh_run(const struct args *args, struct model_error *model1,
-              struct model_error *model2, vtkSmartPointer <vtkPolyData> Data1, vtkSmartPointer <vtkPolyData> Data2,
+              struct model_error *model2, /*vtkSmartPointer <vtkPolyData> Data1, vtkSmartPointer <vtkPolyData> Data2,*/
               struct outbuf *out,
               struct prog_reporter *progress, struct dist_surf_surf_stats *stats,
               struct dist_surf_surf_stats *stats_rev, double *abs_sampling_step,

@@ -49,30 +49,9 @@ testMeshValmet::testMeshValmet()
 }
 
 //***************************** SET ALL THE PARAMETERS WE WILL NEED LATER ***********************************
-void testMeshValmet::SetFileName1( std::string FileName1 )
-{
-    if( m_Pargs.m1_fname )
-    {
-        delete []m_Pargs.m1_fname ;
-    }
-    m_Pargs.m1_fname = new char[ FileName1.size() ];
-    strcpy( m_Pargs.m1_fname , FileName1.c_str() ) ;
-}
-
-void testMeshValmet::SetFileName2( std::string FileName2 )
-{
-    if( m_Pargs.m2_fname )
-    {
-        delete []m_Pargs.m2_fname ;
-    }
-    m_Pargs.m2_fname = new char[ FileName2.size() ];
-    strcpy( m_Pargs.m2_fname , FileName2.c_str() ) ;
-}
-
 void testMeshValmet::SetData1( vtkSmartPointer <vtkPolyData> Data1 )
 {
-    m_PolyData1 = vtkSmartPointer <vtkPolyData>::New();
-    m_PolyData1 = Data1;
+    m_Pargs.Data1 = Data1;
 
     /*if( testPolyData( m_PolyData1 , Data1 ) == 1 )
     {
@@ -82,8 +61,7 @@ void testMeshValmet::SetData1( vtkSmartPointer <vtkPolyData> Data1 )
 
 void testMeshValmet::SetData2(vtkSmartPointer<vtkPolyData> Data2 )
 {
-    m_PolyData2 = vtkSmartPointer <vtkPolyData>::New();
-    m_PolyData2 = Data2;
+    m_Pargs.Data2 = Data2;
 
     /*if( testPolyData( m_PolyData2 , Data2 ) == 1 )
     {
@@ -109,7 +87,10 @@ void testMeshValmet::SetSignedDistance( bool SignedDistance )
 //***************************** ACCESSOR TO THE FINAL POLYDATA THAT WE WILL DISPLAY *************************
 vtkSmartPointer <vtkPolyData> testMeshValmet::GetFinalData()
 {
-    return m_FinalData;
+    vtkSmartPointer <vtkCleanPolyData> Cleaner = vtkSmartPointer <vtkCleanPolyData>::New();
+    Cleaner -> SetInputData( m_FinalData );
+    Cleaner -> Update();
+    return Cleaner -> GetOutput();
 }
 
 vtkSmartPointer <vtkColorTransferFunction> testMeshValmet::GetLut()
@@ -121,7 +102,6 @@ vtkSmartPointer <vtkColorTransferFunction> testMeshValmet::GetLut()
 //************************************** COMPUTE THE ERROR ***************************************
 void testMeshValmet::CalculateError()
 {
-    printf( "computing error:\n\t-MeshA: %s\n\t-MeshB: %s\n" , m_Pargs.m1_fname , m_Pargs.m2_fname );
     printf( "\t-Sampling Step: %f\n\t-Min Sampling Frequency: %d\n\t-Signed Distance: %d\n" , m_Pargs.sampling_step , m_Pargs.min_sample_freq , m_Pargs.signeddist );
     fflush( stdout );
 
@@ -134,8 +114,7 @@ void testMeshValmet::CalculateError()
     printf( "\nmesh_run...");
     fflush( stdout );
 
-    mesh_run( &m_Pargs , &m_ModelError1 , &m_ModelError2 , m_PolyData1 , m_PolyData2 , m_Out , NULL , &m_Stats , &m_StatsRev , &m_AbsSamplingStep , &m_AbsSamplingDens );
-
+    mesh_run( &m_Pargs , &m_ModelError1 , &m_ModelError2 , m_Out , NULL , &m_Stats , &m_StatsRev , &m_AbsSamplingStep , &m_AbsSamplingDens );
     printf( "...done\n");
     fflush( stdout );
 

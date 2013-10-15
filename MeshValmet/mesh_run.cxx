@@ -56,7 +56,6 @@
 
 void mesh_run(const struct args *args,
               struct model_error *model1, struct model_error *model2,
-              vtkSmartPointer <vtkPolyData> Data1 , vtkSmartPointer <vtkPolyData> Data2,
               struct outbuf *out, struct prog_reporter *progress,
               struct dist_surf_surf_stats *stats, struct dist_surf_surf_stats *stats_rev,
               double *abs_sampling_step, double *abs_sampling_dens)
@@ -78,18 +77,14 @@ void mesh_run(const struct args *args,
 
   start_time = clock();
 
-  //vtkSmartPointer <vtkPolyData> Data1 = vtkSmartPointer <vtkPolyData>::New();
-  //Data1 = ConvertFileToData(  args->m1_fname  );
-  model1->mesh = ConvertDataToModel( Data1 );
+  model1->mesh = ConvertDataToModel( args->Data1 );
 
   //outbuf_printf(out,"Done (%.2f secs)\n", (double)(clock()-start_time)/CLOCKS_PER_SEC);
   //outbuf_flush(out);
 
   start_time = clock();
 
-  //vtkSmartPointer <vtkPolyData> Data2 = vtkSmartPointer <vtkPolyData>::New();
-  //Data2 = ConvertFileToData( args->m2_fname );
-  model2->mesh = ConvertDataToModel( Data2 );
+  model2->mesh = ConvertDataToModel( args->Data2 );
 
   //outbuf_printf(out,"Done (%.2f secs)\n", (double)(clock()-start_time)/CLOCKS_PER_SEC);
   //outbuf_flush(out);
@@ -217,15 +212,6 @@ vtkSmartPointer <vtkPolyData> ConvertFileToData( char* File )
 
 model* ConvertDataToModel(vtkSmartPointer <vtkPolyData> data )
 {
-
-    /*vtkSmartPointer <vtkPolyData> Data = vtkSmartPointer <vtkPolyData> ::New();
-    Data -> DeepCopy( polyData );
-
-    if( testPolyData( Data , polyData ) == 1 )
-    {
-        std::cout << " copy data false " << std::endl;
-    }*/
-
     model *Model = new model;
 
     vtkSmartPointer <vtkPoints> Points = vtkSmartPointer <vtkPoints> ::New();

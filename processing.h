@@ -28,8 +28,8 @@ class processing
 {
     public:
         processing();
-        int processSmoothing(dataM &Data );
-        int processDownSampling( dataM &Data );
+        vtkSmartPointer <vtkPolyData> processSmoothing(vtkSmartPointer<vtkPolyData> polyData , int nbIteration );
+        vtkSmartPointer <vtkPolyData> processDownSampling( vtkSmartPointer <vtkPolyData> polyData , double nbDecimate );
         int processError(dataM &Data1 , dataM &Data2 );
         int testPolyData( vtkSmartPointer <vtkPolyData> inData , vtkSmartPointer <vtkPolyData> outData );
 

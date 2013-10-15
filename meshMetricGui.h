@@ -128,6 +128,8 @@ class meshMetricGui : public QMainWindow , public Ui::MainWindow
             int m_SelectedItemA;
             int m_SelectedItemB;
             processing m_MyProcess;
+            int m_nbIteration;
+            double m_nbDecimate;
 
 };
 

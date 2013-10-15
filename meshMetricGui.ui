@@ -488,7 +488,7 @@
        <enum>Qt::LeftToRight</enum>
       </property>
       <property name="text">
-       <string>Reset File</string>
+       <string>Reload File</string>
       </property>
      </widget>
     </widget>

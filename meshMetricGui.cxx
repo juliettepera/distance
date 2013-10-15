@@ -13,6 +13,8 @@ meshMetricGui::meshMetricGui( QWidget *parent , Qt::WFlags f , std::string WorkD
     m_NumberOfDisplay = 0;
     m_SelectedItemA = -1;
     m_SelectedItemB = -1;
+    m_nbDecimate = 0.0;
+    m_nbIteration = 0;
 
     m_WidgetMesh = new QVTKWidget( this -> scrollAreaMesh );
 
@@ -300,6 +302,7 @@ void meshMetricGui::DeleteAllFiles()
         listWidgetLoadedMesh -> clear();
         comboBoxMeshB -> clear();
         lineEditMeshA -> clear();
+        m_DataList.clear();
 
         groupBoxCamera -> setEnabled( false );
         tabWidgetVisualization -> setEnabled( false );
@@ -503,6 +506,7 @@ void meshMetricGui::ChangeMeshSelected()
    }
 
    tabWidgetVisualization -> setEnabled( true );
+   pushButtonDeleteOne -> setEnabled( true );
 
 }
 
@@ -513,6 +517,12 @@ void meshMetricGui::ResetSelectedFile()
         m_DataList[ m_MeshSelected ].initialization();
         m_MyWindowMesh.updateWindow();
     }
+    m_DataList[ m_MeshSelected ].setOpacity( 1.0 );
+    lcdNumberOpacity -> display( m_DataList[ m_MeshSelected ].getOpacity() );
+    horizontalSliderOpacity -> setValue( 100 );
+
+    m_DataList[ m_MeshSelected ].updateActorProperties();
+    ChangeIcon( m_VisibleIcon , m_MeshSelected );
 }
 
 void meshMetricGui::ChangeValueOpacity()
@@ -577,7 +587,7 @@ void meshMetricGui::ChangeNumberOfIteration()
 {
     if( ! m_DataList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
-        m_DataList[ m_MeshSelected ].setNumberOfIterationSmooth( spinBoxIteration -> value() );
+        m_nbIteration = spinBoxIteration -> value();
         pushButtonRunSmoothing -> setEnabled( true );
     }
 }
@@ -586,7 +596,15 @@ void meshMetricGui::ApplySmoothing()
 {
     if( ! m_DataList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
-        m_MyProcess.processSmoothing( m_DataList[ m_MeshSelected ] );
+        vtkSmartPointer <vtkPolyData> smoothedData = vtkSmartPointer <vtkPolyData>::New();
+        vtkSmartPointer <vtkPolyData> originalData = vtkSmartPointer <vtkPolyData>::New();
+
+        originalData = m_DataList[ m_MeshSelected ].getPolyData();
+        smoothedData = m_MyProcess.processSmoothing( originalData , m_nbIteration );
+
+        m_DataList[ m_MeshSelected ].setPolyData( smoothedData );
+        m_DataList[ m_MeshSelected ].changeMapperInput();
+
         m_MyWindowMesh.updateWindow();
 
         pushButtonRunSmoothing -> setEnabled( false );
@@ -599,7 +617,7 @@ void meshMetricGui::ChangeDecimate()
 {
     if( ! m_DataList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
-        m_DataList[ m_MeshSelected ].setDecimate( spinBoxDecimate -> value()/100. );
+        m_nbDecimate = spinBoxDecimate -> value()/100.0;
         pushButtonRunDecimate -> setEnabled( true );
     }
 }
@@ -608,7 +626,15 @@ void meshMetricGui::ApplyDecimate()
 {
     if( ! m_DataList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
-        m_MyProcess.processDownSampling( m_DataList[ m_MeshSelected ] );
+        vtkSmartPointer <vtkPolyData> decimatedData = vtkSmartPointer <vtkPolyData>::New();
+        vtkSmartPointer <vtkPolyData> originalData = vtkSmartPointer <vtkPolyData>::New();
+
+        originalData = m_DataList[ m_MeshSelected ].getPolyData();
+        decimatedData = m_MyProcess.processDownSampling( originalData , m_nbDecimate );
+
+        m_DataList[ m_MeshSelected ].setPolyData( decimatedData );
+        m_DataList[ m_MeshSelected ].changeMapperInput();
+
         m_MyWindowMesh.updateWindow();
 
         pushButtonRunDecimate -> setEnabled( false );

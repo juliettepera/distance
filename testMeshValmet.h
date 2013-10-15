@@ -45,8 +45,6 @@ class testMeshValmet: public QMainWindow
     public:
         testMeshValmet();
 
-        void SetFileName1( std::string FileName1 );
-        void SetFileName2( std::string FileName2 );
         void SetData1(vtkSmartPointer<vtkPolyData> Data1 );
         void SetData2( vtkSmartPointer<vtkPolyData> Data2 );
         void SetSamplingStep( double SamplingStep );
@@ -59,7 +57,6 @@ class testMeshValmet: public QMainWindow
         void CalculateError();
         friend void mesh_run(const args *args,
                              model_error *model1, model_error *model2,
-                             vtkSmartPointer <vtkPolyData> Data1 , vtkSmartPointer <vtkPolyData> Data2 ,
                              outbuf *out, prog_reporter *progress,
                              dist_surf_surf_stats *stats, dist_surf_surf_stats *stats_rev,
                              double *abs_sampling_step, double *abs_sampling_dens);
@@ -70,8 +67,6 @@ class testMeshValmet: public QMainWindow
     private:
 
         vtkSmartPointer <vtkPolyData> m_FinalData;
-        vtkSmartPointer <vtkPolyData> m_PolyData1;
-        vtkSmartPointer <vtkPolyData> m_PolyData2;
         vtkSmartPointer <vtkColorTransferFunction> m_Lut;
 
         struct args m_Pargs;
