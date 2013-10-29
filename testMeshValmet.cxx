@@ -19,7 +19,7 @@ testMeshValmet::testMeshValmet()
     m_DiceCoefficient[0] = 0.0; // ????
     m_IntUnionRatio[0] = 0.0; // ????
 
-    m_Middle = 0; // ????
+    m_Middle = 0.0; // ????
 
     m_Downsampling = 1; // ????
 
@@ -52,21 +52,11 @@ testMeshValmet::testMeshValmet()
 void testMeshValmet::SetData1( vtkSmartPointer <vtkPolyData> Data1 )
 {
     m_Pargs.Data1 = Data1;
-
-    /*if( testPolyData( m_PolyData1 , Data1 ) == 1 )
-    {
-        std::cout << " copy data1 false " << std::endl;
-    }*/
 }
 
 void testMeshValmet::SetData2(vtkSmartPointer<vtkPolyData> Data2 )
 {
     m_Pargs.Data2 = Data2;
-
-    /*if( testPolyData( m_PolyData2 , Data2 ) == 1 )
-    {
-        std::cout << " copy data2 false " << std::endl;
-    }*/
 }
 
 void testMeshValmet::SetSamplingStep( double SamplingStep )
@@ -84,6 +74,16 @@ void testMeshValmet::SetSignedDistance( bool SignedDistance )
     m_Pargs.signeddist = SignedDistance;
 }
 
+void testMeshValmet::setMin(double Dmin)
+{
+    m_Dmin = Dmin;
+}
+
+void testMeshValmet::setMax( double Dmax )
+{
+    m_Dmax = Dmax;
+}
+
 //***************************** ACCESSOR TO THE FINAL POLYDATA THAT WE WILL DISPLAY *************************
 vtkSmartPointer <vtkPolyData> testMeshValmet::GetFinalData()
 {
@@ -97,6 +97,19 @@ vtkSmartPointer <vtkColorTransferFunction> testMeshValmet::GetLut()
 {
     return m_Lut;
 }
+
+double testMeshValmet::GetMin()
+{
+    std::cout<< " dmin in testmesh : " << m_Dmin << std::endl;
+    return m_Dmin;
+}
+
+double testMeshValmet::GetMax()
+{
+    return m_Dmax;
+}
+
+
 
 
 //************************************** COMPUTE THE ERROR ***************************************
@@ -515,6 +528,8 @@ void testMeshValmet::CreateLutError()
 
     mmax = m_Dmax;
     mmin = m_Dmin;
+
+    std::cout<< " create lut with : " << m_Dmin << " and " << m_Dmax << std::endl;
 
       //Begin seting up my own lookup table
       //The Middle point always points to zero distance

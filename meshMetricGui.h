@@ -13,6 +13,9 @@
 #include <QColorDialog>
 #include <QStandardItemModel>
 #include <QMessageBox>
+#include <QCheckBox>
+#include <QStyle>
+#include <QPalette>
 
 // VTK libraries
 #include <QVTKWidget.h>
@@ -37,8 +40,6 @@ class meshMetricGui : public QMainWindow , public Ui::MainWindow
 
         // functions for the icons
             void InitIcon();
-            void ChangeIcon( QIcon Icon );
-            void ChangeIcon( QIcon Icon , int IndiceOfMesh );
 
             void DisplayInit();
 
@@ -66,6 +67,7 @@ class meshMetricGui : public QMainWindow , public Ui::MainWindow
 
         // functions to change files properties
             void ChangeMeshSelected();
+            void UpdateDisplayedMesh( QListWidgetItem* itemClicked );
             void ResetSelectedFile();
             void ChangeValueOpacity();
             void ChooseColor();
@@ -85,8 +87,11 @@ class meshMetricGui : public QMainWindow , public Ui::MainWindow
             void ChangeMinSampleFrequency();
             void ChangeSamplingStep();
             void ChangeSignedDistance();
+            void ChangeValueMin();
+            void ChangeValueMax();
             void ChangeDisplayError();
             void ApplyDistance();
+            void UpdateColor();
 
     private:
         // attributs for the files
@@ -130,7 +135,10 @@ class meshMetricGui : public QMainWindow , public Ui::MainWindow
             processing m_MyProcess;
             int m_nbIteration;
             double m_nbDecimate;
-
+            std::vector <bool> m_ErrorComputed;
+            std::vector <bool> m_Visibility;
+            double m_Min;
+            double m_Max;
 };
 
 #endif

@@ -13,8 +13,10 @@ meshMetricGui::meshMetricGui( QWidget *parent , Qt::WFlags f , std::string WorkD
     m_NumberOfDisplay = 0;
     m_SelectedItemA = -1;
     m_SelectedItemB = -1;
-    m_nbDecimate = 0.0;
-    m_nbIteration = 0;
+    m_nbDecimate = 10;
+    m_nbIteration = 200;
+    m_Min = -1.0;
+    m_Max = 1.0;
 
     m_WidgetMesh = new QVTKWidget( this -> scrollAreaMesh );
 
@@ -32,6 +34,9 @@ meshMetricGui::meshMetricGui( QWidget *parent , Qt::WFlags f , std::string WorkD
     QStringList List;
     List << "2" << "0.5" << "0.2" << "0.1" << "0.05" << "0.02" ;
     comboBoxSamplingStep -> addItems( List );
+
+
+    widgetColor -> setStyleSheet( "background-image: url(/NIRAL/work/jpera/distanceBin/bin/icons/gradient.png)");
 
     // connections
     QObject::connect( actionQuit , SIGNAL( triggered() ) , qApp , SLOT( quit() ) );
@@ -53,7 +58,8 @@ meshMetricGui::meshMetricGui( QWidget *parent , Qt::WFlags f , std::string WorkD
     QObject::connect( pushButtonUp , SIGNAL( clicked() ) , this , SLOT( buttonUpClicked() ) );
     QObject::connect( pushButtonDown , SIGNAL( clicked() ) , this , SLOT( buttonDownClicked() ) );
 
-    QObject::connect( listWidgetLoadedMesh , SIGNAL( itemClicked( QListWidgetItem* ) ) , this , SLOT( ChangeMeshSelected() ) );
+    QObject::connect( listWidgetLoadedMesh , SIGNAL( itemClicked( QListWidgetItem* ) ) , this , SLOT( UpdateDisplayedMesh( QListWidgetItem* ) ) );
+
     QObject::connect( pushButtonResetAll , SIGNAL( clicked() ) , this , SLOT( ResetSelectedFile() ) );
     QObject::connect( horizontalSliderOpacity , SIGNAL( sliderReleased() ), this, SLOT( ChangeValueOpacity() ) );
     QObject::connect( pushButtonColor , SIGNAL( clicked() ) , this , SLOT( ChooseColor() ) );
@@ -73,10 +79,11 @@ meshMetricGui::meshMetricGui( QWidget *parent , Qt::WFlags f , std::string WorkD
     QObject::connect( comboBoxSamplingStep , SIGNAL( activated( int ) ), this, SLOT( ChangeSamplingStep() ) );
     QObject::connect( radioButtonSignedDistance , SIGNAL( toggled( bool ) ), this, SLOT( ChangeSignedDistance() ) );
     QObject::connect( radioButtonAbsoluteDistance , SIGNAL( toggled( bool ) ), this, SLOT( ChangeSignedDistance() ) );
+    QObject::connect( doubleSpinBoxMin , SIGNAL( valueChanged( double ) ) , this , SLOT( ChangeValueMin() ) );
+    QObject::connect( doubleSpinBoxMax , SIGNAL( valueChanged( double ) ) , this , SLOT( ChangeValueMax() ) );
     QObject::connect( checkBoxError , SIGNAL( toggled( bool ) ) , this , SLOT( ChangeDisplayError() ) );
     QObject::connect( pushButtonApply , SIGNAL( clicked() ) , this , SLOT( ApplyDistance() ) );
-
-
+    QObject::connect( pushButtonUpdateColor , SIGNAL( clicked() ) , this , SLOT( UpdateColor() ) );
 
 }
 
@@ -136,22 +143,10 @@ void meshMetricGui::InitIcon()
     pushButtonDisplayAll -> setIcon( m_VisibleIcon );
     pushButtonHideAll -> setIcon( m_UnvisibleIcon );
     pushButtonResetAll -> setIcon( m_ResetIcon );
-}
 
-void meshMetricGui::ChangeIcon( QIcon Icon )
-{
-    int IndiceOfMesh;
-    for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh ++ )
-    {
-        listWidgetLoadedMesh -> item( IndiceOfMesh ) -> setIcon( Icon );
-    }
+    // pb access icons and size
+    listWidgetLoadedMesh -> setStyleSheet( "QListWidget::indicator:checked{ image: url(/NIRAL/work/jpera/distanceBin/bin/icons/visible.png);} QListWidget::indicator:unchecked{ image: url(/NIRAL/work/jpera/distanceBin/bin/icons/unvisible.png);}" );
 }
-
-void meshMetricGui::ChangeIcon( QIcon Icon , int IndiceOfMesh )
-{
-        listWidgetLoadedMesh -> item( IndiceOfMesh ) -> setIcon( Icon );
-}
-
 
 // ****************************************** functions for loadind files
 void meshMetricGui::OpenBrowseWindowFile()
@@ -173,13 +168,21 @@ void meshMetricGui::OpenBrowseWindowFile()
             QFileInfo File = ( lineEditLoad -> text() );
 
             listWidgetLoadedMesh -> addItem( File.fileName().toStdString().c_str() );
-            listWidgetLoadedMesh -> item( m_NumberOfMesh ) -> setIcon( m_UnvisibleIcon );
+
+            QListWidgetItem* CurrentItem = listWidgetLoadedMesh -> item( m_NumberOfMesh );
+            CurrentItem -> setFlags( listWidgetLoadedMesh -> item( m_NumberOfMesh ) -> flags() | Qt::ItemIsUserCheckable );
+            CurrentItem -> setCheckState( Qt::Checked );
 
             comboBoxMeshB -> addItem( m_NotOkIcon , File.fileName().toStdString().c_str() );
 
             m_MyWindowMesh.addData( m_DataList[ m_NumberOfMesh ].getActor() );
 
+            m_ErrorComputed.push_back( false );
+            m_Visibility.push_back( true );
+
             m_NumberOfMesh++;
+            m_MeshSelected = 0;
+            listWidgetLoadedMesh -> setCurrentRow( m_MeshSelected );
 
         }
       }
@@ -222,14 +225,20 @@ void meshMetricGui::OpenBrowseWindowRepository()
             m_DataList[ m_NumberOfMesh ].initialization();
 
             listWidgetLoadedMesh -> addItem( FileList.at(i).fileName().toStdString().c_str() );
-            listWidgetLoadedMesh -> item( m_NumberOfMesh - 1 ) -> setIcon( m_UnvisibleIcon );
+            QListWidgetItem* CurrentItem = listWidgetLoadedMesh -> item( m_NumberOfMesh );
+            CurrentItem -> setFlags( listWidgetLoadedMesh -> item( m_NumberOfMesh ) -> flags() | Qt::ItemIsUserCheckable );
+            CurrentItem -> setCheckState( Qt::Checked );
 
             comboBoxMeshB -> addItem( m_NotOkIcon , FileList.at(i).fileName().toStdString().c_str() );
 
             m_MyWindowMesh.addData( m_DataList[ m_NumberOfMesh ].getActor() );
 
-            m_NumberOfMesh++;
+            m_ErrorComputed.push_back( false );
+            m_Visibility.push_back( true );
 
+            m_NumberOfMesh++;
+            m_MeshSelected = 0;
+            listWidgetLoadedMesh -> setCurrentRow( m_MeshSelected );
         }
 
         FileList.clear();
@@ -245,22 +254,34 @@ void meshMetricGui::DeleteOneFile()
     {
 
         m_DataList.erase( m_DataList.begin() + m_MeshSelected );
+        m_ErrorComputed.erase( m_ErrorComputed.begin() + m_MeshSelected );
+        m_Visibility.erase( m_Visibility.begin() + m_MeshSelected );
         delete listWidgetLoadedMesh->item( m_MeshSelected );
         comboBoxMeshB -> removeItem( m_MeshSelected );
 
         m_MyWindowMesh.deleteData( m_MeshSelected );
 
         m_NumberOfMesh--;
-        m_MeshSelected = -1;
+        m_MeshSelected = 0;
 
-        horizontalSliderOpacity -> setValue( horizontalSliderOpacity -> maximum() );
-        lcdNumberOpacity -> display( horizontalSliderOpacity -> maximum()  );
-        spinBoxIteration -> setValue( spinBoxIteration -> maximum() );
-        spinBoxDecimate -> setValue( spinBoxDecimate -> maximum() );
-        radioButtonPoints -> setChecked( true );
+        horizontalSliderOpacity -> setValue( m_DataList[ m_MeshSelected ].getOpacity()/100.0 );
+        lcdNumberOpacity -> display( m_DataList[ m_MeshSelected ].getOpacity() );
+        spinBoxIteration -> setValue( 200 );
+        spinBoxDecimate -> setValue( 10 );
+        if( m_DataList[ m_MeshSelected ].getType() == 1 )
+        {
+            radioButtonSurface -> setChecked( true );
+        }
+        else if( m_DataList[ m_MeshSelected ].getType() == 2 )
+        {
+            radioButtonPoints -> setChecked( true );
+        }
+        else if( m_DataList[ m_MeshSelected ].getType() == 3 )
+        {
+            radioButtonWireframe -> setChecked( true );
+        }
+        checkBoxError -> setChecked( m_ErrorComputed[ m_MeshSelected ] );
         lineEditMeshA -> clear();
-        checkBoxError -> setChecked( false );
-
         tabWidgetVisualization -> setEnabled( false );
         tabWidgetError -> setEnabled( false );
         pushButtonDeleteOne -> setEnabled( false );
@@ -277,6 +298,7 @@ void meshMetricGui::DeleteOneFile()
         actionAddNewFile -> setEnabled( true );
         actionAddNewRepository -> setEnabled( true );
         actionQuit -> setEnabled( true );
+        m_MeshSelected = -1;
     }
 }
 
@@ -295,14 +317,16 @@ void meshMetricGui::DeleteAllFiles()
 
         horizontalSliderOpacity -> setSliderPosition( horizontalSliderOpacity -> maximum() );
         lcdNumberOpacity -> display( horizontalSliderOpacity -> maximum()  );
-        spinBoxIteration -> setValue( spinBoxIteration -> maximum() );
-        spinBoxDecimate -> setValue( spinBoxDecimate -> maximum() );
+        spinBoxIteration -> setValue( 200 );
+        spinBoxDecimate -> setValue( 10 );
         radioButtonPoints -> setChecked( true );
         checkBoxError -> setChecked( false );
         listWidgetLoadedMesh -> clear();
         comboBoxMeshB -> clear();
         lineEditMeshA -> clear();
         m_DataList.clear();
+        m_ErrorComputed.clear();
+        m_Visibility.clear();
 
         groupBoxCamera -> setEnabled( false );
         tabWidgetVisualization -> setEnabled( false );
@@ -337,8 +361,6 @@ void meshMetricGui::DisplayInit()
     m_MyWindowMesh.updateWindow();
     m_NumberOfDisplay++;
 
-    ChangeIcon( m_VisibleIcon );
-
     groupBoxCamera -> setEnabled( true );
 
     groupBoxVisualization -> setEnabled( true );
@@ -355,11 +377,12 @@ void meshMetricGui::DisplayAll()
     int IndiceOfMesh;
     for( IndiceOfMesh = 0 ; IndiceOfMesh < m_NumberOfMesh ; IndiceOfMesh++ )
     {
-        m_DataList[ IndiceOfMesh ].setOpacity( 1.0 );
-        horizontalSliderOpacity -> setValue( 1.0 );
-        lcdNumberOpacity -> display( 100 );
-        ChangeIcon( m_VisibleIcon , IndiceOfMesh );
-        m_DataList[ IndiceOfMesh ].updateActorProperties();
+       m_DataList[ IndiceOfMesh ].setOpacity( 1.0 );
+       horizontalSliderOpacity -> setValue( 1.0 );
+       lcdNumberOpacity -> display( 100 );
+       listWidgetLoadedMesh -> item( IndiceOfMesh ) -> setCheckState( Qt::Checked );
+       m_DataList[ IndiceOfMesh ].updateActorProperties();
+       m_Visibility[ IndiceOfMesh ] = true;
     }
     m_MyWindowMesh.updateWindow();
 
@@ -375,16 +398,15 @@ void meshMetricGui::HideAll()
         m_DataList[ IndiceOfMesh ].setOpacity( 0.0 );
         horizontalSliderOpacity -> setValue( 0.0 );
         lcdNumberOpacity -> display( 0.0 );
-        ChangeIcon( m_UnvisibleIcon , IndiceOfMesh );
+        listWidgetLoadedMesh -> item( IndiceOfMesh ) -> setCheckState( Qt::Unchecked );
         m_DataList[ IndiceOfMesh ].updateActorProperties();
+        m_Visibility[ IndiceOfMesh ] = false;
     }
     m_MyWindowMesh.updateWindow();
 
     tabWidgetVisualization -> setEnabled( false );
     tabWidgetError -> setEnabled( false );
-
 }
-
 
 // ****************************************** functions to change the camera
 void meshMetricGui::buttonUpClicked()
@@ -455,12 +477,50 @@ void meshMetricGui::buttonFrontClicked()
 
 
 // ****************************************** functions to change files properties
+void meshMetricGui::UpdateDisplayedMesh( QListWidgetItem *itemClicked )
+{
+    QListWidgetItem* CurrentItem = itemClicked;
+    int ItemRow = 0;
+
+    if( listWidgetLoadedMesh -> currentItem() == CurrentItem )
+    {
+        ChangeMeshSelected();
+        ItemRow = m_MeshSelected;
+    }
+    else
+    {
+        ItemRow = listWidgetLoadedMesh->row( CurrentItem );
+    }
+
+    if( CurrentItem -> checkState() == Qt::Unchecked && m_Visibility[ ItemRow ] == true )
+    {
+        m_DataList[ ItemRow  ].setOpacity( 0.0 );
+        m_Visibility[ ItemRow ] = false;
+
+        m_DataList[ ItemRow ].updateActorProperties();
+        m_MyWindowMesh.updateWindow();
+    }
+
+    if( CurrentItem -> checkState() == Qt::Checked && m_Visibility[ ItemRow ] == false )
+    {
+        m_DataList[ ItemRow  ].setOpacity( 1.0 );
+        m_Visibility[ ItemRow ] = true;
+
+        m_DataList[ ItemRow ].updateActorProperties();
+        m_MyWindowMesh.updateWindow();
+    }
+}
+
 void meshMetricGui::ChangeMeshSelected()
 {
-   m_MeshSelected = listWidgetLoadedMesh -> currentRow();
+   m_nbIteration = 200;
+   m_nbDecimate = 10;
+   m_MeshSelected = listWidgetLoadedMesh -> currentRow();   
 
    horizontalSliderOpacity -> setValue( m_DataList[ m_MeshSelected ].getOpacity()*100 );
    lcdNumberOpacity -> display( m_DataList[ m_MeshSelected ].getOpacity() );
+   spinBoxIteration -> setValue( 200 );
+   spinBoxDecimate -> setValue( 10 );
 
    if( m_DataList[ m_MeshSelected ].getType() == 1 )
    {
@@ -486,15 +546,23 @@ void meshMetricGui::ChangeMeshSelected()
        radioButtonAbsoluteDistance -> setChecked( true );
    }
 
-   if( m_DataList[ m_MeshSelected ].getDisplayError() == true )
+   if( m_ErrorComputed[ m_MeshSelected ] == true )
    {
-       checkBoxError -> setChecked( true );
+       checkBoxError -> setEnabled( true );
+       if( m_DataList[ m_MeshSelected ].getDisplayError() == true )
+       {
+           checkBoxError -> setChecked( true );
+       }
+       else if( m_DataList[ m_MeshSelected ].getDisplayError() == false )
+       {
+           checkBoxError -> setChecked( false );
+       }
    }
-   else if( m_DataList[ m_MeshSelected ].getDisplayError() == false )
+   else
    {
+       checkBoxError -> setEnabled( false );
        checkBoxError -> setChecked( false );
    }
-
 
    QFileInfo File = QString::fromStdString( m_DataList[ m_MeshSelected ].getName() );
    lineEditMeshA -> setText( File.fileName() );
@@ -506,8 +574,7 @@ void meshMetricGui::ChangeMeshSelected()
    }
 
    tabWidgetVisualization -> setEnabled( true );
-   pushButtonDeleteOne -> setEnabled( true );
-
+   pushButtonDeleteOne -> setEnabled( true );   
 }
 
 void meshMetricGui::ResetSelectedFile()
@@ -520,9 +587,14 @@ void meshMetricGui::ResetSelectedFile()
     m_DataList[ m_MeshSelected ].setOpacity( 1.0 );
     lcdNumberOpacity -> display( m_DataList[ m_MeshSelected ].getOpacity() );
     horizontalSliderOpacity -> setValue( 100 );
+    m_Visibility[ m_MeshSelected ] = true;
 
     m_DataList[ m_MeshSelected ].updateActorProperties();
-    ChangeIcon( m_VisibleIcon , m_MeshSelected );
+    listWidgetLoadedMesh -> item( m_MeshSelected ) -> setCheckState( Qt::Checked );
+
+    m_ErrorComputed[ m_MeshSelected ] = false;
+    checkBoxError -> setEnabled( false );
+    checkBoxError -> setChecked( false );
 }
 
 void meshMetricGui::ChangeValueOpacity()
@@ -536,11 +608,13 @@ void meshMetricGui::ChangeValueOpacity()
 
         if( m_DataList[ m_MeshSelected ].getOpacity() == 0.0 )
         {
-            ChangeIcon( m_UnvisibleIcon , m_MeshSelected );
+            listWidgetLoadedMesh -> item( m_MeshSelected ) -> setCheckState( Qt::Unchecked );
+            m_Visibility[ m_MeshSelected ] = false;
         }
         else
         {
-            ChangeIcon( m_VisibleIcon , m_MeshSelected );
+            listWidgetLoadedMesh -> item( m_MeshSelected ) -> setCheckState( Qt::Checked );
+            m_Visibility[ m_MeshSelected ] = true;
         }
 
         m_MyWindowMesh.updateWindow();
@@ -608,7 +682,7 @@ void meshMetricGui::ApplySmoothing()
         m_MyWindowMesh.updateWindow();
 
         pushButtonRunSmoothing -> setEnabled( false );
-        spinBoxIteration -> setValue( spinBoxIteration -> minimum() );
+        spinBoxIteration -> setValue( 200 );
     }
 }
 
@@ -638,7 +712,7 @@ void meshMetricGui::ApplyDecimate()
         m_MyWindowMesh.updateWindow();
 
         pushButtonRunDecimate -> setEnabled( false );
-        spinBoxDecimate -> setValue( spinBoxDecimate -> minimum() );
+        spinBoxDecimate -> setValue( 10 );
     }
 }
 
@@ -732,23 +806,77 @@ void meshMetricGui::ChangeDisplayError()
     }
 }
 
+void meshMetricGui::ChangeValueMax()
+{
+    if( m_SelectedItemA != -1 && m_SelectedItemB != -1 )
+    {
+        if( doubleSpinBoxMax -> value() <= m_DataList[ m_SelectedItemA ].getMin() )
+        {
+            doubleSpinBoxMax -> setValue( m_DataList[ m_SelectedItemA ].getMax() );
+        }
+        else
+        {
+            m_Max = doubleSpinBoxMax -> value();
+        }
+    }
+}
+
+void meshMetricGui::ChangeValueMin()
+{
+    if( m_SelectedItemA != -1 && m_SelectedItemB != -1 )
+    {
+        if( doubleSpinBoxMin -> value() >= m_DataList[ m_SelectedItemA ].getMax() )
+        {
+            doubleSpinBoxMin -> setValue( m_DataList[ m_SelectedItemA ].getMin() );
+        }
+        else
+        {
+            m_Min = doubleSpinBoxMin -> value();
+        }
+    }
+}
+
 void meshMetricGui::ApplyDistance()
 {
     if( m_SelectedItemA != -1 && m_SelectedItemB != -1 )
     {
         checkBoxError -> setChecked( true );
         checkBoxError -> setEnabled( true );
+        m_ErrorComputed[ m_MeshSelected ] = true;
 
         m_MyProcess.processError( m_DataList[ m_SelectedItemA ] , m_DataList[ m_SelectedItemB ] );
 
         m_DataList[ m_SelectedItemB ].setOpacity( 0.0 );
-        ChangeIcon( m_UnvisibleIcon , m_SelectedItemB );
+        m_Visibility[ m_SelectedItemB ] = false;
+        listWidgetLoadedMesh -> item( m_SelectedItemB ) -> setCheckState( Qt::Unchecked );
         m_DataList[ m_SelectedItemB ].updateActorProperties();
 
+        m_DataList[ m_SelectedItemA ].setOpacity( 1.0 );
+        m_Visibility[ m_SelectedItemA ] = true;
+        listWidgetLoadedMesh -> item( m_SelectedItemA ) -> setCheckState( Qt::Checked );
+        m_DataList[ m_SelectedItemA ].updateActorProperties();
+
+        lineEditMin -> setText( QString::number( m_DataList[ m_SelectedItemA ].getMin() ) );
+        lineEditMax -> setText( QString::number( m_DataList[ m_SelectedItemA ].getMax() ) );
+
+        doubleSpinBoxMin -> setValue( m_DataList[ m_SelectedItemA ].getMin() );
+        doubleSpinBoxMax -> setValue( m_DataList[ m_SelectedItemA ].getMax() );
+
+
         m_MyWindowMesh.updateWindow();
+
+        ChangeMeshSelected();
     }
 }
 
+void meshMetricGui::UpdateColor()
+{
+    if( m_SelectedItemA != -1 && m_SelectedItemB != -1 )
+    {
+        m_MyProcess.updateColor( m_Min , m_Max , m_DataList[ m_SelectedItemA ] );
+        m_MyWindowMesh.updateWindow();
+    }
+}
 
 
 

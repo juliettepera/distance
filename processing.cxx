@@ -81,9 +81,28 @@ int processing::processError( dataM &Data1 , dataM &Data2 )
     Data1.setPolyData( ErrorData );
     Data1.setLut( ErrorLut );
 
+    Data1.setMin( m_MyMeshValmet.GetMin() );
+    Data1.setMax( m_MyMeshValmet.GetMax() );
+
     Data1.changeMapperInput();
 
     return 0;
+}
+
+void processing::updateColor( double Min , double Max , dataM &Data1 )
+{
+    vtkSmartPointer <vtkColorTransferFunction> ErrorLut = vtkSmartPointer <vtkColorTransferFunction>::New();
+
+    m_MyMeshValmet.setMin( Min );
+    m_MyMeshValmet.setMax( Max );
+
+    m_MyMeshValmet.CreateLutError();
+
+    ErrorLut = m_MyMeshValmet.GetLut();
+    Data1.setLut( ErrorLut );
+
+    Data1.changeMapperInput();
+
 }
 
 int processing::testPolyData( vtkSmartPointer <vtkPolyData> inData , vtkSmartPointer <vtkPolyData> outData )

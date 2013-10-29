@@ -27,7 +27,7 @@ INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${Q
 ADD_DEFINITIONS( -DQT_GUI_LIBS -DQT_CORE_LIB -DQT3_SUPPORT )
 
 # generate moc and ui files
-QT4_WRAP_CPP( QtProject_HEADERS_MOC meshMetricGui.h )
+QT4_WRAP_CPP( QtProject_HEADERS_MOC meshMetricGui.h ColormapWidget.h )
 QT4_WRAP_UI( UI_FILES meshMetricGui.ui )
 
 # set the sources files
@@ -49,6 +49,9 @@ display.cxx
 
 testMeshValmet.h
 testMeshValmet.cxx
+
+ColormapWidget.h
+ColormapWidget.cxx
 
 MeshValmet/3dmodel.h
 

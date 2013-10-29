@@ -50,9 +50,13 @@ class testMeshValmet: public QMainWindow
         void SetSamplingStep( double SamplingStep );
         void SetMinSampleFrequency( int MinSampleFrequency );
         void SetSignedDistance( bool SignedDistance );
+        void setMin( double Dmin );
+        void setMax( double Dmax );
 
         vtkSmartPointer <vtkPolyData> GetFinalData();
         vtkSmartPointer <vtkColorTransferFunction> GetLut();
+        double GetMin();
+        double GetMax();
 
         void CalculateError();
         friend void mesh_run(const args *args,

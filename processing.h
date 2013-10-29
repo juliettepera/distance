@@ -31,6 +31,7 @@ class processing
         vtkSmartPointer <vtkPolyData> processSmoothing(vtkSmartPointer<vtkPolyData> polyData , int nbIteration );
         vtkSmartPointer <vtkPolyData> processDownSampling( vtkSmartPointer <vtkPolyData> polyData , double nbDecimate );
         int processError(dataM &Data1 , dataM &Data2 );
+        void updateColor(double Min , double Max, dataM &Data1);
         int testPolyData( vtkSmartPointer <vtkPolyData> inData , vtkSmartPointer <vtkPolyData> outData );
 
     private:
