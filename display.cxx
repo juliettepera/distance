@@ -5,6 +5,8 @@ display::display()
     m_Renderer = vtkSmartPointer <vtkRenderer>::New();
     m_RenderWindow = vtkSmartPointer <vtkRenderWindow>::New();
     m_Camera = vtkSmartPointer <vtkCamera>::New();
+    m_Axes = vtkSmartPointer <vtkAxesActor>::New();
+    m_Marker = vtkSmartPointer <vtkOrientationMarkerWidget>::New();
 
     m_SizeH = 700 ; m_SizeW = 700;
     m_CameraX = 0 ; m_CameraY = 0 ; m_CameraZ = 0;
@@ -29,6 +31,15 @@ void display::initWindow()
 
     m_RenderWindow -> SetSize( m_SizeH , m_SizeW );
     m_Renderer -> ResetCamera();
+
+    m_Marker -> SetOutlineColor( 0.9300, 0.5700, 0.1300 );
+    m_Marker -> SetOrientationMarker( m_Axes );
+
+    m_Marker -> SetInteractor( m_RenderWindow -> GetInteractor() );
+
+    m_Marker -> SetViewport( 0.0, 0.0, 0.2, 0.2 );
+    m_Marker -> SetEnabled( 1 );
+    m_Marker -> InteractiveOff();
 }
 
 void display::updateWindow()

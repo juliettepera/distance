@@ -44,6 +44,7 @@ meshMetricGui::meshMetricGui( QWidget *parent , Qt::WFlags f , std::string WorkD
     QObject::connect( actionAddNewFile , SIGNAL( triggered() ) , this , SLOT( OpenBrowseWindowFile() ) );
     QObject::connect( actionAddNewRepository , SIGNAL( triggered() ) , this , SLOT( OpenBrowseWindowRepository() ) );
     QObject::connect( pushButtonAdd , SIGNAL( clicked() ) , this , SLOT( OpenBrowseWindowFile() ) );
+    QObject::connect( actionSaveFile , SIGNAL( triggered() ) , this , SLOT( SaveFile() ) );
 
     QObject::connect( pushButtonDeleteOne , SIGNAL( clicked() ) , this , SLOT( DeleteOneFile() ) );
     QObject::connect( pushButtonDelete , SIGNAL( clicked() ) , this , SLOT( DeleteAllFiles() ) );
@@ -243,6 +244,16 @@ void meshMetricGui::OpenBrowseWindowRepository()
 
         FileList.clear();
         DisplayInit();
+    }
+}
+
+void meshMetricGui::SaveFile()
+{
+    if( !m_DataList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
+    {
+        QString fileName = QFileDialog::getSaveFileName( this , " Create a new vtk file or open an existing one" , "./untitled.vtk" , "vtk mesh (*.vtk)" );
+        std::cout << fileName.toStdString() << std::endl;
+        m_MyProcess.SaveFile( fileName.toStdString() , m_DataList[ m_MeshSelected ] );
     }
 }
 
@@ -571,10 +582,12 @@ void meshMetricGui::ChangeMeshSelected()
    if( m_NumberOfMesh >= 2 )
    {
        tabWidgetError -> setEnabled( true );
+       tabResults -> setEnabled( false );
    }
 
    tabWidgetVisualization -> setEnabled( true );
    pushButtonDeleteOne -> setEnabled( true );   
+   actionSaveFile -> setEnabled( true );
 }
 
 void meshMetricGui::ResetSelectedFile()
@@ -866,6 +879,9 @@ void meshMetricGui::ApplyDistance()
         m_MyWindowMesh.updateWindow();
 
         ChangeMeshSelected();
+
+        tabResults -> setEnabled( true );
+        tabWidgetError -> setCurrentWidget( tabResults );
     }
 }
 

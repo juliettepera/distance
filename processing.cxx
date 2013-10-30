@@ -101,7 +101,7 @@ void processing::updateColor( double Min , double Max , dataM &Data1 )
     ErrorLut = m_MyMeshValmet.GetLut();
     Data1.setLut( ErrorLut );
 
-    Data1.changeMapperInput();
+    Data1.changeActivScalar();
 
 }
 
@@ -170,4 +170,19 @@ int processing::testPolyData( vtkSmartPointer <vtkPolyData> inData , vtkSmartPoi
         }
     }
     return 0;
+}
+
+void processing::SaveFile(std::string Name, dataM &Data1)
+{
+    vtkSmartPointer <vtkPolyDataWriter> Writer = vtkSmartPointer <vtkPolyDataWriter>::New();
+
+    int i = Name.size();
+    if( Name.compare( i-4 , 4 , ".vtk" ) != 0 )
+    {
+        Name += ".vtk";
+    }
+
+    Writer -> SetInputData( Data1.getPolyData() );
+    Writer -> SetFileName( Name.c_str() );
+    Writer -> Update();
 }

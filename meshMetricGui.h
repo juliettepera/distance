@@ -45,9 +45,10 @@ class meshMetricGui : public QMainWindow , public Ui::MainWindow
 
     public slots:
 
-        // functions for loadind files
+        // functions for loadind/saving files
             void OpenBrowseWindowFile();
             void OpenBrowseWindowRepository();
+            void SaveFile();
 
         // functions for delete files
             void DeleteOneFile();

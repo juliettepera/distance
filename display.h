@@ -8,6 +8,8 @@
 #include <vtkCamera.h>
 #include <vtkSmartPointer.h>
 #include <vtkActor.h>
+#include <vtkAxesActor.h>
+#include <vtkOrientationMarkerWidget.h>
 
 // Qt Libraries
 //#include <QMessageBox>
@@ -42,6 +44,8 @@ class display
         vtkSmartPointer <vtkRenderer> m_Renderer;
         vtkSmartPointer <vtkRenderWindow> m_RenderWindow;
         vtkSmartPointer <vtkCamera> m_Camera;
+        vtkSmartPointer <vtkAxesActor> m_Axes;
+        vtkSmartPointer <vtkOrientationMarkerWidget> m_Marker;
 
         int m_SizeH;
         int m_SizeW;

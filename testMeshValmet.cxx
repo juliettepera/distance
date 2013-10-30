@@ -119,7 +119,6 @@ void testMeshValmet::CalculateError()
     fflush( stdout );
 
     m_FinalData = vtkSmartPointer <vtkPolyData> ::New();
-    m_Lut = vtkSmartPointer <vtkColorTransferFunction>::New();
 
     m_Out = NULL;
     m_Out = outbuf_new( stdio_puts , stdout );
@@ -523,6 +522,8 @@ void testMeshValmet::drawVertexErrorT()
 
 void testMeshValmet::CreateLutError()
 {
+    m_Lut = vtkSmartPointer <vtkColorTransferFunction>::New();
+
     double mmax,mmin;
     int inter = 5;
 
