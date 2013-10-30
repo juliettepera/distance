@@ -94,6 +94,8 @@ class meshMetricGui : public QMainWindow , public Ui::MainWindow
             void ApplyDistance();
             void UpdateColor();
 
+            void PreviousError();
+
     private:
         // attributs for the files
             int m_NumberOfMesh;

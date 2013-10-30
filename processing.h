@@ -19,6 +19,7 @@
 #include <vtkPolyData.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkPolyDataWriter.h>
+#include <vtkDataArray.h>
 
 // OTHER libraries
 #include <string>
@@ -35,6 +36,7 @@ class processing
         void updateColor(double Min , double Max, dataM &Data1);
         int testPolyData( vtkSmartPointer <vtkPolyData> inData , vtkSmartPointer <vtkPolyData> outData );
         void SaveFile( std::string Name , dataM &Data1 );
+        int CheckPreviousError( dataM &Data1 );
 
     private:
         testMeshValmet m_MyMeshValmet;

@@ -186,3 +186,91 @@ void processing::SaveFile(std::string Name, dataM &Data1)
     Writer -> SetFileName( Name.c_str() );
     Writer -> Update();
 }
+
+int processing::CheckPreviousError( dataM &Data1 )
+{
+    vtkSmartPointer <vtkPolyData> PolyData = vtkSmartPointer <vtkPolyData>::New();
+
+    PolyData = Data1.getPolyData();
+
+    int NumberOfArrays = PolyData -> GetPointData() -> GetNumberOfArrays();
+    int Check = 0;
+    int Indice = 0;
+
+    if( NumberOfArrays == 0 )
+    {
+        return -1;
+    }
+    else
+    {
+        const char* Names[ NumberOfArrays ];
+        for( int i = 0; i < NumberOfArrays ; i++ )
+        {
+            Names[ i ] = PolyData -> GetPointData() -> GetArrayName( i );
+
+            if( strcmp( Names[ i ] , "Error" ) == 0 )
+            {
+                Check = Check + 1;
+                Indice = i;
+            }
+
+            if( strcmp( Names[ i ] , "Original" ) == 0 )
+            {
+                Check = Check + 2;
+            }
+        }
+
+        if( Check == 3 )
+        {
+            // both error and original are present
+            vtkDataArray* Array = vtkDataArray::SafeDownCast( PolyData -> GetPointData() -> GetArray( Indice ) );
+
+            double range[2];
+            Array -> GetRange( range );
+
+            std::cout << range[0] << " , " << range[1] <<std::endl;
+
+            Data1.setMin( range[ 0 ] );
+            Data1.setMax( range[ 1 ] );
+
+            return 3;
+        }
+        else if( Check == 0 )
+        {
+            // there is some arrays but no error or original
+            return 0;
+        }
+        else if( Check == 1)
+        {
+            // there is only the error -> pb
+            return 1;
+        }
+        else if( Check == 2 )
+        {
+            // there is only the original -> pb
+            return 2;
+        }
+        else
+        {
+            // pb
+            return 4;
+        }
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

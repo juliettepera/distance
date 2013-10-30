@@ -86,6 +86,8 @@ meshMetricGui::meshMetricGui( QWidget *parent , Qt::WFlags f , std::string WorkD
     QObject::connect( pushButtonApply , SIGNAL( clicked() ) , this , SLOT( ApplyDistance() ) );
     QObject::connect( pushButtonUpdateColor , SIGNAL( clicked() ) , this , SLOT( UpdateColor() ) );
 
+    QObject::connect( pushButton , SIGNAL( clicked() ) , this , SLOT( PreviousError() ) );
+
 }
 
 // ****************************************** functions for the icons
@@ -895,7 +897,39 @@ void meshMetricGui::UpdateColor()
 }
 
 
+void meshMetricGui::PreviousError()
+{
+    int out = m_MyProcess.CheckPreviousError( m_DataList[ m_MeshSelected ] );
 
+    switch( out )
+    {
+        case 1:
+        std::cout << " problem, only array error " << std::endl;
+        break;
+
+        case 2:
+        std::cout << " problem, only original array " << std::endl;
+        break;
+
+        case 3:
+        std::cout << " both arrays " << std::endl;
+        checkBoxError -> setEnabled( true );
+        checkBoxError -> setChecked( true );
+        m_DataList[ m_MeshSelected ].setDisplayError( true );
+        m_MyProcess.updateColor( m_DataList[ m_MeshSelected ].getMin() , m_DataList[ m_MeshSelected ].getMax() , m_DataList[ m_SelectedItemA ] );
+        m_MyWindowMesh.updateWindow();
+        break;
+
+        case 4:
+        std::cout << " unknown problem " << std::endl;
+        break;
+
+        default:
+        std::cout << " no arrays or no error " << std::endl;
+        break;
+
+    }
+}
 
 
 
