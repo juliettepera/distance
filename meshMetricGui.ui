@@ -713,19 +713,6 @@
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>220</y>
-        <width>93</width>
-        <height>27</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>PushButton</string>
-      </property>
-     </widget>
     </widget>
     <widget class="QWidget" name="tabParameters">
      <attribute name="title">

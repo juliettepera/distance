@@ -86,7 +86,7 @@ meshMetricGui::meshMetricGui( QWidget *parent , Qt::WFlags f , std::string WorkD
     QObject::connect( pushButtonApply , SIGNAL( clicked() ) , this , SLOT( ApplyDistance() ) );
     QObject::connect( pushButtonUpdateColor , SIGNAL( clicked() ) , this , SLOT( UpdateColor() ) );
 
-    QObject::connect( pushButton , SIGNAL( clicked() ) , this , SLOT( PreviousError() ) );
+    //QObject::connect( pushButton , SIGNAL( clicked() ) , this , SLOT( PreviousError() ) );
 
 }
 
@@ -193,7 +193,6 @@ void meshMetricGui::OpenBrowseWindowFile()
       browseMesh.clear();
       delete lineEditLoad;
       DisplayInit();
-
     }
 }
 
@@ -383,6 +382,8 @@ void meshMetricGui::DisplayInit()
     pushButtonDisplayAll -> setEnabled( true );
     pushButtonHideAll -> setEnabled( true );
     listWidgetLoadedMesh -> setEnabled( true );
+
+    PreviousError();
 }
 
 void meshMetricGui::DisplayAll()
@@ -899,35 +900,39 @@ void meshMetricGui::UpdateColor()
 
 void meshMetricGui::PreviousError()
 {
-    int out = m_MyProcess.CheckPreviousError( m_DataList[ m_MeshSelected ] );
-
-    switch( out )
+    if( ! m_DataList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
-        case 1:
-        std::cout << " problem, only array error " << std::endl;
-        break;
+        int out = m_MyProcess.CheckPreviousError( m_DataList[ m_MeshSelected ] );
 
-        case 2:
-        std::cout << " problem, only original array " << std::endl;
-        break;
+        switch( out )
+        {
+            case 1:
+                std::cout << " problem, only array error " << std::endl;
+            break;
 
-        case 3:
-        std::cout << " both arrays " << std::endl;
-        checkBoxError -> setEnabled( true );
-        checkBoxError -> setChecked( true );
-        m_DataList[ m_MeshSelected ].setDisplayError( true );
-        m_MyProcess.updateColor( m_DataList[ m_MeshSelected ].getMin() , m_DataList[ m_MeshSelected ].getMax() , m_DataList[ m_SelectedItemA ] );
-        m_MyWindowMesh.updateWindow();
-        break;
+            case 2:
+                std::cout << " problem, only original array " << std::endl;
+            break;
 
-        case 4:
-        std::cout << " unknown problem " << std::endl;
-        break;
+            case 3:
+                std::cout << " both arrays " << std::endl;
+                checkBoxError -> setEnabled( true );
+                checkBoxError -> setChecked( true );
+                m_ErrorComputed[ m_MeshSelected ] = true;
+                m_DataList[ m_MeshSelected ].setDisplayError( true );
+                m_MyProcess.updateColor( m_DataList[ m_MeshSelected ].getMin() , m_DataList[ m_MeshSelected ].getMax() , m_DataList[ m_MeshSelected ] );
+                m_MyWindowMesh.updateWindow();
+            break;
 
-        default:
-        std::cout << " no arrays or no error " << std::endl;
-        break;
+            case 4:
+                std::cout << " unknown problem " << std::endl;
+            break;
 
+            default:
+                std::cout << " no arrays or no error " << std::endl;
+            break;
+
+        }
     }
 }
 

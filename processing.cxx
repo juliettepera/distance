@@ -228,8 +228,6 @@ int processing::CheckPreviousError( dataM &Data1 )
             double range[2];
             Array -> GetRange( range );
 
-            std::cout << range[0] << " , " << range[1] <<std::endl;
-
             Data1.setMin( range[ 0 ] );
             Data1.setMax( range[ 1 ] );
 
