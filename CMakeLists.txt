@@ -47,11 +47,19 @@ processing.cxx
 display.h
 display.cxx
 
-testMeshValmet.h
-testMeshValmet.cxx
+meshValmet.h
+meshValmet.cxx
 
 ColormapWidget.h
 ColormapWidget.cxx
+
+#gradientArrow.cxx
+#gradientArrow.h
+
+#gradientWidgetQT.cxx
+#gradientWidgetQT.h
+
+#colorPointStruct.h
 
 MeshValmet/3dmodel.h
 

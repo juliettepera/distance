@@ -34,9 +34,7 @@ meshMetricGui::meshMetricGui( QWidget *parent , Qt::WFlags f , std::string WorkD
     QStringList List;
     List << "2" << "0.5" << "0.2" << "0.1" << "0.05" << "0.02" ;
     comboBoxSamplingStep -> addItems( List );
-
-
-    widgetColor -> setStyleSheet( "background-image: url(/NIRAL/work/jpera/distanceBin/bin/icons/gradient.png)");
+    comboBoxSamplingStep -> setCurrentItem( 1 );
 
     // connections
     QObject::connect( actionQuit , SIGNAL( triggered() ) , qApp , SLOT( quit() ) );
@@ -85,9 +83,6 @@ meshMetricGui::meshMetricGui( QWidget *parent , Qt::WFlags f , std::string WorkD
     QObject::connect( checkBoxError , SIGNAL( toggled( bool ) ) , this , SLOT( ChangeDisplayError() ) );
     QObject::connect( pushButtonApply , SIGNAL( clicked() ) , this , SLOT( ApplyDistance() ) );
     QObject::connect( pushButtonUpdateColor , SIGNAL( clicked() ) , this , SLOT( UpdateColor() ) );
-
-    //QObject::connect( pushButton , SIGNAL( clicked() ) , this , SLOT( PreviousError() ) );
-
 }
 
 // ****************************************** functions for the icons
@@ -148,7 +143,12 @@ void meshMetricGui::InitIcon()
     pushButtonResetAll -> setIcon( m_ResetIcon );
 
     // pb access icons and size
-    listWidgetLoadedMesh -> setStyleSheet( "QListWidget::indicator:checked{ image: url(/NIRAL/work/jpera/distanceBin/bin/icons/visible.png);} QListWidget::indicator:unchecked{ image: url(/NIRAL/work/jpera/distanceBin/bin/icons/unvisible.png);}" );
+    std::string styleSheetLoadedMesh = "QListWidget::indicator:checked{ image: url(";
+    styleSheetLoadedMesh += m_WorkDirectory;
+    styleSheetLoadedMesh += "/icons/visible.png);} QListWidget::indicator:unchecked{ image: url(";
+    styleSheetLoadedMesh += m_WorkDirectory;
+    styleSheetLoadedMesh += "/icons/unvisible.png);}";
+    listWidgetLoadedMesh -> setStyleSheet( QString::fromStdString( styleSheetLoadedMesh ) );
 }
 
 // ****************************************** functions for loadind files
@@ -183,9 +183,11 @@ void meshMetricGui::OpenBrowseWindowFile()
             m_ErrorComputed.push_back( false );
             m_Visibility.push_back( true );
 
+            m_MeshSelected = m_NumberOfMesh;
             m_NumberOfMesh++;
-            m_MeshSelected = 0;
             listWidgetLoadedMesh -> setCurrentRow( m_MeshSelected );
+
+            PreviousError();
 
         }
       }
@@ -238,9 +240,11 @@ void meshMetricGui::OpenBrowseWindowRepository()
             m_ErrorComputed.push_back( false );
             m_Visibility.push_back( true );
 
+            m_MeshSelected = m_NumberOfMesh;
             m_NumberOfMesh++;
-            m_MeshSelected = 0;
             listWidgetLoadedMesh -> setCurrentRow( m_MeshSelected );
+
+            PreviousError();
         }
 
         FileList.clear();
@@ -264,7 +268,6 @@ void meshMetricGui::DeleteOneFile()
 {
     if( !m_DataList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
     {
-
         m_DataList.erase( m_DataList.begin() + m_MeshSelected );
         m_ErrorComputed.erase( m_ErrorComputed.begin() + m_MeshSelected );
         m_Visibility.erase( m_Visibility.begin() + m_MeshSelected );
@@ -383,7 +386,7 @@ void meshMetricGui::DisplayInit()
     pushButtonHideAll -> setEnabled( true );
     listWidgetLoadedMesh -> setEnabled( true );
 
-    PreviousError();
+    //PreviousError();
 }
 
 void meshMetricGui::DisplayAll()
@@ -571,11 +574,15 @@ void meshMetricGui::ChangeMeshSelected()
        {
            checkBoxError -> setChecked( false );
        }
+       tabWidgetError -> setCurrentWidget( tabResults );
+       tabResults -> setEnabled( true );
    }
    else
    {
        checkBoxError -> setEnabled( false );
        checkBoxError -> setChecked( false );
+       tabWidgetError -> setCurrentWidget( tabDistance );
+       tabResults -> setEnabled( false );
    }
 
    QFileInfo File = QString::fromStdString( m_DataList[ m_MeshSelected ].getName() );
@@ -866,11 +873,15 @@ void meshMetricGui::ApplyDistance()
         m_Visibility[ m_SelectedItemB ] = false;
         listWidgetLoadedMesh -> item( m_SelectedItemB ) -> setCheckState( Qt::Unchecked );
         m_DataList[ m_SelectedItemB ].updateActorProperties();
+        QFileInfo File = QString::fromStdString( m_DataList[ m_SelectedItemB ].getName() );
+        lineEditB -> setText( File.fileName() );
 
         m_DataList[ m_SelectedItemA ].setOpacity( 1.0 );
         m_Visibility[ m_SelectedItemA ] = true;
         listWidgetLoadedMesh -> item( m_SelectedItemA ) -> setCheckState( Qt::Checked );
         m_DataList[ m_SelectedItemA ].updateActorProperties();
+        File = QString::fromStdString( m_DataList[ m_SelectedItemA ].getName() );
+        lineEditA -> setText( File.fileName() );
 
         lineEditMin -> setText( QString::number( m_DataList[ m_SelectedItemA ].getMin() ) );
         lineEditMax -> setText( QString::number( m_DataList[ m_SelectedItemA ].getMax() ) );
@@ -878,13 +889,11 @@ void meshMetricGui::ApplyDistance()
         doubleSpinBoxMin -> setValue( m_DataList[ m_SelectedItemA ].getMin() );
         doubleSpinBoxMax -> setValue( m_DataList[ m_SelectedItemA ].getMax() );
 
-
+        //m_MyWindowMesh.setLut( m_DataList[ m_SelectedItemA ].getMapper()->GetLookupTable() );
+        //m_MyWindowMesh.updateLut();
         m_MyWindowMesh.updateWindow();
 
         ChangeMeshSelected();
-
-        tabResults -> setEnabled( true );
-        tabWidgetError -> setCurrentWidget( tabResults );
     }
 }
 
@@ -900,39 +909,45 @@ void meshMetricGui::UpdateColor()
 
 void meshMetricGui::PreviousError()
 {
-    if( ! m_DataList.empty() && m_NumberOfDisplay != 0 && m_MeshSelected != -1 )
+    if( ! m_DataList.empty() && m_MeshSelected != -1 )
     {
         int out = m_MyProcess.CheckPreviousError( m_DataList[ m_MeshSelected ] );
+        QMessageBox MsgBox;
+        QFileInfo File;
 
         switch( out )
         {
-            case 1:
-                std::cout << " problem, only array error " << std::endl;
+            case 1:               
+                MsgBox.setText( " the original scalar is missing ");
+                MsgBox.exec();
             break;
 
             case 2:
-                std::cout << " problem, only original array " << std::endl;
+                MsgBox.setText( " the error scalar is missing ");
+                MsgBox.exec();
             break;
 
             case 3:
-                std::cout << " both arrays " << std::endl;
                 checkBoxError -> setEnabled( true );
-                checkBoxError -> setChecked( true );
+                checkBoxError -> setChecked( true );                
                 m_ErrorComputed[ m_MeshSelected ] = true;
                 m_DataList[ m_MeshSelected ].setDisplayError( true );
+
                 m_MyProcess.updateColor( m_DataList[ m_MeshSelected ].getMin() , m_DataList[ m_MeshSelected ].getMax() , m_DataList[ m_MeshSelected ] );
-                m_MyWindowMesh.updateWindow();
+
+                tabWidgetError -> setCurrentWidget( tabResults );
+                tabResults -> setEnabled( true );
+
+                File = QString::fromStdString( m_DataList[ m_MeshSelected ].getName() );
+                lineEditA -> setText( File.fileName() );
+                lineEditB -> setText( QString::fromStdString( " Unknowned ") );
             break;
 
             case 4:
-                std::cout << " unknown problem " << std::endl;
+                MsgBox.setText( " problem ");
+                MsgBox.exec();
             break;
-
-            default:
-                std::cout << " no arrays or no error " << std::endl;
-            break;
-
-        }
+        }        
     }
 }
 

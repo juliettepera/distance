@@ -9,7 +9,7 @@
 
 // My libraries
 #include "dataM.h"
-#include "testMeshValmet.h"
+#include "meshValmet.h"
 
 // QT libraries
 #include <QMessageBox>
@@ -39,7 +39,7 @@ class processing
         int CheckPreviousError( dataM &Data1 );
 
     private:
-        testMeshValmet m_MyMeshValmet;
+        meshValmet m_MyMeshValmet;
 };
 
 #endif

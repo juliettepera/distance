@@ -7,6 +7,8 @@ display::display()
     m_Camera = vtkSmartPointer <vtkCamera>::New();
     m_Axes = vtkSmartPointer <vtkAxesActor>::New();
     m_Marker = vtkSmartPointer <vtkOrientationMarkerWidget>::New();
+    //m_ScalarBar = vtkSmartPointer <vtkScalarBarActor>::New();
+    //m_Lut = vtkSmartPointer <vtkScalarsToColors>::New();
 
     m_SizeH = 700 ; m_SizeW = 700;
     m_CameraX = 0 ; m_CameraY = 0 ; m_CameraZ = 0;
@@ -40,6 +42,12 @@ void display::initWindow()
     m_Marker -> SetViewport( 0.0, 0.0, 0.2, 0.2 );
     m_Marker -> SetEnabled( 1 );
     m_Marker -> InteractiveOff();
+
+    //m_ScalarBar -> SetLookupTable( m_Lut );
+    //m_ScalarBar -> SetTitle("Error");
+    //m_ScalarBar -> SetNumberOfLabels(4);
+    //m_Renderer -> AddActor2D( m_ScalarBar );
+
 }
 
 void display::updateWindow()
@@ -47,6 +55,11 @@ void display::updateWindow()
     m_RenderWindow -> Render();
     m_MeshWidget -> show();
 }
+
+/*void display::updateLut()
+{
+    m_ScalarBar -> SetLookupTable( m_Lut );
+}*/
 
 void display::addData( vtkSmartPointer <vtkActor> Actor )
 {
@@ -116,6 +129,12 @@ void display::setMeshWidget( QVTKWidget *MeshWidget )
 {
     m_MeshWidget = MeshWidget;
 }
+
+/*void display::setLut( vtkSmartPointer <vtkScalarsToColors> Lut )
+{
+    m_Lut = vtkSmartPointer <vtkScalarsToColors>::New();
+    m_Lut = Lut;
+}*/
 
 
 

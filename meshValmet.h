@@ -20,14 +20,7 @@
 #include <vtkColorTransferFunction.h>
 #include <vtkPointData.h>
 #include <vtkFloatArray.h>
-
-// Qt Libraries
-#include <QMainWindow>
-#include <QFileDialog>
-#include <QObject>
-#include <QProgressDialog>
-#include <QMessageBox>
-
+#include <vtkCleanPolyData.h>
 
 // Other Libraries
 #include <iostream>
@@ -36,17 +29,14 @@
 // MeshValmet Libraries
 #include "MeshValmet/mesh_run.h"
 
-#include "dataM.h"
-
-
-class meshValmet: public QMainWindow
+class meshValmet
 {
 
     public:
         meshValmet();
 
-        void SetData1(vtkSmartPointer<vtkPolyData> Data1 );
-        void SetData2( vtkSmartPointer<vtkPolyData> Data2 );
+        void SetData1( vtkSmartPointer <vtkPolyData> Data1 );
+        void SetData2( vtkSmartPointer <vtkPolyData> Data2 );
         void SetSamplingStep( double SamplingStep );
         void SetMinSampleFrequency( int MinSampleFrequency );
         void SetSignedDistance( bool SignedDistance );
@@ -69,7 +59,6 @@ class meshValmet: public QMainWindow
         int testPolyData( vtkSmartPointer <vtkPolyData> inData , vtkSmartPointer <vtkPolyData> outData );
 
     private:
-
         vtkSmartPointer <vtkPolyData> m_FinalData;
         vtkSmartPointer <vtkColorTransferFunction> m_Lut;
 

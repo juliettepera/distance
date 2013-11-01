@@ -10,10 +10,9 @@
 #include <vtkActor.h>
 #include <vtkAxesActor.h>
 #include <vtkOrientationMarkerWidget.h>
+#include <vtkScalarBarActor.h>
+#include <vtkLookupTable.h>
 
-// Qt Libraries
-//#include <QMessageBox>
-//#include <qwidget.h>
 
 class display
 {
@@ -22,6 +21,7 @@ class display
 
         void initWindow();
         void updateWindow();
+        //void updateLut();
 
         void addData( vtkSmartPointer <vtkActor> Actor );
         void deleteData( int IndiceOfMesh );
@@ -38,6 +38,8 @@ class display
 
         void setMeshWidget( QVTKWidget *MeshWidget );
 
+        //void setLut(vtkSmartPointer <vtkScalarsToColors> m_Lut );
+
     private:
         QVTKWidget *m_MeshWidget;
 
@@ -46,6 +48,8 @@ class display
         vtkSmartPointer <vtkCamera> m_Camera;
         vtkSmartPointer <vtkAxesActor> m_Axes;
         vtkSmartPointer <vtkOrientationMarkerWidget> m_Marker;
+        //vtkSmartPointer <vtkScalarBarActor> m_ScalarBar;
+        //vtkSmartPointer <vtkScalarsToColors> m_Lut;
 
         int m_SizeH;
         int m_SizeW;

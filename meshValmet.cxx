@@ -2,8 +2,8 @@
 
 meshValmet::meshValmet()
 {
-    m_Pargs.sampling_step = 0.5/100;
-    m_Pargs.min_sample_freq = 2.0;
+    m_Pargs.sampling_step = 0.5/100.0;
+    m_Pargs.min_sample_freq = 2;
     m_Pargs.signeddist = false;
 
     m_Pargs.verb_analysis = false; // ???
@@ -110,8 +110,6 @@ double meshValmet::GetMax()
 }
 
 
-
-
 //************************************** COMPUTE THE ERROR ***************************************
 void meshValmet::CalculateError()
 {
@@ -123,12 +121,7 @@ void meshValmet::CalculateError()
     m_Out = NULL;
     m_Out = outbuf_new( stdio_puts , stdout );
 
-    printf( "\nmesh_run...");
-    fflush( stdout );
-
     mesh_run( &m_Pargs , &m_ModelError1 , &m_ModelError2 , m_Out , NULL , &m_Stats , &m_StatsRev , &m_AbsSamplingStep , &m_AbsSamplingDens );
-    printf( "...done\n");
-    fflush( stdout );
 
     int num_vert1 = m_ModelError1.mesh->num_vert;
     int num_vert2 = m_ModelError2.mesh->num_vert;
@@ -176,13 +169,7 @@ void meshValmet::CalculateError()
       T2[3*i+2] = face_list[i].f2+1;
     }
 
-    printf( "\nComputeRobustVolumeOverlap...");
-    fflush( stdout );
-
     ComputeRobustVolumeOverlap( L1 , L2 , num_vert1 , num_vert2 , T1 , T2 , num_faces1 , num_faces2 , m_DiceCoefficient , m_IntUnionRatio );
-
-    printf( "\n... ComputeRobustVolumeOverlap done\n");
-    fflush( stdout );
 
     delete [] L1;
     delete [] L2;
@@ -204,18 +191,8 @@ void meshValmet::CalculateError()
         m_Dmin = m_ModelError1.abs_min_error;
       }
 
-    printf( "\ndrawVertexErrorT..." );
-    fflush( stdout );
-
     drawVertexErrorT();
-
-    printf( "...done\n\nCreateLutError...");
-    fflush( stdout );
-
     CreateLutError();
-
-    printf( "...done\n");
-    fflush( stdout );
 }
 
 //********************************* CREATE THE FINAL POLYDATA ***********************************
@@ -522,7 +499,7 @@ void meshValmet::drawVertexErrorT()
   m_FinalData -> GetPointData() -> AddArray( ScalarsConst );
 }
 
-void meshValmet::CreateLutError()
+/*void meshValmet::CreateLutError()
 {
     m_Lut = vtkSmartPointer <vtkColorTransferFunction>::New();
 
@@ -569,8 +546,19 @@ void meshValmet::CreateLutError()
           m_Lut->AddRGBPoint((float)(m_Middle+(mmin-m_Middle)*i/(double)inter),m_Lookuptable[128+i*22].R/(float)255,m_Lookuptable[128+i*22].G/(float)255,m_Lookuptable[128+i*22].B/(float)255);
 
       }
-}
+}*/
 
+void meshValmet::CreateLutError()
+{
+    m_Lut = vtkSmartPointer <vtkColorTransferFunction>::New();
+
+    m_Lut -> SetColorSpaceToRGB();
+        m_Lut -> AddRGBSegment( m_Dmin , 0 , 0 , 1 , -0.5 , 0 , 1 , 0 );
+        m_Lut -> AddRGBSegment( -0.5 , 0 , 1 , 0 , 0.5 , 0 , 1 , 0 );
+        m_Lut -> AddRGBSegment( 0.5 , 0 , 1 , 0 , m_Dmax , 1 , 0 , 0 );
+
+    m_Lut -> SetScaleToLinear();
+}
 
 int meshValmet::testPolyData( vtkSmartPointer <vtkPolyData> inData , vtkSmartPointer <vtkPolyData> outData )
 {
