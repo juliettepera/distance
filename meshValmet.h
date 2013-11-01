@@ -40,8 +40,8 @@ class meshValmet
         void SetSamplingStep( double SamplingStep );
         void SetMinSampleFrequency( int MinSampleFrequency );
         void SetSignedDistance( bool SignedDistance );
-        void setMin( double Dmin );
-        void setMax( double Dmax );
+        void setMin(double Min );
+        void setMax(double Max );
 
         vtkSmartPointer <vtkPolyData> GetFinalData();
         vtkSmartPointer <vtkColorTransferFunction> GetLut();
@@ -80,6 +80,8 @@ class meshValmet
 
         double m_Dmax;
         double m_Dmin;
+        double m_max;
+        double m_min;
 
         double m_Downsampling;
         double m_Middle;

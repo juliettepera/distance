@@ -385,8 +385,6 @@ void meshMetricGui::DisplayInit()
     pushButtonDisplayAll -> setEnabled( true );
     pushButtonHideAll -> setEnabled( true );
     listWidgetLoadedMesh -> setEnabled( true );
-
-    //PreviousError();
 }
 
 void meshMetricGui::DisplayAll()
@@ -563,6 +561,16 @@ void meshMetricGui::ChangeMeshSelected()
        radioButtonAbsoluteDistance -> setChecked( true );
    }
 
+   QFileInfo File = QString::fromStdString( m_DataList[ m_MeshSelected ].getName() );
+   lineEditMeshA -> setText( File.fileName() );
+   AvailableMesh();
+
+   if( m_NumberOfMesh >= 2 )
+   {
+      tabWidgetError -> setCurrentWidget( tabDistance );
+      tabWidgetError -> setEnabled( true );
+   }
+
    if( m_ErrorComputed[ m_MeshSelected ] == true )
    {
        checkBoxError -> setEnabled( true );
@@ -582,16 +590,6 @@ void meshMetricGui::ChangeMeshSelected()
        checkBoxError -> setEnabled( false );
        checkBoxError -> setChecked( false );
        tabWidgetError -> setCurrentWidget( tabDistance );
-       tabResults -> setEnabled( false );
-   }
-
-   QFileInfo File = QString::fromStdString( m_DataList[ m_MeshSelected ].getName() );
-   lineEditMeshA -> setText( File.fileName() );
-   AvailableMesh();
-
-   if( m_NumberOfMesh >= 2 )
-   {
-       tabWidgetError -> setEnabled( true );
        tabResults -> setEnabled( false );
    }
 

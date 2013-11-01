@@ -74,14 +74,14 @@ void meshValmet::SetSignedDistance( bool SignedDistance )
     m_Pargs.signeddist = SignedDistance;
 }
 
-void meshValmet::setMin(double Dmin)
+void meshValmet::setMin(double Min)
 {
-    m_Dmin = Dmin;
+    m_min = Min;
 }
 
-void meshValmet::setMax( double Dmax )
+void meshValmet::setMax( double Max )
 {
-    m_Dmax = Dmax;
+    m_max = Max;
 }
 
 //***************************** ACCESSOR TO THE FINAL POLYDATA THAT WE WILL DISPLAY *************************
@@ -100,7 +100,6 @@ vtkSmartPointer <vtkColorTransferFunction> meshValmet::GetLut()
 
 double meshValmet::GetMin()
 {
-    std::cout<< " dmin in testmesh : " << m_Dmin << std::endl;
     return m_Dmin;
 }
 
@@ -551,11 +550,22 @@ void meshValmet::drawVertexErrorT()
 void meshValmet::CreateLutError()
 {
     m_Lut = vtkSmartPointer <vtkColorTransferFunction>::New();
-
+    double delta = 0.5;
     m_Lut -> SetColorSpaceToRGB();
-        m_Lut -> AddRGBSegment( m_Dmin , 0 , 0 , 1 , -0.5 , 0 , 1 , 0 );
-        m_Lut -> AddRGBSegment( -0.5 , 0 , 1 , 0 , 0.5 , 0 , 1 , 0 );
-        m_Lut -> AddRGBSegment( 0.5 , 0 , 1 , 0 , m_Dmax , 1 , 0 , 0 );
+
+    if( m_min > -delta )
+    {
+        m_min = m_Dmin;
+    }
+    if( m_max < delta )
+    {
+        m_max = m_Dmax;
+    }
+
+    m_Lut -> AddRGBSegment( m_min , 0 , 0 , 1 , -delta , 0 , 1 , 0 );
+    m_Lut -> AddRGBSegment( -delta , 0 , 1 , 0 , 0 , 0 , 1 , 0 );
+    m_Lut -> AddRGBSegment( 0 , 0 , 1 , 0 , delta , 0 , 1 , 0 );
+    m_Lut -> AddRGBSegment( delta , 0 , 1 , 0 , m_max , 1 , 0 , 0 );
 
     m_Lut -> SetScaleToLinear();
 }
